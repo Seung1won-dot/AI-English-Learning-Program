@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>단어 퀴즈 — English World</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>🌏 English World</h1>
+    <nav>
+      <a href="/">오늘 학습</a>
+      <a href="/history">학습 기록</a>
+      <a href="/review">복습</a>
+      <a href="/quiz" class="active">퀴즈</a>
+      <a href="/chat">회화</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h2>📝 단어 퀴즈 <small class="due-badge">오늘 복습 {{ due_count }}개</small></h2>
+      <p class="hint">한글 뜻을 보고 영어 단어를 입력하세요. 맞히면 복습 간격이 늘어나고, 틀리면 오늘 다시 나옵니다. (간격 반복 학습)</p>
+
+      <!-- 진행 -->
+      <div id="quizArea">
+        <div id="quizEmpty" class="hint hidden">
+          🎉 오늘 복습할 단어가 없어요! <a href="/">단어 더 외우러 가기 →</a>
+        </div>
+
+        <div id="quizCard" class="quiz-card hidden">
+          <div class="quiz-progress">
+            <span id="quizCount">1 / 1</span>
+            <span id="quizScore" class="quiz-score">맞은 개수 0</span>
+          </div>
+          <div class="quiz-meaning" id="quizMeaning"></div>
+
+          <form id="quizForm" class="quiz-form" autocomplete="off">
+            <input type="text" id="quizInput" placeholder="영어 단어 입력" autocomplete="off" />
+            <button type="submit" id="quizSubmit">확인</button>
+          </form>
+
+          <div id="quizResult" class="quiz-result hidden">
+            <div id="quizVerdict" class="quiz-verdict"></div>
+            <div id="quizAnswer" class="quiz-answer"></div>
+            <div id="quizExample" class="quiz-example"></div>
+            <button id="quizNext" class="quiz-next">다음 문제 →</button>
+          </div>
+        </div>
+
+        <div id="quizDone" class="quiz-done hidden">
+          <h3>퀴즈 완료! 🎉</h3>
+          <p id="quizDoneText"></p>
+          <button id="quizReload">다시 불러오기</button>
+          <a href="/" class="btn-link">오늘 학습으로</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="{{ url_for('static', filename='tts.js') }}"></script>
+  <script src="{{ url_for('static', filename='quiz.js') }}"></script>
+</body>
+</html>
