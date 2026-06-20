@@ -1,0 +1,22 @@
+# 환경 변수 (API 키 보호)
+.env
+
+# 데이터베이스 파일
+*.db
+*.db-wal
+*.db-shm
+*.sqlite3
+
+# 로그
+*.log
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/

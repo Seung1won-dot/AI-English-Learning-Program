@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>오늘 학습 — English World</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body data-words-goal="{{ words_goal }}" data-sents-goal="{{ sentences_goal }}">
+  <header class="topbar">
+    <h1>🌏 English World</h1>
+    <nav>
+      <a href="/" class="active">오늘 학습</a>
+      <a href="/history">학습 기록</a>
+      <a href="/review">복습</a>
+      <a href="/quiz">퀴즈</a>
+      <a href="/chat">회화</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <p class="mode-badge">
+      {% if using_real_ai %}
+        🤖 {{ provider_label }} 실시간 사용 중
+      {% else %}
+        🧩 목업 모드 — .env 에 GROQ_API_KEY(무료) 를 넣으면 실제 AI로 전환됩니다
+      {% endif %}
+      <span class="today-tag">{{ today }}</span>
+    </p>
+
+    <!-- 진행도 -->
+    <section class="goal-grid">
+      <div class="goal-box">
+        <div class="goal-head"><span>📖 오늘의 단어</span>
+          <b id="wordCountLabel">{{ counts.words }} / {{ words_goal }}</b></div>
+        <div class="progress"><div id="wordBar" class="progress-fill"
+          style="width: {{ (counts.words / words_goal * 100) | round(0) if counts.words < words_goal else 100 }}%"></div></div>
+      </div>
+      <div class="goal-box">
+        <div class="goal-head"><span>💬 오늘의 문장</span>
+          <b id="sentCountLabel">{{ counts.sentences }} / {{ sentences_goal }}</b></div>
+        <div class="progress"><div id="sentBar" class="progress-fill"
+          style="width: {{ (counts.sentences / sentences_goal * 100) | round(0) if counts.sentences < sentences_goal else 100 }}%"></div></div>
+      </div>
+    </section>
+
+    <!-- 단어 학습 -->
+    <section class="card">
+      <h2>📖 단어 외우기</h2>
+      <p class="hint">오늘 외울 단어를 입력하면 AI가 뜻·발음·예문을 정리해 줍니다.</p>
+      <div class="inline-form">
+        <input type="text" id="wordInput" placeholder="예: improve" />
+        <button id="wordBtn">단어 추가</button>
+        <button id="recommendBtn" class="ghost">✨ AI 추천 단어</button>
+      </div>
+      <p id="wordError" class="error hidden"></p>
+      <span id="wordLoading" class="loading hidden">AI가 단어를 정리 중...</span>
+
+      <!-- 추천 단어 미리보기 -->
+      <div id="recommendBox" class="recommend-box hidden">
+        <p class="hint">마음에 드는 단어를 눌러 오늘 학습에 담으세요.</p>
+        <div id="recommendList" class="recommend-list"></div>
+      </div>
+
+      <!-- 오늘 담은 단어 -->
+      <div id="wordList" class="item-list">
+        {% for w in items.words %}
+          <div class="word-item">
+            <div class="word-head"><b>{{ w.word }}</b>
+              <span class="pron">{{ w.pronunciation }}</span>
+              <button class="speak-btn" data-text="{{ w.word }}" title="발음 듣기">🔊</button></div>
+            <div class="word-mean">{{ w.meaning }}</div>
+            {% if w.example %}<div class="word-ex">“{{ w.example }}”<br><span>{{ w.example_kr }}</span></div>{% endif %}
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+
+    <!-- 문장 학습 -->
+    <section class="card">
+      <h2>💬 회화 문장 첨삭</h2>
+      <p class="hint">하고 싶은 말을 영어로 써보세요. AI가 교정·피드백·한글뜻·점수를 줍니다.</p>
+      <textarea id="sentInput" rows="2" placeholder="예: I want to order a coffee"></textarea>
+      <div class="actions">
+        <button id="sentBtn">문장 첨삭</button>
+        <span id="sentLoading" class="loading hidden">AI가 검토 중...</span>
+      </div>
+      <p id="sentError" class="error hidden"></p>
+
+      <div id="sentList" class="item-list">
+        {% for s in items.sentences %}
+          <div class="sent-item">
+            <div class="sent-top">
+              <span class="score-pill {% if s.score >= 80 %}good{% elif s.score >= 60 %}mid{% else %}low{% endif %}">{{ s.score }}</span>
+              <span class="corrected">{{ s.corrected }}</span>
+              <button class="speak-btn" data-text="{{ s.corrected }}" title="발음 듣기">🔊</button>
+            </div>
+            {% if s.meaning %}<div class="sent-mean">🇰🇷 {{ s.meaning }}</div>{% endif %}
+            <div class="sent-fb">{{ s.feedback }}</div>
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+  </main>
+
+  <script src="{{ url_for('static', filename='tts.js') }}"></script>
+  <script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>

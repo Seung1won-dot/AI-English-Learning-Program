@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>학습 기록 — English World</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>🌏 English World</h1>
+    <nav>
+      <a href="/">오늘 학습</a>
+      <a href="/history" class="active">학습 기록</a>
+      <a href="/review">복습</a>
+      <a href="/quiz">퀴즈</a>
+      <a href="/chat">회화</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <section class="stats-grid">
+      <div class="stat-box"><span class="stat-num">{{ stats.total_words }}</span><span class="stat-label">외운 단어</span></div>
+      <div class="stat-box"><span class="stat-num">{{ stats.total_sentences }}</span><span class="stat-label">공부한 문장</span></div>
+      <div class="stat-box"><span class="stat-num">{{ stats.total_days }}</span><span class="stat-label">학습한 날</span></div>
+      <div class="stat-box"><span class="stat-num">🔥 {{ stats.streak }}</span><span class="stat-label">연속 학습일</span></div>
+    </section>
+
+    <h2 class="section-title">날짜별 기록</h2>
+
+    {% if history %}
+      <!-- 날짜 선택 필터 -->
+      <section class="filter-bar">
+        <div class="filter-row">
+          <label for="datePicker">📅 날짜 선택</label>
+          <input type="date" id="datePicker"
+                 min="{{ history[-1].date }}" max="{{ history[0].date }}" />
+          <button id="clearDate" class="ghost">전체 보기</button>
+        </div>
+        <div class="date-chips">
+          {% for day in history %}
+            <button class="date-chip" data-date="{{ day.date }}">
+              {{ day.date[5:] }}
+              <small>단어 {{ day.words|length }}·문장 {{ day.sentences|length }}</small>
+            </button>
+          {% endfor %}
+        </div>
+        <p id="noRecord" class="hint hidden">선택한 날짜에는 학습 기록이 없습니다.</p>
+      </section>
+
+      {% for day in history %}
+        <section class="card day-card" data-date="{{ day.date }}">
+          <div class="day-head">
+            <h3>{{ day.date }}</h3>
+            <span class="day-meta">단어 {{ day.words|length }} · 문장 {{ day.sentences|length }}</span>
+          </div>
+
+          {% if day.words %}
+            <div class="day-block">
+              <h4>📖 단어</h4>
+              <ul class="day-words">
+                {% for w in day.words %}
+                  <li>
+                    <b>{{ w.word }}</b>
+                    {% if w.pronunciation %}<span class="pron">{{ w.pronunciation }}</span>{% endif %}
+                    <button class="speak-btn" data-text="{{ w.word }}" title="발음 듣기">🔊</button>
+                    <span class="dash">—</span> {{ w.meaning }}
+                    {% if w.example %}<div class="mini-ex">“{{ w.example }}” <span>{{ w.example_kr }}</span></div>{% endif %}
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+
+          {% if day.sentences %}
+            <div class="day-block">
+              <h4>💬 문장</h4>
+              <ul class="day-sents">
+                {% for s in day.sentences %}
+                  <li>
+                    <span class="score-pill {% if s.score >= 80 %}good{% elif s.score >= 60 %}mid{% else %}low{% endif %}">{{ s.score }}</span>
+                    <span class="corrected">{{ s.corrected }}</span>
+                    <button class="speak-btn" data-text="{{ s.corrected }}" title="발음 듣기">🔊</button>
+                    {% if s.meaning %}<div class="mini-mean">🇰🇷 {{ s.meaning }}</div>{% endif %}
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+        </section>
+      {% endfor %}
+    {% else %}
+      <section class="card">
+        <p class="hint">아직 학습 기록이 없습니다. <a href="/">오늘 학습 시작하기 →</a></p>
+      </section>
+    {% endif %}
+  </main>
+
+  <script src="{{ url_for('static', filename='tts.js') }}"></script>
+  <script src="{{ url_for('static', filename='history.js') }}"></script>
+</body>
+</html>
