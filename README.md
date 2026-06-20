@@ -9,6 +9,21 @@
 
 ---
 
+## 📸 화면
+
+**오늘 학습** — 단어 5개 + 회화 문장 3개, AI 분석/첨삭, 진행도
+![오늘 학습](docs/screenshots/01_today.png)
+
+| 학습 기록 (날짜별) | 복습 (플래시카드) |
+|---|---|
+| ![학습 기록](docs/screenshots/02_history.png) | ![복습](docs/screenshots/03_review.png) |
+
+| 단어 퀴즈 (간격 반복) | AI 회화 (한국어 교정) |
+|---|---|
+| ![퀴즈](docs/screenshots/04_quiz.png) | ![회화](docs/screenshots/05_chat.png) |
+
+---
+
 ## ✨ 주요 기능
 
 ### 1) 오늘 학습 (`/`)

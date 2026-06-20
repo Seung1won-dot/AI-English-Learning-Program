@@ -196,8 +196,10 @@ _CHAT_SYSTEM = (
     "the conversation going. Use simple, everyday English suitable for an "
     "intermediate learner. "
     "If the learner's last message has a notable grammar or word-choice mistake, "
-    "AFTER your reply add a new line starting with '📝' and briefly correct it IN KOREAN "
-    "(show the natural English version). If there is no notable mistake, do not add the 📝 line."
+    "AFTER your reply add a new line starting with '📝' and briefly correct it. "
+    "The correction MUST be written in KOREAN (한국어/한글) — never in Chinese, Japanese, "
+    "or any other language. Show the natural English version inside the Korean explanation. "
+    "If there is no notable mistake, do not add the 📝 line."
 )
 
 
