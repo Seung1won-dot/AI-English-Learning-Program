@@ -11,10 +11,15 @@ db.py — SQLite 데이터 계층
   4) 요청마다 새 커넥션을 열고 with 블록으로 확실히 닫는다.
 
 테이블
-  words     : 외운 단어 (단어, 뜻, 발음, 예문, 예문해석)
-  sentences : 공부한 회화 문장 (원문, 교정, 피드백, 한글뜻, 점수)
+  words          : 외운 단어 (단어, 뜻, 발음, 예문, 예문해석, 모드)
+  sentences      : 공부한 회화 문장 (원문, 교정, 피드백, 한글뜻, 점수, 모드)
+  opic_answers   : 오픽 답변 연습 (질문, 내 답변, 교정, 피드백, 모범답변, 점수)
+  toeic_quiz_log : 토익 Part5 문제 풀이 기록 (문제, 보기, 내 답, 정답, 해설, 정오)
+
+모드(mode) 값: 'toeic' | 'opic' | 'talk'  — 학습 기록을 목적별로 구분하는 태그
 """
 
+import json
 import os
 import sqlite3
 from contextlib import contextmanager
@@ -85,6 +90,47 @@ def init_db():
         _ensure_column(conn, "words", "box", "INTEGER NOT NULL DEFAULT 1")
         _ensure_column(conn, "words", "next_review", "TEXT NOT NULL DEFAULT ''")
 
+        # --- 학습 모드 태그: 기존 데이터는 '회화(talk)'로 분류 (데이터 유실 없음) ---
+        _ensure_column(conn, "words", "mode", "TEXT NOT NULL DEFAULT 'talk'")
+        _ensure_column(conn, "sentences", "mode", "TEXT NOT NULL DEFAULT 'talk'")
+
+        # --- OPIC 답변 연습 기록 ---
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS opic_answers (
+                id           INTEGER PRIMARY KEY AUTOINCREMENT,
+                created_at   TEXT    NOT NULL,
+                date         TEXT    NOT NULL,
+                topic        TEXT    NOT NULL DEFAULT '',   -- 서베이 주제 (자기소개/집/취미...)
+                question     TEXT    NOT NULL,              -- 오픽 질문
+                answer       TEXT    NOT NULL,              -- 내 답변 (타이핑 또는 음성 인식)
+                corrected    TEXT    NOT NULL DEFAULT '',   -- AI 교정문
+                feedback     TEXT    NOT NULL DEFAULT '',   -- AI 피드백 (한국어)
+                model_answer TEXT    NOT NULL DEFAULT '',   -- AI 모범답변
+                score        INTEGER NOT NULL DEFAULT 0     -- 0~100
+            );
+            """
+        )
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_opic_date ON opic_answers(date);")
+
+        # --- TOEIC Part5 문제 풀이 기록 ---
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS toeic_quiz_log (
+                id             INTEGER PRIMARY KEY AUTOINCREMENT,
+                created_at     TEXT    NOT NULL,
+                date           TEXT    NOT NULL,
+                question       TEXT    NOT NULL,              -- 문제 (빈칸 포함 문장)
+                choices        TEXT    NOT NULL,              -- 보기 4개 (JSON 배열)
+                my_answer      INTEGER NOT NULL,              -- 내가 고른 보기 (0~3)
+                correct_answer INTEGER NOT NULL,              -- 정답 보기 (0~3)
+                explanation    TEXT    NOT NULL DEFAULT '',   -- 해설 (한국어)
+                is_correct     INTEGER NOT NULL DEFAULT 0     -- 1=정답, 0=오답
+            );
+            """
+        )
+        conn.execute("CREATE INDEX IF NOT EXISTS idx_toeic_date ON toeic_quiz_log(date);")
+
 
 def _ensure_column(conn, table, column, decl):
     """테이블에 컬럼이 없으면 ALTER 로 추가한다 (마이그레이션)."""
@@ -105,33 +151,73 @@ def _now():
 # ---------------------------------------------------------------------------
 # 저장
 # ---------------------------------------------------------------------------
-def add_word(word, meaning, pronunciation="", example="", example_kr=""):
+VALID_MODES = ("toeic", "opic", "talk")
+
+
+def _clean_mode(mode):
+    """모드 값을 검증한다. 모르는 값이 오면 'talk'로 저장한다."""
+    return mode if mode in VALID_MODES else "talk"
+
+
+def add_word(word, meaning, pronunciation="", example="", example_kr="", mode="talk"):
     """단어 1개를 저장하고 id 를 반환한다. (새 단어는 오늘부터 복습 대상)"""
     created_at, date = _now()
     with get_conn() as conn:
         cur = conn.execute(
             """
-            INSERT INTO words (created_at, date, word, meaning, pronunciation, example, example_kr, box, next_review)
-            VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?)
+            INSERT INTO words (created_at, date, word, meaning, pronunciation, example, example_kr, box, next_review, mode)
+            VALUES (?, ?, ?, ?, ?, ?, ?, 1, ?, ?)
             """,
             (created_at, date, word.strip(), meaning.strip(),
-             pronunciation.strip(), example.strip(), example_kr.strip(), date),
+             pronunciation.strip(), example.strip(), example_kr.strip(), date,
+             _clean_mode(mode)),
         )
         return cur.lastrowid
 
 
-def add_sentence(original, corrected, feedback, meaning="", score=0):
+def add_sentence(original, corrected, feedback, meaning="", score=0, mode="talk"):
     """회화 문장 1개를 저장하고 id 를 반환한다."""
     created_at, date = _now()
     score = int(max(0, min(100, score)))
     with get_conn() as conn:
         cur = conn.execute(
             """
-            INSERT INTO sentences (created_at, date, original, corrected, feedback, meaning, score)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO sentences (created_at, date, original, corrected, feedback, meaning, score, mode)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (created_at, date, original.strip(), corrected.strip(),
-             feedback.strip(), meaning.strip(), score),
+             feedback.strip(), meaning.strip(), score, _clean_mode(mode)),
+        )
+        return cur.lastrowid
+
+
+def add_opic_answer(topic, question, answer, corrected="", feedback="", model_answer="", score=0):
+    """오픽 답변 연습 1건을 저장하고 id 를 반환한다."""
+    created_at, date = _now()
+    score = int(max(0, min(100, score)))
+    with get_conn() as conn:
+        cur = conn.execute(
+            """
+            INSERT INTO opic_answers (created_at, date, topic, question, answer, corrected, feedback, model_answer, score)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (created_at, date, topic.strip(), question.strip(), answer.strip(),
+             corrected.strip(), feedback.strip(), model_answer.strip(), score),
+        )
+        return cur.lastrowid
+
+
+def add_toeic_quiz(question, choices, my_answer, correct_answer, explanation="", is_correct=False):
+    """토익 Part5 문제 풀이 1건을 저장하고 id 를 반환한다. choices 는 보기 4개 리스트."""
+    created_at, date = _now()
+    with get_conn() as conn:
+        cur = conn.execute(
+            """
+            INSERT INTO toeic_quiz_log (created_at, date, question, choices, my_answer, correct_answer, explanation, is_correct)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+            (created_at, date, question.strip(), json.dumps(list(choices), ensure_ascii=False),
+             int(my_answer), int(correct_answer), explanation.strip(), 1 if is_correct else 0),
         )
         return cur.lastrowid
 
@@ -143,35 +229,72 @@ def today_str():
     return datetime.now().strftime("%Y-%m-%d")
 
 
-def get_today_counts():
-    """오늘 공부한 단어 수 / 문장 수 (진행도 표시용)."""
+def get_today_counts(mode=None):
+    """오늘 공부한 단어 수 / 문장 수 (진행도 표시용). mode 를 주면 그 모드만 센다."""
     today = today_str()
     with get_conn() as conn:
-        w = conn.execute("SELECT COUNT(*) FROM words WHERE date=?", (today,)).fetchone()[0]
-        s = conn.execute("SELECT COUNT(*) FROM sentences WHERE date=?", (today,)).fetchone()[0]
+        if mode:
+            w = conn.execute("SELECT COUNT(*) FROM words WHERE date=? AND mode=?", (today, mode)).fetchone()[0]
+            s = conn.execute("SELECT COUNT(*) FROM sentences WHERE date=? AND mode=?", (today, mode)).fetchone()[0]
+        else:
+            w = conn.execute("SELECT COUNT(*) FROM words WHERE date=?", (today,)).fetchone()[0]
+            s = conn.execute("SELECT COUNT(*) FROM sentences WHERE date=?", (today,)).fetchone()[0]
     return {"words": w, "sentences": s}
 
 
-def get_today_items():
+def get_today_items(mode=None):
     """오늘 저장한 단어/문장 목록 (오늘 학습 화면에서 바로 보여주기)."""
     today = today_str()
     with get_conn() as conn:
-        words = conn.execute(
-            "SELECT * FROM words WHERE date=? ORDER BY id ASC", (today,)
-        ).fetchall()
-        sentences = conn.execute(
-            "SELECT * FROM sentences WHERE date=? ORDER BY id ASC", (today,)
-        ).fetchall()
+        if mode:
+            words = conn.execute(
+                "SELECT * FROM words WHERE date=? AND mode=? ORDER BY id ASC", (today, mode)
+            ).fetchall()
+            sentences = conn.execute(
+                "SELECT * FROM sentences WHERE date=? AND mode=? ORDER BY id ASC", (today, mode)
+            ).fetchall()
+        else:
+            words = conn.execute(
+                "SELECT * FROM words WHERE date=? ORDER BY id ASC", (today,)
+            ).fetchall()
+            sentences = conn.execute(
+                "SELECT * FROM sentences WHERE date=? ORDER BY id ASC", (today,)
+            ).fetchall()
     return {
         "words": [dict(r) for r in words],
         "sentences": [dict(r) for r in sentences],
     }
 
 
+def get_today_mode_summary():
+    """홈 화면 모드 카드용 — 모드별 오늘 학습량 요약.
+
+    반환: {"toeic": {"words": n, "quiz": n}, "opic": {"answers": n}, "talk": {"words": n, "sentences": n}}
+    """
+    today = today_str()
+    with get_conn() as conn:
+        toeic_words = conn.execute(
+            "SELECT COUNT(*) FROM words WHERE date=? AND mode='toeic'", (today,)).fetchone()[0]
+        toeic_quiz = conn.execute(
+            "SELECT COUNT(*) FROM toeic_quiz_log WHERE date=?", (today,)).fetchone()[0]
+        opic_answers = conn.execute(
+            "SELECT COUNT(*) FROM opic_answers WHERE date=?", (today,)).fetchone()[0]
+        talk_words = conn.execute(
+            "SELECT COUNT(*) FROM words WHERE date=? AND mode='talk'", (today,)).fetchone()[0]
+        talk_sents = conn.execute(
+            "SELECT COUNT(*) FROM sentences WHERE date=? AND mode='talk'", (today,)).fetchone()[0]
+    return {
+        "toeic": {"words": toeic_words, "quiz": toeic_quiz},
+        "opic": {"answers": opic_answers},
+        "talk": {"words": talk_words, "sentences": talk_sents},
+    }
+
+
 def get_history(limit_days=60):
     """날짜별로 묶은 학습 기록을 최신 날짜 순으로 반환한다.
 
-    반환: [{date, words:[...], sentences:[...]}, ...]
+    반환: [{date, words:[...], sentences:[...], opic:[...], toeic:[...]}, ...]
+    (words/sentences 각 항목에는 mode 태그가 포함된다)
     """
     with get_conn() as conn:
         dates = conn.execute(
@@ -180,6 +303,10 @@ def get_history(limit_days=60):
                 SELECT date FROM words
                 UNION
                 SELECT date FROM sentences
+                UNION
+                SELECT date FROM opic_answers
+                UNION
+                SELECT date FROM toeic_quiz_log
             )
             ORDER BY date DESC
             LIMIT ?
@@ -196,10 +323,18 @@ def get_history(limit_days=60):
             sentences = conn.execute(
                 "SELECT * FROM sentences WHERE date=? ORDER BY id ASC", (d,)
             ).fetchall()
+            opic = conn.execute(
+                "SELECT * FROM opic_answers WHERE date=? ORDER BY id ASC", (d,)
+            ).fetchall()
+            toeic = conn.execute(
+                "SELECT * FROM toeic_quiz_log WHERE date=? ORDER BY id ASC", (d,)
+            ).fetchall()
             history.append({
                 "date": d,
                 "words": [dict(r) for r in words],
                 "sentences": [dict(r) for r in sentences],
+                "opic": [dict(r) for r in opic],
+                "toeic": [{**dict(r), "choices": json.loads(r["choices"])} for r in toeic],
             })
     return history
 
@@ -209,10 +344,15 @@ def get_stats():
     with get_conn() as conn:
         total_words = conn.execute("SELECT COUNT(*) FROM words").fetchone()[0]
         total_sentences = conn.execute("SELECT COUNT(*) FROM sentences").fetchone()[0]
+        total_opic = conn.execute("SELECT COUNT(*) FROM opic_answers").fetchone()[0]
+        total_toeic = conn.execute("SELECT COUNT(*) FROM toeic_quiz_log").fetchone()[0]
         study_dates = [r[0] for r in conn.execute(
             """
             SELECT date FROM (
-                SELECT date FROM words UNION SELECT date FROM sentences
+                SELECT date FROM words
+                UNION SELECT date FROM sentences
+                UNION SELECT date FROM opic_answers
+                UNION SELECT date FROM toeic_quiz_log
             ) ORDER BY date DESC
             """
         ).fetchall()]
@@ -222,6 +362,8 @@ def get_stats():
     return {
         "total_words": total_words,
         "total_sentences": total_sentences,
+        "total_opic": total_opic,
+        "total_toeic": total_toeic,
         "total_days": total_days,
         "streak": streak,
     }
