@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>English World — 오늘은 어떤 공부를 할까요?</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>🌏 English World</h1>
+    <nav>
+      <a href="/" class="active">홈</a>
+      <a href="/toeic">TOEIC</a>
+      <a href="/opic">OPIC</a>
+      <a href="/talk">회화</a>
+      <a href="/history">기록</a>
+      <a href="/review">복습</a>
+      <a href="/quiz">퀴즈</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <p class="mode-badge">
+      {% if using_real_ai %}
+        🤖 {{ provider_label }} 실시간 사용 중
+      {% else %}
+        🧩 목업 모드 — .env 에 GROQ_API_KEY(무료) 를 넣으면 실제 AI로 전환됩니다
+      {% endif %}
+      <span class="today-tag">{{ today }}</span>
+    </p>
+
+    <h2 class="home-greet">오늘은 어떤 공부를 할까요?</h2>
+    <p class="home-sub">목적에 맞는 모드를 골라 시작하세요. 모든 학습은 날짜별로 기록됩니다.</p>
+
+    <div class="mode-grid">
+      <a class="mode-card toeic" href="/toeic">
+        <div class="mode-strip"></div>
+        <div class="mode-body">
+          <span class="mode-icon">📘</span>
+          <div class="mode-name">TOEIC</div>
+          <div class="mode-desc">빈출 단어 암기와 Part 5 문제 풀이로 점수 올리기</div>
+          <div class="mode-today">
+            오늘 단어 {{ summary.toeic.words }} · 문제 {{ summary.toeic.quiz }}
+          </div>
+        </div>
+      </a>
+
+      <a class="mode-card opic" href="/opic">
+        <div class="mode-strip"></div>
+        <div class="mode-body">
+          <span class="mode-icon">🎤</span>
+          <div class="mode-name">OPIC</div>
+          <div class="mode-desc">실전 유형 질문에 말하고 AI 첨삭과 모범답변 받기</div>
+          <div class="mode-today">
+            오늘 답변 연습 {{ summary.opic.answers }}
+          </div>
+        </div>
+      </a>
+
+      <a class="mode-card talk" href="/talk">
+        <div class="mode-strip"></div>
+        <div class="mode-body">
+          <span class="mode-icon">💬</span>
+          <div class="mode-name">영어 회화</div>
+          <div class="mode-desc">단어·문장 공부와 AI 프리토킹으로 회화 실력 쌓기</div>
+          <div class="mode-today">
+            오늘 단어 {{ summary.talk.words }} · 문장 {{ summary.talk.sentences }}
+          </div>
+        </div>
+      </a>
+    </div>
+
+    <div class="quick-links">
+      <a class="quick-link" href="/history">📅 학습 기록<small>날짜별 · 모드별 모아보기</small></a>
+      <a class="quick-link" href="/review">🃏 플래시카드 복습<small>외운 단어·문장 되새기기</small></a>
+      <a class="quick-link" href="/quiz">✏️ 단어 퀴즈<small>오늘 복습할 단어 {{ due_count }}개</small></a>
+    </div>
+  </main>
+</body>
+</html>

@@ -2,6 +2,7 @@
 
 const WORDS_GOAL = Number(document.body.dataset.wordsGoal) || 5;
 const SENTS_GOAL = Number(document.body.dataset.sentsGoal) || 3;
+const PAGE_MODE = document.body.dataset.mode || "talk";   // 학습 기록에 붙는 모드 태그
 
 // ---- 공통 유틸 ----
 async function postJSON(url, payload) {
@@ -64,7 +65,7 @@ async function addWord(payload) {
   show(wordLoading, true);
   wordBtn.disabled = true;
   try {
-    const data = await postJSON("/api/word", payload);
+    const data = await postJSON("/api/word", { ...payload, mode: PAGE_MODE });
     wordList.insertAdjacentHTML("afterbegin", wordCard(data));
     updateCounts(data.counts);
     wordInput.value = "";
@@ -143,7 +144,7 @@ sentBtn.addEventListener("click", async () => {
   show(sentLoading, true);
   sentBtn.disabled = true;
   try {
-    const data = await postJSON("/api/sentence", { sentence });
+    const data = await postJSON("/api/sentence", { sentence, mode: PAGE_MODE });
     sentList.insertAdjacentHTML("afterbegin", sentCard(data));
     updateCounts(data.counts);
     sentInput.value = "";
