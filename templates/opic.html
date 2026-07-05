@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OPIC — English World</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>🌏 English World</h1>
+    <nav>
+      <a href="/">홈</a>
+      <a href="/toeic">TOEIC</a>
+      <a href="/opic" class="active">OPIC</a>
+      <a href="/talk">회화</a>
+      <a href="/history">기록</a>
+      <a href="/review">복습</a>
+      <a href="/quiz">퀴즈</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div class="page-head">
+      <h2>🎤 OPIC 연습</h2>
+      <span class="mode-tag opic">OPIC</span>
+    </div>
+
+    {% if not using_real_ai %}
+      <p class="mode-badge">🧩 목업 모드 — .env 에 GROQ_API_KEY(무료) 를 넣으면 AI가 매번 새 질문·첨삭·모범답변을 만들어 줍니다</p>
+    {% endif %}
+
+    <section class="card">
+      <h2>1️⃣ 주제를 고르고 질문 받기</h2>
+      <p class="hint">실제 오픽 서베이 주제입니다. 질문을 받고 실전처럼 답해 보세요.</p>
+
+      <div class="opic-topics">
+        <button class="opic-chip active" data-topic="자기소개">자기소개</button>
+        <button class="opic-chip" data-topic="집">집</button>
+        <button class="opic-chip" data-topic="취미">취미</button>
+        <button class="opic-chip" data-topic="여행">여행</button>
+        <button class="opic-chip" data-topic="운동">운동</button>
+        <button class="opic-chip" data-topic="영화">영화</button>
+        <button class="opic-chip" data-topic="롤플레이">롤플레이</button>
+      </div>
+
+      <div class="actions" style="margin-top:6px">
+        <button id="opicQuestionBtn" class="opic-btn">질문 받기</button>
+        <span id="opicQLoading" class="loading hidden">질문을 만드는 중...</span>
+      </div>
+      <p id="opicQError" class="error hidden"></p>
+
+      <div id="opicQuestionBox" class="opic-question hidden" style="margin-top:14px">
+        <div class="q-en"><span id="opicQText"></span> <button id="opicQSpeak" class="speak-btn" title="질문 듣기">🔊</button></div>
+        <div id="opicQKr" class="q-kr"></div>
+      </div>
+    </section>
+
+    <section id="opicAnswerCard" class="card hidden">
+      <h2>2️⃣ 답변하기</h2>
+      <p class="hint">실전처럼 <b>말로</b> 답하거나(🎤), 타이핑해도 좋아요. 답변은 영어로!</p>
+
+      <div class="answer-tools">
+        <button id="micBtn" class="mic-btn hidden">🎤 말로 답하기</button>
+        <span id="micHint" class="mic-hint"></span>
+      </div>
+      <textarea id="opicAnswer" rows="4" placeholder="예: Hi, my name is Minsu. I'm a university student majoring in..."></textarea>
+      <div class="actions">
+        <button id="opicSubmitBtn" class="opic-btn">AI 첨삭 받기</button>
+        <span id="opicALoading" class="loading hidden">AI가 답변을 검토 중...</span>
+      </div>
+      <p id="opicAError" class="error hidden"></p>
+
+      <div id="opicResult" class="opic-result hidden">
+        <div class="opic-block">
+          <h4>💯 점수 <span id="opicScore" class="score-pill good" style="margin-left:6px"></span></h4>
+          <h4 style="margin-top:10px">✏️ 자연스럽게 고친 내 답변 <button id="opicCorrSpeak" class="speak-btn" title="듣기">🔊</button></h4>
+          <p id="opicCorrected"></p>
+        </div>
+        <div class="opic-block">
+          <h4>📝 피드백</h4>
+          <p id="opicFeedback"></p>
+        </div>
+        <div id="opicModelBlock" class="opic-block model">
+          <h4>🌟 모범답변 <button id="opicModelSpeak" class="speak-btn" title="듣기">🔊</button></h4>
+          <p id="opicModel"></p>
+        </div>
+        <div class="actions">
+          <button id="opicRetryBtn" class="ghost">같은 주제 다시 연습</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="{{ url_for('static', filename='tts.js') }}"></script>
+  <script src="{{ url_for('static', filename='opic.js') }}"></script>
+</body>
+</html>

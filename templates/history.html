@@ -10,11 +10,13 @@
   <header class="topbar">
     <h1>🌏 English World</h1>
     <nav>
-      <a href="/">오늘 학습</a>
-      <a href="/history" class="active">학습 기록</a>
+      <a href="/">홈</a>
+      <a href="/toeic">TOEIC</a>
+      <a href="/opic">OPIC</a>
+      <a href="/talk">회화</a>
+      <a href="/history" class="active">기록</a>
       <a href="/review">복습</a>
       <a href="/quiz">퀴즈</a>
-      <a href="/chat">회화</a>
     </nav>
   </header>
 
@@ -22,6 +24,8 @@
     <section class="stats-grid">
       <div class="stat-box"><span class="stat-num">{{ stats.total_words }}</span><span class="stat-label">외운 단어</span></div>
       <div class="stat-box"><span class="stat-num">{{ stats.total_sentences }}</span><span class="stat-label">공부한 문장</span></div>
+      <div class="stat-box"><span class="stat-num">{{ stats.total_opic }}</span><span class="stat-label">오픽 답변</span></div>
+      <div class="stat-box"><span class="stat-num">{{ stats.total_toeic }}</span><span class="stat-label">토익 문제</span></div>
       <div class="stat-box"><span class="stat-num">{{ stats.total_days }}</span><span class="stat-label">학습한 날</span></div>
       <div class="stat-box"><span class="stat-num">🔥 {{ stats.streak }}</span><span class="stat-label">연속 학습일</span></div>
     </section>
@@ -29,6 +33,14 @@
     <h2 class="section-title">날짜별 기록</h2>
 
     {% if history %}
+      <!-- 모드 필터 -->
+      <div class="mode-filter">
+        <button class="mode-filter-tab active" data-mode="all">전체</button>
+        <button class="mode-filter-tab f-toeic" data-mode="toeic">📘 TOEIC</button>
+        <button class="mode-filter-tab f-opic" data-mode="opic">🎤 OPIC</button>
+        <button class="mode-filter-tab f-talk" data-mode="talk">💬 회화</button>
+      </div>
+
       <!-- 날짜 선택 필터 -->
       <section class="filter-bar">
         <div class="filter-row">
@@ -41,26 +53,30 @@
           {% for day in history %}
             <button class="date-chip" data-date="{{ day.date }}">
               {{ day.date[5:] }}
-              <small>단어 {{ day.words|length }}·문장 {{ day.sentences|length }}</small>
+              <small>{{ day.words|length + day.sentences|length + day.opic|length + day.toeic|length }}개 학습</small>
             </button>
           {% endfor %}
         </div>
-        <p id="noRecord" class="hint hidden">선택한 날짜에는 학습 기록이 없습니다.</p>
+        <p id="noRecord" class="hint hidden">선택한 조건에는 학습 기록이 없습니다.</p>
       </section>
 
       {% for day in history %}
         <section class="card day-card" data-date="{{ day.date }}">
           <div class="day-head">
             <h3>{{ day.date }}</h3>
-            <span class="day-meta">단어 {{ day.words|length }} · 문장 {{ day.sentences|length }}</span>
+            <span class="day-meta">
+              단어 {{ day.words|length }} · 문장 {{ day.sentences|length }}
+              · 오픽 {{ day.opic|length }} · 토익문제 {{ day.toeic|length }}
+            </span>
           </div>
 
           {% if day.words %}
-            <div class="day-block">
+            <div class="day-block" data-modes="{{ day.words|map(attribute='mode')|unique|join(',') }}">
               <h4>📖 단어</h4>
               <ul class="day-words">
                 {% for w in day.words %}
-                  <li>
+                  <li class="mode-item" data-mode="{{ w.mode }}">
+                    <span class="mode-tag {{ w.mode }}">{{ {'toeic':'TOEIC','opic':'OPIC','talk':'회화'}[w.mode] }}</span>
                     <b>{{ w.word }}</b>
                     {% if w.pronunciation %}<span class="pron">{{ w.pronunciation }}</span>{% endif %}
                     <button class="speak-btn" data-text="{{ w.word }}" title="발음 듣기">🔊</button>
@@ -77,11 +93,49 @@
               <h4>💬 문장</h4>
               <ul class="day-sents">
                 {% for s in day.sentences %}
-                  <li>
+                  <li class="mode-item" data-mode="{{ s.mode }}">
+                    <span class="mode-tag {{ s.mode }}">{{ {'toeic':'TOEIC','opic':'OPIC','talk':'회화'}[s.mode] }}</span>
                     <span class="score-pill {% if s.score >= 80 %}good{% elif s.score >= 60 %}mid{% else %}low{% endif %}">{{ s.score }}</span>
                     <span class="corrected">{{ s.corrected }}</span>
                     <button class="speak-btn" data-text="{{ s.corrected }}" title="발음 듣기">🔊</button>
                     {% if s.meaning %}<div class="mini-mean">🇰🇷 {{ s.meaning }}</div>{% endif %}
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+
+          {% if day.opic %}
+            <div class="day-block">
+              <h4>🎤 오픽 답변 연습</h4>
+              <ul class="day-words">
+                {% for o in day.opic %}
+                  <li class="mode-item day-opic-item" data-mode="opic">
+                    <span class="mode-tag opic">OPIC</span>
+                    {% if o.topic %}<b>[{{ o.topic }}]</b>{% endif %}
+                    <span class="score-pill {% if o.score >= 80 %}good{% elif o.score >= 60 %}mid{% else %}low{% endif %}">{{ o.score }}</span>
+                    <div class="q">Q. {{ o.question }}</div>
+                    <div>🗣 {{ o.corrected or o.answer }}
+                      <button class="speak-btn" data-text="{{ o.corrected or o.answer }}" title="듣기">🔊</button></div>
+                    {% if o.model_answer %}<div class="mini-ex">🌟 모범답변: {{ o.model_answer }}</div>{% endif %}
+                  </li>
+                {% endfor %}
+              </ul>
+            </div>
+          {% endif %}
+
+          {% if day.toeic %}
+            <div class="day-block">
+              <h4>✏️ 토익 Part 5</h4>
+              <ul class="day-words">
+                {% for t in day.toeic %}
+                  <li class="mode-item day-toeic-item" data-mode="toeic">
+                    <span class="mode-tag toeic">TOEIC</span>
+                    {% if t.is_correct %}<span class="verdict-ok">⭕ 정답</span>{% else %}<span class="verdict-no">❌ 오답</span>{% endif %}
+                    <div class="q">{{ t.question }}</div>
+                    <div>정답: <b>{{ t.choices[t.correct_answer] }}</b>
+                      {% if not t.is_correct %} · 내 답: {{ t.choices[t.my_answer] }}{% endif %}</div>
+                    {% if t.explanation %}<div class="mini-ex">{{ t.explanation }}</div>{% endif %}
                   </li>
                 {% endfor %}
               </ul>
