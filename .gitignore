@@ -23,3 +23,6 @@ env/
 
 # Claude Code 로컬 설정
 .claude/
+
+# 내부 작업 문서 (스펙/플랜)
+docs/superpowers/
