@@ -13,16 +13,19 @@
 
 ## 📸 화면
 
-**오늘 학습** — 단어 5개 + 회화 문장 3개, AI 분석/첨삭, 진행도
-![오늘 학습](docs/screenshots/01_today.png)
+**홈 — 학습 모드 선택** (TOEIC / OPIC / 회화 + 오늘 학습 요약)
+![홈](docs/screenshots/01_home.png)
 
-| 학습 기록 (날짜별) | 복습 (플래시카드) |
+| 📘 TOEIC (빈출 단어 + Part 5) | 🎤 OPIC (질문 → 말하기 → AI 첨삭) |
 |---|---|
-| ![학습 기록](docs/screenshots/02_history.png) | ![복습](docs/screenshots/03_review.png) |
+| ![TOEIC](docs/screenshots/02_toeic.png) | ![OPIC](docs/screenshots/03_opic.png) |
 
-| 단어 퀴즈 (간격 반복) | AI 회화 (한국어 교정) |
+| 💬 회화 (오늘 학습 + AI 프리토킹) | 📅 학습 기록 (날짜별 · 모드별 필터) |
 |---|---|
-| ![퀴즈](docs/screenshots/04_quiz.png) | ![회화](docs/screenshots/05_chat.png) |
+| ![회화](docs/screenshots/04_talk.png) | ![학습 기록](docs/screenshots/05_history.png) |
+
+**단어 퀴즈** — 간격 반복(SRS)으로 모든 모드의 단어 통합 복습
+![퀴즈](docs/screenshots/06_quiz.png)
 
 ---
 
