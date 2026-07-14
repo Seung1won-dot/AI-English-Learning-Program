@@ -29,6 +29,7 @@ const recommendBtn = document.getElementById("toeicRecommendBtn");
 const wordError = document.getElementById("toeicWordError");
 const recommendBox = document.getElementById("toeicRecommendBox");
 const recommendList = document.getElementById("toeicRecommendList");
+const wordFallback = document.getElementById("toeicWordFallback");
 const wordList = document.getElementById("toeicWordList");
 
 levelChips.forEach((chip) => {
@@ -54,6 +55,7 @@ recommendBtn.addEventListener("click", async () => {
   recommendBtn.textContent = "추천 받는 중...";
   try {
     const data = await postJSON("/api/toeic/words", { level });
+    show(wordFallback, !!data.fallback);
     recommendList.innerHTML = data.words.map((w, i) => `
       <button class="recommend-chip" data-i="${i}">
         <b>${esc(w.word)}</b> <span>${esc(w.meaning)}</span> <em>+ 담기</em>
@@ -90,9 +92,12 @@ recommendList.addEventListener("click", async (e) => {
 // Part 5 문제
 // =========================================================
 const startBtn = document.getElementById("p5StartBtn");
+const retryBtn = document.getElementById("p5RetryBtn");
+const retryBadge = document.getElementById("p5RetryBadge");
 const nextBtn = document.getElementById("p5NextBtn");
 const loading = document.getElementById("p5Loading");
 const p5Error = document.getElementById("p5Error");
+const p5Fallback = document.getElementById("p5Fallback");
 const box = document.getElementById("p5Box");
 const questionEl = document.getElementById("p5Question");
 const choicesEl = document.getElementById("p5Choices");
@@ -104,28 +109,45 @@ const scoreEl = document.getElementById("p5Score");
 let current = null;           // 현재 문제
 const recentQuestions = [];   // 같은 문제 반복 방지
 let solved = 0, correct = 0;  // 이번 세션 점수
+let retryQueue = [];          // 오답 다시 풀기 큐 (비어 있으면 새 문제 모드)
 
 const LABELS = ["A", "B", "C", "D"];
 
+function renderQuestion(q, isRetry = false) {
+  current = q;
+  questionEl.textContent = q.question;
+  choicesEl.innerHTML = q.choices.map((c, i) => `
+    <button class="p5-choice" data-i="${i}">
+      <span class="p5-label">(${LABELS[i]})</span> ${esc(c)}
+    </button>`).join("");
+  show(retryBadge, isRetry);
+  show(explainBox, false);
+  show(nextBtn, false);
+  show(box, true);
+  delete choicesEl.dataset.answered;   // 새 문제 → 답변 잠금 해제
+}
+
 async function loadQuestion() {
+  // 오답 복습 중이면 큐에서 먼저 꺼낸다
+  if (retryQueue.length > 0) {
+    renderQuestion(retryQueue.shift(), true);
+    nextBtn.textContent = retryQueue.length > 0
+      ? `다음 오답 (${retryQueue.length}개 남음) →` : "다음 문제 →";
+    return;
+  }
+
   p5Error.classList.add("hidden");
+  show(p5Fallback, false);
   show(loading, true);
   startBtn.disabled = true;
   try {
-    current = await postJSON("/api/toeic/question", { recent: recentQuestions });
-    recentQuestions.push(current.question);
+    const q = await postJSON("/api/toeic/question", { recent: recentQuestions });
+    recentQuestions.push(q.question);
     if (recentQuestions.length > 10) recentQuestions.shift();
-
-    questionEl.textContent = current.question;
-    choicesEl.innerHTML = current.choices.map((c, i) => `
-      <button class="p5-choice" data-i="${i}">
-        <span class="p5-label">(${LABELS[i]})</span> ${esc(c)}
-      </button>`).join("");
-    show(explainBox, false);
-    show(nextBtn, false);
-    show(box, true);
-    delete choicesEl.dataset.answered;   // 새 문제 → 답변 잠금 해제
+    renderQuestion(q, false);
+    nextBtn.textContent = "다음 문제 →";
     startBtn.textContent = "새 문제 받기";
+    show(p5Fallback, !!q.fallback);
   } catch (e) {
     p5Error.textContent = e.message;
     show(p5Error, true);
@@ -135,7 +157,34 @@ async function loadQuestion() {
   }
 }
 
-startBtn.addEventListener("click", loadQuestion);
+async function loadWrongQuestions() {
+  p5Error.classList.add("hidden");
+  retryBtn.disabled = true;
+  try {
+    const res = await fetch("/api/toeic/wrong");
+    const data = await res.json();
+    retryQueue = (data.questions || []).map((q) => ({
+      question: q.question,
+      choices: q.choices,
+      answer: q.correct_answer,
+      explanation: q.explanation,
+    }));
+    if (retryQueue.length === 0) {
+      p5Error.textContent = "다시 풀 오답이 없어요! 🎉 (틀린 문제를 다시 맞히면 목록에서 빠집니다)";
+      show(p5Error, true);
+      return;
+    }
+    loadQuestion();
+  } catch (e) {
+    p5Error.textContent = e.message;
+    show(p5Error, true);
+  } finally {
+    retryBtn.disabled = false;
+  }
+}
+
+startBtn.addEventListener("click", () => { retryQueue = []; loadQuestion(); });
+retryBtn.addEventListener("click", loadWrongQuestions);
 nextBtn.addEventListener("click", loadQuestion);
 
 choicesEl.addEventListener("click", async (e) => {

@@ -69,9 +69,11 @@ async function addWord(payload) {
     wordList.insertAdjacentHTML("afterbegin", wordCard(data));
     updateCounts(data.counts);
     wordInput.value = "";
+    return true;
   } catch (e) {
     wordError.textContent = e.message;
     show(wordError, true);
+    return false;
   } finally {
     show(wordLoading, false);
     wordBtn.disabled = false;
@@ -92,6 +94,7 @@ recommendBtn.addEventListener("click", async () => {
   recommendBtn.textContent = "추천 받는 중...";
   try {
     const data = await postJSON("/api/recommend-words", { topic: "일상생활" });
+    show(document.getElementById("wordFallback"), !!data.fallback);
     recommendList.innerHTML = data.words.map((w, i) => `
       <button class="recommend-chip" data-i="${i}">
         <b>${esc(w.word)}</b> <span>${esc(w.meaning)}</span> <em>+ 담기</em>
@@ -107,13 +110,17 @@ recommendBtn.addEventListener("click", async () => {
   }
 });
 
-recommendList.addEventListener("click", (e) => {
+recommendList.addEventListener("click", async (e) => {
   const chip = e.target.closest(".recommend-chip");
-  if (!chip) return;
+  if (!chip || chip.classList.contains("picked")) return;
   const w = recommendList._words[Number(chip.dataset.i)];
-  addWord(w);               // 추천 단어를 그대로 저장 (재분석 안 함)
   chip.classList.add("picked");
   chip.querySelector("em").textContent = "✓ 담음";
+  const ok = await addWord(w);   // 추천 단어를 그대로 저장 (재분석 안 함)
+  if (!ok) {                     // 중복 등으로 실패하면 되돌린다
+    chip.classList.remove("picked");
+    chip.querySelector("em").textContent = "+ 담기";
+  }
 });
 
 // =========================================================

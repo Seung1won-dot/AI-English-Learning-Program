@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>단어 퀴즈 — English World</title>
+  <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}" />
+  <meta name="theme-color" content="#4f6ef7" />
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='icons/icon-192.png') }}" />
+  <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/icon-192.png') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 </head>
 <body>
@@ -23,7 +27,13 @@
   <main class="container">
     <section class="card">
       <h2>📝 단어 퀴즈 <small class="due-badge">오늘 복습 {{ due_count }}개</small></h2>
-      <p class="hint">한글 뜻을 보고 영어 단어를 입력하세요. 맞히면 복습 간격이 늘어나고, 틀리면 오늘 다시 나옵니다. (간격 반복 학습)</p>
+      <p class="hint">한글 뜻을 보고 영어 단어를 맞히세요. 맞히면 복습 간격이 늘어나고, 틀리면 오늘 다시 나옵니다. (간격 반복 학습)</p>
+
+      <!-- 객관식 / 주관식 전환 -->
+      <div class="quiz-mode-toggle">
+        <button id="modeChoice" class="quiz-mode-btn active">🔘 객관식</button>
+        <button id="modeTyping" class="quiz-mode-btn">⌨️ 주관식</button>
+      </div>
 
       <!-- 진행 -->
       <div id="quizArea">
@@ -42,6 +52,8 @@
             <input type="text" id="quizInput" placeholder="영어 단어 입력" autocomplete="off" />
             <button type="submit" id="quizSubmit">확인</button>
           </form>
+
+          <div id="quizChoices" class="quiz-choices hidden"></div>
 
           <div id="quizResult" class="quiz-result hidden">
             <div id="quizVerdict" class="quiz-verdict"></div>

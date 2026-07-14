@@ -80,3 +80,25 @@ chips.forEach((chip) => {
       ?.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 });
+
+// ---- 단어 삭제 (오타·중복 정리) ----
+document.addEventListener("click", async (e) => {
+  const btn = e.target.closest(".word-del");
+  if (!btn) return;
+  const item = btn.closest(".mode-item");
+  const word = item?.querySelector("b")?.textContent || "이 단어";
+  if (!confirm(`'${word}'를 삭제할까요? 퀴즈·복습 목록에서도 빠집니다.`)) return;
+
+  btn.disabled = true;
+  try {
+    const res = await fetch(`/api/word/${btn.dataset.id}`, { method: "DELETE" });
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data.error || "삭제에 실패했습니다.");
+    }
+    item.remove();
+  } catch (err) {
+    btn.disabled = false;
+    alert(err.message);
+  }
+});

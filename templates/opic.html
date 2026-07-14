@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>OPIC — English World</title>
+  <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}" />
+  <meta name="theme-color" content="#4f6ef7" />
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='icons/icon-192.png') }}" />
+  <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/icon-192.png') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 </head>
 <body>
@@ -49,6 +53,7 @@
         <span id="opicQLoading" class="loading hidden">질문을 만드는 중...</span>
       </div>
       <p id="opicQError" class="error hidden"></p>
+      <p id="opicQFallback" class="fallback-note hidden">⚠️ AI 연결에 실패해서 준비된 예비 질문으로 대체되었어요. 잠시 후 다시 시도해 보세요.</p>
 
       <div id="opicQuestionBox" class="opic-question hidden" style="margin-top:14px">
         <div class="q-en"><span id="opicQText"></span> <button id="opicQSpeak" class="speak-btn" title="질문 듣기">🔊</button></div>

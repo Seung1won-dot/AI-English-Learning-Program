@@ -60,6 +60,7 @@ questionBtn.addEventListener("click", async () => {
   questionBtn.disabled = true;
   try {
     const data = await postJSON("/api/opic/question", { topic });
+    show(document.getElementById("opicQFallback"), !!data.fallback);
     currentQuestion = data.question;
     qText.textContent = data.question;
     qKr.textContent = data.question_kr || "";

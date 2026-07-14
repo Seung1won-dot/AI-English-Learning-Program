@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TOEIC — English World</title>
+  <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}" />
+  <meta name="theme-color" content="#4f6ef7" />
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='icons/icon-192.png') }}" />
+  <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/icon-192.png') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 </head>
 <body>
@@ -42,6 +46,7 @@
       </div>
       <button id="toeicRecommendBtn" class="toeic-btn">✨ 빈출 단어 추천 받기</button>
       <p id="toeicWordError" class="error hidden"></p>
+      <p id="toeicWordFallback" class="fallback-note hidden">⚠️ AI 연결에 실패해서 준비된 예비 단어로 대체되었어요. 잠시 후 다시 시도해 보세요.</p>
 
       <div id="toeicRecommendBox" class="recommend-box hidden">
         <p class="hint">마음에 드는 단어를 눌러 오늘 학습에 담으세요.</p>
@@ -68,13 +73,16 @@
 
       <div class="actions" style="margin-top:6px">
         <button id="p5StartBtn" class="toeic-btn">문제 받기</button>
+        <button id="p5RetryBtn" class="toeic-btn ghost">❌ 오답 다시 풀기</button>
         <span id="p5Loading" class="loading hidden">문제를 만드는 중...</span>
         <span id="p5Score" class="p5-score"></span>
       </div>
       <p id="p5Error" class="error hidden"></p>
+      <p id="p5Fallback" class="fallback-note hidden">⚠️ AI 연결에 실패해서 준비된 예비 문제로 대체되었어요. 잠시 후 다시 시도해 보세요.</p>
 
       <div id="p5Box" class="hidden" style="margin-top:16px">
         <div id="p5Question" class="p5-question"></div>
+        <span id="p5RetryBadge" class="retry-badge hidden">오답 복습 중</span>
         <div id="p5Choices" class="p5-choices"></div>
         <div id="p5Explain" class="p5-explain hidden">
           <div id="p5Verdict" class="p5-verdict"></div>

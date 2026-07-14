@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>학습 기록 — English World</title>
+  <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}" />
+  <meta name="theme-color" content="#4f6ef7" />
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='icons/icon-192.png') }}" />
+  <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/icon-192.png') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 </head>
 <body>
@@ -75,11 +79,12 @@
               <h4>📖 단어</h4>
               <ul class="day-words">
                 {% for w in day.words %}
-                  <li class="mode-item" data-mode="{{ w.mode }}">
+                  <li class="mode-item" data-mode="{{ w.mode }}" data-word-id="{{ w.id }}">
                     <span class="mode-tag {{ w.mode }}">{{ {'toeic':'TOEIC','opic':'OPIC','talk':'회화'}[w.mode] }}</span>
                     <b>{{ w.word }}</b>
                     {% if w.pronunciation %}<span class="pron">{{ w.pronunciation }}</span>{% endif %}
                     <button class="speak-btn" data-text="{{ w.word }}" title="발음 듣기">🔊</button>
+                    <button class="word-del" data-id="{{ w.id }}" title="단어 삭제 (오타·중복 정리)">✕</button>
                     <span class="dash">—</span> {{ w.meaning }}
                     {% if w.example %}<div class="mini-ex">“{{ w.example }}” <span>{{ w.example_kr }}</span></div>{% endif %}
                   </li>

@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>영어 회화 — English World</title>
+  <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}" />
+  <meta name="theme-color" content="#4f6ef7" />
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='icons/icon-192.png') }}" />
+  <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/icon-192.png') }}" />
   <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
 </head>
 <body data-words-goal="{{ words_goal }}" data-sents-goal="{{ sentences_goal }}" data-mode="talk">
@@ -69,6 +73,7 @@
           <button id="recommendBtn" class="ghost">✨ AI 추천 단어</button>
         </div>
         <p id="wordError" class="error hidden"></p>
+        <p id="wordFallback" class="fallback-note hidden">⚠️ AI 연결에 실패해서 준비된 예비 단어로 대체되었어요. 잠시 후 다시 시도해 보세요.</p>
         <span id="wordLoading" class="loading hidden">AI가 단어를 정리 중...</span>
 
         <div id="recommendBox" class="recommend-box hidden">
