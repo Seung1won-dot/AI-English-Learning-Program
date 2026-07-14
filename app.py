@@ -27,6 +27,10 @@ API (JSON)
 실행:  python app.py  (기본 http://127.0.0.1:5000)
 """
 
+import os
+import random
+import socket
+
 from dotenv import load_dotenv
 from flask import Flask, render_template, request, jsonify, redirect
 
@@ -132,6 +136,15 @@ def api_word():
     if not word:
         return jsonify({"error": "단어를 입력해 주세요."}), 400
 
+    # 같은 단어를 두 번 저장하지 않는다 (퀴즈에 중복 출제되는 것을 방지)
+    existing = db.find_word(word)
+    if existing:
+        return jsonify({
+            "duplicate": True,
+            "error": f"'{existing['word']}'는 {existing['date']}에 이미 저장한 단어예요.",
+            "id": existing["id"],
+        }), 409
+
     # 분석에 필요한 값이 함께 오면 그대로 저장 (추천 단어를 담을 때),
     # 없으면 AI 로 분석한다.
     if data.get("meaning"):
@@ -163,6 +176,18 @@ def api_word():
                     "counts": db.get_today_counts(mode=mode)})
 
 
+@app.route("/api/word/<int:word_id>", methods=["DELETE"])
+def api_delete_word(word_id):
+    """단어 삭제 (오타·중복 정리용)."""
+    try:
+        deleted = db.delete_word(word_id)
+    except Exception as e:
+        return jsonify({"error": f"삭제에 실패했습니다: {e}"}), 500
+    if not deleted:
+        return jsonify({"error": "해당 단어를 찾을 수 없습니다."}), 404
+    return jsonify({"id": word_id, "deleted": True})
+
+
 @app.route("/api/recommend-words", methods=["POST"])
 def api_recommend_words():
     """오늘의 추천 단어 (미리보기 — 저장은 사용자가 선택)."""
@@ -172,7 +197,8 @@ def api_recommend_words():
         words = ai_feedback.recommend_words(topic=topic, count=WORDS_GOAL)
     except Exception as e:
         return jsonify({"error": f"추천 중 오류: {e}"}), 500
-    return jsonify({"topic": topic, "words": words})
+    return jsonify({"topic": topic, "words": words,
+                    "fallback": ai_feedback.consume_fallback_flag()})
 
 
 @app.route("/api/sentence", methods=["POST"])
@@ -217,7 +243,8 @@ def api_toeic_words():
         words = ai_feedback.recommend_toeic_words(level=level, count=WORDS_GOAL)
     except Exception as e:
         return jsonify({"error": f"추천 중 오류: {e}"}), 500
-    return jsonify({"level": level, "words": words})
+    return jsonify({"level": level, "words": words,
+                    "fallback": ai_feedback.consume_fallback_flag()})
 
 
 @app.route("/api/toeic/question", methods=["POST"])
@@ -229,7 +256,7 @@ def api_toeic_question():
         q = ai_feedback.generate_part5_question(recent_questions=recent)
     except Exception as e:
         return jsonify({"error": f"문제 생성 중 오류: {e}"}), 500
-    return jsonify(q)
+    return jsonify({**q, "fallback": ai_feedback.consume_fallback_flag()})
 
 
 @app.route("/api/toeic/answer", methods=["POST"])
@@ -258,6 +285,12 @@ def api_toeic_answer():
     return jsonify({"id": qid, "is_correct": is_correct})
 
 
+@app.route("/api/toeic/wrong")
+def api_toeic_wrong():
+    """다시 풀어볼 토익 오답 문제 목록."""
+    return jsonify({"questions": db.get_wrong_toeic(limit=20)})
+
+
 # ---------------------------------------------------------------------------
 # OPIC API
 # ---------------------------------------------------------------------------
@@ -270,7 +303,8 @@ def api_opic_question():
         q = ai_feedback.opic_question(topic)
     except Exception as e:
         return jsonify({"error": f"질문 생성 중 오류: {e}"}), 500
-    return jsonify({"topic": topic, **q})
+    return jsonify({"topic": topic, **q,
+                    "fallback": ai_feedback.consume_fallback_flag()})
 
 
 @app.route("/api/opic/answer", methods=["POST"])
@@ -317,8 +351,13 @@ def api_review():
 
 @app.route("/api/quiz")
 def api_quiz():
-    """오늘 복습할 단어 목록."""
-    return jsonify({"words": db.get_due_words(limit=20)})
+    """오늘 복습할 단어 목록 (객관식 보기 4개 포함)."""
+    words = db.get_due_words(limit=20)
+    for w in words:
+        choices = db.get_distractors(w["id"], count=3) + [w["word"]]
+        random.shuffle(choices)
+        w["choices"] = choices
+    return jsonify({"words": words})
 
 
 @app.route("/api/quiz/answer", methods=["POST"])
@@ -350,5 +389,32 @@ def api_chat():
     return jsonify({"reply": reply})
 
 
+def _lan_ip():
+    """같은 와이파이에서 접속할 수 있는 이 PC 의 IP 를 알아낸다."""
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))  # 실제 전송은 없음 — 라우팅 경로만 확인
+        ip = s.getsockname()[0]
+        s.close()
+        return ip
+    except Exception:
+        return None
+
+
 if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=5000, debug=True)
+    host = os.getenv("HOST", "127.0.0.1")
+    port = int(os.getenv("PORT", "5000"))
+    # 같은 와이파이에 공개(0.0.0.0)할 때는 디버거를 꺼서 원격 코드 실행 위험을 막는다
+    debug = os.getenv("FLASK_DEBUG", "0" if host == "0.0.0.0" else "1") == "1"
+
+    # 참고: 한국어 Windows 콘솔(cp949)은 이모지를 출력하지 못하므로 텍스트만 쓴다
+    print()
+    print("  [English World] 시작!")
+    print(f"  PC에서 : http://127.0.0.1:{port}")
+    if host == "0.0.0.0":
+        ip = _lan_ip()
+        if ip:
+            print(f"  폰에서 : http://{ip}:{port}  (같은 와이파이에서 접속)")
+    print()
+
+    app.run(host=host, port=port, debug=debug)

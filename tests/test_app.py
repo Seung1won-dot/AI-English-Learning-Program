@@ -109,6 +109,58 @@ def test_opic_answer_requires_question_and_answer(client):
     assert client.post("/api/opic/answer", json={"question": "q"}).status_code == 400
 
 
+# ----- 단어 관리 (중복 방지 / 삭제) -----
+def test_duplicate_word_rejected(client):
+    client.post("/api/word", json={"word": "invoice", "meaning": "송장"})
+    res = client.post("/api/word", json={"word": "Invoice", "meaning": "송장"})
+    assert res.status_code == 409
+    data = res.get_json()
+    assert data["duplicate"] is True
+    # 저장은 1건만
+    assert len(db.get_today_items()["words"]) == 1
+
+
+def test_delete_word_api(client):
+    res = client.post("/api/word", json={"word": "typo", "meaning": "오타"})
+    wid = res.get_json()["id"]
+    assert client.delete(f"/api/word/{wid}").status_code == 200
+    assert db.get_today_items()["words"] == []
+    assert client.delete(f"/api/word/{wid}").status_code == 404
+
+
+# ----- 퀴즈 (객관식 보기) -----
+def test_quiz_includes_choices(client):
+    client.post("/api/word", json={"word": "apple", "meaning": "사과"})
+    data = client.get("/api/quiz").get_json()
+    assert len(data["words"]) == 1
+    w = data["words"][0]
+    assert len(w["choices"]) == 4
+    assert w["word"] in w["choices"]
+    assert len(set(c.lower() for c in w["choices"])) == 4
+
+
+# ----- 토익 오답 다시 풀기 -----
+def test_toeic_wrong_list(client):
+    q = client.post("/api/toeic/question", json={}).get_json()
+    wrong_answer = (q["answer"] + 1) % 4
+    client.post("/api/toeic/answer", json={
+        "question": q["question"], "choices": q["choices"],
+        "my_answer": wrong_answer, "correct_answer": q["answer"],
+        "explanation": q["explanation"],
+    })
+    data = client.get("/api/toeic/wrong").get_json()
+    assert len(data["questions"]) == 1
+    assert data["questions"][0]["question"] == q["question"]
+
+    # 다시 풀어 맞히면 목록에서 빠진다
+    client.post("/api/toeic/answer", json={
+        "question": q["question"], "choices": q["choices"],
+        "my_answer": q["answer"], "correct_answer": q["answer"],
+        "explanation": q["explanation"],
+    })
+    assert client.get("/api/toeic/wrong").get_json()["questions"] == []
+
+
 # ----- 기존 기능 회귀 -----
 def test_sentence_defaults_to_talk_mode(client):
     res = client.post("/api/sentence", json={"sentence": "i like coffee"})

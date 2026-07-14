@@ -81,6 +81,90 @@ def test_stats_include_new_tables():
     assert stats["streak"] == 1
 
 
+def test_find_word_case_insensitive():
+    db.add_word("Improve", "향상시키다")
+    found = db.find_word("improve")
+    assert found is not None
+    assert found["word"] == "Improve"
+    assert db.find_word("nonexistent") is None
+
+
+def test_delete_word():
+    wid = db.add_word("typo", "오타")
+    assert db.delete_word(wid) is True
+    assert db.get_today_items()["words"] == []
+    # 없는 id 는 False
+    assert db.delete_word(9999) is False
+
+
+def test_new_word_is_due_today():
+    db.add_word("fresh", "신선한")
+    due = db.get_due_words()
+    assert len(due) == 1
+    assert due[0]["word"] == "fresh"
+
+
+def test_get_distractors_excludes_answer():
+    for w, m in [("apple", "사과"), ("banana", "바나나"), ("cherry", "체리"),
+                 ("grape", "포도"), ("melon", "멜론")]:
+        db.add_word(w, m)
+    target = db.get_due_words()[0]
+    distractors = db.get_distractors(target["id"], count=3)
+    assert len(distractors) == 3
+    assert target["word"] not in distractors
+    assert len(set(distractors)) == 3
+
+
+def test_get_distractors_pads_when_few_words():
+    db.add_word("alone", "혼자")
+    target = db.get_due_words()[0]
+    distractors = db.get_distractors(target["id"], count=3)
+    # 저장 단어가 부족해도 내장 풀에서 보충해 3개를 채운다
+    assert len(distractors) == 3
+    assert "alone" not in distractors
+
+
+def test_get_wrong_toeic_excludes_later_correct():
+    db.add_toeic_quiz("Q1 ___.", ["a", "b", "c", "d"], my_answer=1,
+                      correct_answer=0, explanation="", is_correct=False)
+    db.add_toeic_quiz("Q2 ___.", ["a", "b", "c", "d"], my_answer=0,
+                      correct_answer=0, explanation="", is_correct=True)
+    wrong = db.get_wrong_toeic()
+    assert len(wrong) == 1
+    assert wrong[0]["question"] == "Q1 ___."
+    assert wrong[0]["choices"] == ["a", "b", "c", "d"]
+
+    # 같은 문제를 나중에 맞히면 오답 목록에서 빠진다
+    db.add_toeic_quiz("Q1 ___.", ["a", "b", "c", "d"], my_answer=0,
+                      correct_answer=0, explanation="", is_correct=True)
+    assert db.get_wrong_toeic() == []
+
+
+def test_migration_fills_empty_next_review(tmp_path, monkeypatch):
+    """SRS 도입 전 데이터(next_review='')는 저장일로 정규화된다."""
+    import sqlite3
+    old = tmp_path / "srs.db"
+    conn = sqlite3.connect(str(old))
+    conn.execute(
+        "CREATE TABLE words (id INTEGER PRIMARY KEY AUTOINCREMENT, created_at TEXT NOT NULL,"
+        " date TEXT NOT NULL, word TEXT NOT NULL, meaning TEXT NOT NULL,"
+        " pronunciation TEXT NOT NULL DEFAULT '', example TEXT NOT NULL DEFAULT '',"
+        " example_kr TEXT NOT NULL DEFAULT '')"
+    )
+    conn.execute(
+        "INSERT INTO words (created_at, date, word, meaning) VALUES ('2026-06-20T09:00:00', '2026-06-20', 'legacy', '옛날 단어')"
+    )
+    conn.commit()
+    conn.close()
+
+    monkeypatch.setattr(db, "DB_PATH", str(old))
+    db.init_db()
+
+    due = db.get_due_words()
+    assert len(due) == 1
+    assert due[0]["next_review"] == "2026-06-20"
+
+
 def test_migration_preserves_existing_rows(tmp_path, monkeypatch):
     """mode 컬럼이 없던 옛 DB 에 init_db 를 다시 돌려도 기존 행이 talk 로 유지된다."""
     import sqlite3

@@ -21,6 +21,7 @@ db.py — SQLite 데이터 계층
 
 import json
 import os
+import random
 import sqlite3
 from contextlib import contextmanager
 from datetime import datetime, timedelta
@@ -89,6 +90,8 @@ def init_db():
         # --- SRS(간격 반복) 컬럼: 기존 DB 에도 안전하게 추가 ---
         _ensure_column(conn, "words", "box", "INTEGER NOT NULL DEFAULT 1")
         _ensure_column(conn, "words", "next_review", "TEXT NOT NULL DEFAULT ''")
+        # SRS 도입 전에 저장된 단어(next_review='')는 저장일부터 복습 대상으로 정규화
+        conn.execute("UPDATE words SET next_review = date WHERE next_review = ''")
 
         # --- 학습 모드 태그: 기존 데이터는 '회화(talk)'로 분류 (데이터 유실 없음) ---
         _ensure_column(conn, "words", "mode", "TEXT NOT NULL DEFAULT 'talk'")
@@ -173,6 +176,22 @@ def add_word(word, meaning, pronunciation="", example="", example_kr="", mode="t
              _clean_mode(mode)),
         )
         return cur.lastrowid
+
+
+def find_word(word):
+    """같은 단어(대소문자 무시)가 이미 저장돼 있으면 그 행을, 없으면 None 을 반환한다."""
+    with get_conn() as conn:
+        row = conn.execute(
+            "SELECT * FROM words WHERE LOWER(word) = LOWER(?) LIMIT 1", (word.strip(),)
+        ).fetchone()
+        return dict(row) if row else None
+
+
+def delete_word(word_id):
+    """단어 1개를 삭제한다. 삭제했으면 True, 해당 id 가 없으면 False."""
+    with get_conn() as conn:
+        cur = conn.execute("DELETE FROM words WHERE id=?", (int(word_id),))
+        return cur.rowcount > 0
 
 
 def add_sentence(original, corrected, feedback, meaning="", score=0, mode="talk"):
@@ -452,6 +471,49 @@ def count_due_words():
         ).fetchone()[0]
 
 
+# 객관식 보기 보충용 기본 오답 풀 (저장 단어가 적을 때 사용)
+_DISTRACTOR_POOL = [
+    "improve", "schedule", "available", "decision", "experience", "recommend",
+    "invoice", "quarterly", "reimburse", "comply", "merger", "warranty",
+    "postpone", "routine", "reserve", "travel", "order", "budget",
+]
+
+
+def get_distractors(word_id, count=3):
+    """객관식 퀴즈용 오답 보기.
+
+    다른 저장 단어에서 무작위로 뽑고, 부족하면 내장 풀에서 보충한다.
+    정답 단어와 겹치지 않는 서로 다른 단어 count개를 반환한다.
+    """
+    with get_conn() as conn:
+        answer_row = conn.execute(
+            "SELECT word FROM words WHERE id=?", (int(word_id),)
+        ).fetchone()
+        answer = (answer_row["word"] if answer_row else "").strip().lower()
+        rows = conn.execute(
+            "SELECT DISTINCT word FROM words WHERE id != ? ORDER BY RANDOM() LIMIT ?",
+            (int(word_id), count * 2),
+        ).fetchall()
+
+    picked = []
+    seen = {answer}
+    for r in rows:
+        w = r["word"].strip()
+        if w.lower() not in seen:
+            picked.append(w)
+            seen.add(w.lower())
+        if len(picked) >= count:
+            return picked
+
+    pool = [w for w in _DISTRACTOR_POOL if w.lower() not in seen]
+    random.shuffle(pool)
+    for w in pool:
+        picked.append(w)
+        if len(picked) >= count:
+            break
+    return picked
+
+
 def update_word_review(word_id, correct):
     """퀴즈 결과로 단어의 박스/다음 복습일을 갱신한다.
 
@@ -479,3 +541,32 @@ def update_word_review(word_id, correct):
             (box, next_str, word_id),
         )
     return {"box": box, "next_review": next_str}
+
+
+# ---------------------------------------------------------------------------
+# 토익 오답 노트
+# ---------------------------------------------------------------------------
+def get_wrong_toeic(limit=20):
+    """다시 풀어볼 토익 오답 문제.
+
+    틀린 기록이 있는 문제 중, 이후에 정답 기록이 없는 것만 반환한다.
+    (다시 풀어서 맞히면 목록에서 자연히 빠진다)
+    """
+    with get_conn() as conn:
+        rows = conn.execute(
+            """
+            SELECT * FROM toeic_quiz_log
+            WHERE is_correct = 0
+              AND question NOT IN (
+                  SELECT question FROM toeic_quiz_log WHERE is_correct = 1
+              )
+            GROUP BY question
+            ORDER BY MAX(id) DESC
+            LIMIT ?
+            """,
+            (limit,),
+        ).fetchall()
+        return [
+            {**dict(r), "choices": json.loads(r["choices"])}
+            for r in rows
+        ]

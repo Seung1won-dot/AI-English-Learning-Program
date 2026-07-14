@@ -47,6 +47,24 @@ def is_using_real_ai():
     return _select_provider()[0] is not None
 
 
+# AI 키가 있는데 호출 실패로 목업을 반환한 경우를 기록하는 플래그.
+# 각 API 핸들러가 consume_fallback_flag() 로 읽어 사용자에게 알려준다.
+_fallback_used = False
+
+
+def _mark_fallback():
+    global _fallback_used
+    _fallback_used = True
+
+
+def consume_fallback_flag():
+    """직전 AI 호출이 목업으로 대체되었는지 반환하고 플래그를 초기화한다."""
+    global _fallback_used
+    used = _fallback_used
+    _fallback_used = False
+    return used
+
+
 def current_provider_label():
     name = _select_provider()[0]
     return {"groq": "Groq (무료 AI)", "openai": "OpenAI"}.get(name)
@@ -182,6 +200,7 @@ def recommend_words(topic="일상생활", count=5):
                 return cleaned
         except Exception:
             pass
+        _mark_fallback()
 
     return _recommend_mock(count)
 
@@ -226,6 +245,7 @@ def recommend_toeic_words(level="600", count=5):
                 return cleaned
         except Exception:
             pass
+        _mark_fallback()
 
     return _MOCK_TOEIC_WORDS[:count]
 
@@ -267,6 +287,7 @@ def generate_part5_question(recent_questions=None):
                 }
         except Exception:
             pass
+        _mark_fallback()
 
     return _part5_mock(recent_questions)
 
@@ -300,6 +321,7 @@ def opic_question(topic="자기소개"):
                 }
         except Exception:
             pass
+        _mark_fallback()
 
     return _opic_question_mock(topic)
 
