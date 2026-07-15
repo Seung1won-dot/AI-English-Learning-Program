@@ -12,9 +12,10 @@
 </head>
 <body>
   <header class="topbar">
-    <h1>🌏 English World</h1>
+    <a class="brand" href="/"><span class="brand-mark">E</span>English World</a>
     <nav>
       <a href="/" class="active">홈</a>
+      <a href="/vocab">단어</a>
       <a href="/toeic">TOEIC</a>
       <a href="/opic">OPIC</a>
       <a href="/talk">회화</a>
@@ -38,47 +39,47 @@
     <p class="home-sub">목적에 맞는 모드를 골라 시작하세요. 모든 학습은 날짜별로 기록됩니다.</p>
 
     <div class="mode-grid">
-      <a class="mode-card toeic" href="/toeic">
-        <div class="mode-strip"></div>
+      <a class="mode-card vocab" href="/vocab">
         <div class="mode-body">
-          <span class="mode-icon">📘</span>
+          <span class="mode-chip">Aa</span>
+          <div class="mode-name">단어 암기</div>
+          <div class="mode-desc">단어를 모아 외우고 간격 반복으로 오래 기억하기</div>
+          <div class="mode-today">오늘 단어 {{ summary.vocab.words }} · 복습 대기 {{ due_count }}</div>
+        </div>
+      </a>
+
+      <a class="mode-card toeic" href="/toeic">
+        <div class="mode-body">
+          <span class="mode-chip">T</span>
           <div class="mode-name">TOEIC</div>
           <div class="mode-desc">빈출 단어 암기와 Part 5 문제 풀이로 점수 올리기</div>
-          <div class="mode-today">
-            오늘 단어 {{ summary.toeic.words }} · 문제 {{ summary.toeic.quiz }}
-          </div>
+          <div class="mode-today">오늘 단어 {{ summary.toeic.words }} · 문제 {{ summary.toeic.quiz }}</div>
         </div>
       </a>
 
       <a class="mode-card opic" href="/opic">
-        <div class="mode-strip"></div>
         <div class="mode-body">
-          <span class="mode-icon">🎤</span>
+          <span class="mode-chip">Op</span>
           <div class="mode-name">OPIC</div>
           <div class="mode-desc">실전 유형 질문에 말하고 AI 첨삭과 모범답변 받기</div>
-          <div class="mode-today">
-            오늘 답변 연습 {{ summary.opic.answers }}
-          </div>
+          <div class="mode-today">오늘 답변 연습 {{ summary.opic.answers }}</div>
         </div>
       </a>
 
       <a class="mode-card talk" href="/talk">
-        <div class="mode-strip"></div>
         <div class="mode-body">
-          <span class="mode-icon">💬</span>
+          <span class="mode-chip">Talk</span>
           <div class="mode-name">영어 회화</div>
-          <div class="mode-desc">단어·문장 공부와 AI 프리토킹으로 회화 실력 쌓기</div>
-          <div class="mode-today">
-            오늘 단어 {{ summary.talk.words }} · 문장 {{ summary.talk.sentences }}
-          </div>
+          <div class="mode-desc">문장 첨삭과 AI 프리토킹으로 회화 실력 쌓기</div>
+          <div class="mode-today">오늘 단어 {{ summary.talk.words }} · 문장 {{ summary.talk.sentences }}</div>
         </div>
       </a>
     </div>
 
     <div class="quick-links">
-      <a class="quick-link" href="/history">📅 학습 기록<small>날짜별 · 모드별 모아보기</small></a>
-      <a class="quick-link" href="/review">🃏 플래시카드 복습<small>외운 단어·문장 되새기기</small></a>
-      <a class="quick-link" href="/quiz">✏️ 단어 퀴즈<small>오늘 복습할 단어 {{ due_count }}개</small></a>
+      <a class="quick-link" href="/quiz"><span class="ql-title">단어 퀴즈</span><small>오늘 복습할 단어 {{ due_count }}개</small></a>
+      <a class="quick-link" href="/review"><span class="ql-title">플래시카드</span><small>외운 단어·문장 되새기기</small></a>
+      <a class="quick-link" href="/history"><span class="ql-title">학습 기록</span><small>날짜별·모드별 모아보기</small></a>
     </div>
   </main>
 </body>
