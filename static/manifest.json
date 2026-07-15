@@ -4,8 +4,8 @@
   "description": "TOEIC · OPIC · 회화 모드로 공부하고 간격 반복으로 복습하는 개인 영어 학습 앱",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#faf9f6",
-  "theme_color": "#4f6ef7",
+  "background_color": "#f8fafc",
+  "theme_color": "#0f172a",
   "icons": [
     { "src": "/static/icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
     { "src": "/static/icons/icon-512.png", "sizes": "512x512", "type": "image/png" }
