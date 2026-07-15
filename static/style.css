@@ -675,3 +675,11 @@ button.vocab-btn:hover { background: #7c3aed; }
   margin-top: 14px;
 }
 .topic-label { font-size: 13px; color: var(--muted); font-weight: 600; margin-right: 2px; }
+
+/* ===== 내 단어장 ===== */
+.wb-progress { margin: 12px 0 2px; }
+.wb-count-label { font-size: 14px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+.wb-count-label select {
+  border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px;
+  font-size: 14px; font-family: inherit; background: #fff; color: var(--text);
+}

@@ -47,6 +47,23 @@
       </div>
     </section>
 
+    <!-- 내 단어장 -->
+    {% if wordbook.total > 0 %}
+    <section class="card" id="wordbookCard">
+      <h2>내 단어장 <small class="due-badge"><span id="wbRemaining">{{ wordbook.remaining }}</span>개 남음 / 전체 {{ wordbook.total }}개</small></h2>
+      <p class="hint">PDF 단어장에서 적재한 단어들입니다. 매일 조금씩 가져와 외우면 자동으로 복습 일정에 들어갑니다.</p>
+      <div class="wb-progress progress"><div id="wbBar" class="progress-fill" style="width: {{ (wordbook.added / wordbook.total * 100) | round(0) }}%"></div></div>
+      <div class="actions">
+        <label class="wb-count-label">한 번에
+          <select id="wbCount"><option>5</option><option selected>10</option><option>20</option></select>개
+        </label>
+        <button id="wbPullBtn" class="vocab-btn">새 단어 가져오기</button>
+      </div>
+      <p id="wbError" class="error hidden"></p>
+      <p id="wbDone" class="hint hidden">🎉 단어장의 모든 단어를 가져왔어요!</p>
+    </section>
+    {% endif %}
+
     <!-- 단어 추가 -->
     <section class="card">
       <h2>오늘의 단어 추가</h2>

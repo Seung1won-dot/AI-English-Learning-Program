@@ -72,11 +72,12 @@ def home():
 
 @app.route("/vocab")
 def vocab():
-    """단어 암기 모드 — 단어 추가/추천 + 오늘 단어 + 복습 현황."""
+    """단어 암기 모드 — 단어 추가/추천 + 단어장 + 오늘 단어 + 복습 현황."""
     return render_template(
         "vocab.html",
         items=db.get_today_items(mode="vocab"),
         due_count=db.count_due_words(),
+        wordbook=db.wordbook_stats(),
         **_ai_context(),
     )
 
@@ -197,6 +198,22 @@ def api_delete_word(word_id):
     if not deleted:
         return jsonify({"error": "해당 단어를 찾을 수 없습니다."}), 404
     return jsonify({"id": word_id, "deleted": True})
+
+
+@app.route("/api/wordbook/pull", methods=["POST"])
+def api_wordbook_pull():
+    """단어장에서 새 단어 N개를 오늘 학습 목록으로 가져온다."""
+    data = request.get_json(silent=True) or {}
+    count = data.get("count") or 10
+    try:
+        pulled = db.pull_wordbook(int(count))
+    except Exception as e:
+        return jsonify({"error": f"단어장에서 가져오지 못했습니다: {e}"}), 500
+    return jsonify({
+        "pulled": pulled,
+        "stats": db.wordbook_stats(),
+        "due_count": db.count_due_words(),
+    })
 
 
 @app.route("/api/recommend-words", methods=["POST"])

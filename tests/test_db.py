@@ -149,6 +149,52 @@ def test_get_wrong_toeic_excludes_later_correct():
     assert db.get_wrong_toeic() == []
 
 
+def test_wordbook_import_and_pull():
+    n = db.import_wordbook([
+        {"word": "abandon", "meaning": "포기하다", "example": "E1", "example_kr": "K1"},
+        {"word": "ability", "meaning": "능력", "example": "E2", "example_kr": "K2"},
+        {"word": "absence", "meaning": "결석", "example": "E3", "example_kr": "K3"},
+    ])
+    assert n == 3
+    stats = db.wordbook_stats()
+    assert stats == {"total": 3, "added": 0, "remaining": 3}
+
+    pulled = db.pull_wordbook(2)
+    assert len(pulled) == 2
+    assert pulled[0]["word"] == "abandon"          # 단어장 순서대로
+    assert db.wordbook_stats()["remaining"] == 1
+    # words 테이블에 vocab 모드로 들어가고 바로 복습 대상이 된다
+    assert len(db.get_today_items(mode="vocab")["words"]) == 2
+    assert db.count_due_words() == 2
+
+    pulled2 = db.pull_wordbook(10)                  # 남은 게 1개면 1개만
+    assert len(pulled2) == 1
+    assert db.wordbook_stats()["remaining"] == 0
+    assert db.pull_wordbook(5) == []                # 다 소진되면 빈 목록
+
+
+def test_wordbook_import_skips_duplicates():
+    db.import_wordbook([{"word": "abandon", "meaning": "포기하다"}])
+    n = db.import_wordbook([
+        {"word": "Abandon", "meaning": "포기하다"},   # 대소문자만 다른 중복
+        {"word": "ability", "meaning": "능력"},
+    ])
+    assert n == 1
+    assert db.wordbook_stats()["total"] == 2
+
+
+def test_wordbook_pull_skips_already_saved_word():
+    """이미 words 에 저장된 단어는 건너뛰고 다음 단어를 채워서 가져온다."""
+    db.add_word("abandon", "포기하다")
+    db.import_wordbook([
+        {"word": "abandon", "meaning": "포기하다"},
+        {"word": "ability", "meaning": "능력"},
+    ])
+    pulled = db.pull_wordbook(2)
+    assert [p["word"] for p in pulled] == ["ability"]
+    assert db.wordbook_stats()["remaining"] == 0    # abandon 도 소진 처리
+
+
 def test_migration_fills_empty_next_review(tmp_path, monkeypatch):
     """SRS 도입 전 데이터(next_review='')는 저장일로 정규화된다."""
     import sqlite3

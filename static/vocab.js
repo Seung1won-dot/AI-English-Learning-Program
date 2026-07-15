@@ -120,6 +120,41 @@ recommendList.addEventListener("click", async (e) => {
   }
 });
 
+// ---- 내 단어장에서 가져오기 ----
+const wbPullBtn = document.getElementById("wbPullBtn");
+if (wbPullBtn) {
+  const wbCount = document.getElementById("wbCount");
+  const wbRemaining = document.getElementById("wbRemaining");
+  const wbBar = document.getElementById("wbBar");
+  const wbError = document.getElementById("wbError");
+  const wbDone = document.getElementById("wbDone");
+
+  wbPullBtn.addEventListener("click", async () => {
+    wbError.classList.add("hidden");
+    wbPullBtn.disabled = true;
+    wbPullBtn.textContent = "가져오는 중...";
+    try {
+      const data = await postJSON("/api/wordbook/pull", { count: Number(wbCount.value) });
+      data.pulled.forEach((w) => wordList.insertAdjacentHTML("afterbegin", wordCard(w)));
+      refreshCount();
+      wbRemaining.textContent = data.stats.remaining;
+      wbBar.style.width = data.stats.total
+        ? Math.round((data.stats.added / data.stats.total) * 100) + "%" : "100%";
+      if (data.stats.remaining === 0) {
+        show(wbDone, true);
+        wbPullBtn.disabled = true;
+      }
+    } catch (e) {
+      wbError.textContent = e.message;
+      show(wbError, true);
+    } finally {
+      if (!wbDone.classList.contains("hidden")) { /* 소진됨 — 버튼 비활성 유지 */ }
+      else wbPullBtn.disabled = false;
+      wbPullBtn.textContent = "새 단어 가져오기";
+    }
+  });
+}
+
 // ---- 단어 삭제 ----
 wordList.addEventListener("click", async (e) => {
   const btn = e.target.closest(".word-del");

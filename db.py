@@ -134,6 +134,21 @@ def init_db():
         )
         conn.execute("CREATE INDEX IF NOT EXISTS idx_toeic_date ON toeic_quiz_log(date);")
 
+        # --- 단어장 (PDF 등에서 일괄 적재해 두고 매일 조금씩 꺼내 외우는 풀) ---
+        conn.execute(
+            """
+            CREATE TABLE IF NOT EXISTS wordbook (
+                id         INTEGER PRIMARY KEY AUTOINCREMENT,
+                word       TEXT    NOT NULL UNIQUE COLLATE NOCASE,  -- 영어 단어
+                meaning    TEXT    NOT NULL,              -- 한글 뜻
+                example    TEXT    NOT NULL DEFAULT '',   -- 영어 예문
+                example_kr TEXT    NOT NULL DEFAULT '',   -- 예문 해석
+                added      INTEGER NOT NULL DEFAULT 0,    -- 1=이미 학습 목록으로 가져감
+                added_at   TEXT    NOT NULL DEFAULT ''    -- 가져간 날짜
+            );
+            """
+        )
+
 
 def _ensure_column(conn, table, column, decl):
     """테이블에 컬럼이 없으면 ALTER 로 추가한다 (마이그레이션)."""
@@ -545,6 +560,80 @@ def update_word_review(word_id, correct):
             (box, next_str, word_id),
         )
     return {"box": box, "next_review": next_str}
+
+
+# ---------------------------------------------------------------------------
+# 단어장 — 일괄 적재해 두고 매일 조금씩 학습 목록으로 가져온다
+# ---------------------------------------------------------------------------
+def import_wordbook(entries):
+    """단어장에 단어들을 적재한다. 이미 있는 단어(대소문자 무시)는 건너뛰고,
+    새로 넣은 개수를 반환한다.
+
+    entries: [{word, meaning, example?, example_kr?}, ...]
+    """
+    inserted = 0
+    with get_conn() as conn:
+        for e in entries:
+            word = (e.get("word") or "").strip()
+            meaning = " ".join((e.get("meaning") or "").split())
+            if not word or not meaning:
+                continue
+            cur = conn.execute(
+                """
+                INSERT OR IGNORE INTO wordbook (word, meaning, example, example_kr)
+                VALUES (?, ?, ?, ?)
+                """,
+                (word, meaning, (e.get("example") or "").strip(),
+                 (e.get("example_kr") or "").strip()),
+            )
+            inserted += cur.rowcount
+    return inserted
+
+
+def wordbook_stats():
+    """단어장 현황 {total, added, remaining}."""
+    with get_conn() as conn:
+        total = conn.execute("SELECT COUNT(*) FROM wordbook").fetchone()[0]
+        added = conn.execute("SELECT COUNT(*) FROM wordbook WHERE added=1").fetchone()[0]
+    return {"total": total, "added": added, "remaining": total - added}
+
+
+def pull_wordbook(count=10):
+    """단어장에서 아직 안 가져온 단어 count개를 학습 목록(words, vocab 모드)으로 옮긴다.
+
+    이미 words 에 저장된 단어는 건너뛰되 소진(added=1) 처리해서 다시 나오지 않게 한다.
+    반환: 새로 저장된 단어 dict 목록 (id 포함).
+    """
+    count = int(max(1, min(50, count)))
+    today = today_str()
+    pulled = []
+    with get_conn() as conn:
+        rows = conn.execute(
+            "SELECT * FROM wordbook WHERE added=0 ORDER BY id ASC", ()
+        ).fetchall()
+
+    for row in rows:
+        if len(pulled) >= count:
+            break
+        entry = dict(row)
+        with get_conn() as conn:
+            conn.execute(
+                "UPDATE wordbook SET added=1, added_at=? WHERE id=?",
+                (today, entry["id"]),
+            )
+        if find_word(entry["word"]):
+            continue  # 이미 학습 목록에 있음 — 소진만 하고 건너뜀
+        wid = add_word(
+            word=entry["word"], meaning=entry["meaning"],
+            example=entry["example"], example_kr=entry["example_kr"],
+            mode="vocab",
+        )
+        pulled.append({
+            "id": wid, "word": entry["word"], "meaning": entry["meaning"],
+            "pronunciation": "",
+            "example": entry["example"], "example_kr": entry["example_kr"],
+        })
+    return pulled
 
 
 # ---------------------------------------------------------------------------

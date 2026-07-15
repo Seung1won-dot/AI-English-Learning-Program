@@ -136,6 +136,21 @@ def test_delete_word_api(client):
     assert client.delete(f"/api/word/{wid}").status_code == 404
 
 
+# ----- 단어장 -----
+def test_wordbook_pull_api(client):
+    db.import_wordbook([
+        {"word": "abandon", "meaning": "포기하다"},
+        {"word": "ability", "meaning": "능력"},
+    ])
+    res = client.post("/api/wordbook/pull", json={"count": 1})
+    data = res.get_json()
+    assert res.status_code == 200
+    assert len(data["pulled"]) == 1
+    assert data["pulled"][0]["word"] == "abandon"
+    assert data["stats"]["remaining"] == 1
+    assert data["due_count"] == 1
+
+
 # ----- 퀴즈 (객관식 보기) -----
 def test_quiz_includes_choices(client):
     client.post("/api/word", json={"word": "apple", "meaning": "사과"})
