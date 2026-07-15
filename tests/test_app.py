@@ -27,9 +27,17 @@ def client():
 
 
 # ----- 화면 -----
-@pytest.mark.parametrize("path", ["/", "/toeic", "/opic", "/talk", "/history", "/review", "/quiz"])
+@pytest.mark.parametrize("path", ["/", "/vocab", "/toeic", "/opic", "/talk", "/history", "/review", "/quiz"])
 def test_pages_render(client, path):
     assert client.get(path).status_code == 200
+
+
+def test_vocab_word_saved_and_history_renders(client):
+    res = client.post("/api/word", json={"word": "memorize", "meaning": "암기하다", "mode": "vocab"})
+    assert res.status_code == 200
+    assert db.get_today_items(mode="vocab")["words"][0]["mode"] == "vocab"
+    # vocab 모드 항목이 있어도 기록 페이지가 렌더링되어야 한다 (모드 라벨 매핑 누락 방지)
+    assert client.get("/history").status_code == 200
 
 
 def test_old_chat_redirects_to_talk(client):

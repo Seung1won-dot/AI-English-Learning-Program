@@ -12,9 +12,10 @@
 </head>
 <body>
   <header class="topbar">
-    <h1>🌏 English World</h1>
+    <a class="brand" href="/"><span class="brand-mark">E</span>English World</a>
     <nav>
       <a href="/">홈</a>
+      <a href="/vocab">단어</a>
       <a href="/toeic">TOEIC</a>
       <a href="/opic">OPIC</a>
       <a href="/talk">회화</a>
@@ -40,6 +41,7 @@
       <!-- 모드 필터 -->
       <div class="mode-filter">
         <button class="mode-filter-tab active" data-mode="all">전체</button>
+        <button class="mode-filter-tab f-vocab" data-mode="vocab">📖 단어</button>
         <button class="mode-filter-tab f-toeic" data-mode="toeic">📘 TOEIC</button>
         <button class="mode-filter-tab f-opic" data-mode="opic">🎤 OPIC</button>
         <button class="mode-filter-tab f-talk" data-mode="talk">💬 회화</button>
@@ -80,7 +82,7 @@
               <ul class="day-words">
                 {% for w in day.words %}
                   <li class="mode-item" data-mode="{{ w.mode }}" data-word-id="{{ w.id }}">
-                    <span class="mode-tag {{ w.mode }}">{{ {'toeic':'TOEIC','opic':'OPIC','talk':'회화'}[w.mode] }}</span>
+                    <span class="mode-tag {{ w.mode }}">{{ {'toeic':'TOEIC','opic':'OPIC','talk':'회화','vocab':'단어'}[w.mode] }}</span>
                     <b>{{ w.word }}</b>
                     {% if w.pronunciation %}<span class="pron">{{ w.pronunciation }}</span>{% endif %}
                     <button class="speak-btn" data-text="{{ w.word }}" title="발음 듣기">🔊</button>
@@ -99,7 +101,7 @@
               <ul class="day-sents">
                 {% for s in day.sentences %}
                   <li class="mode-item" data-mode="{{ s.mode }}">
-                    <span class="mode-tag {{ s.mode }}">{{ {'toeic':'TOEIC','opic':'OPIC','talk':'회화'}[s.mode] }}</span>
+                    <span class="mode-tag {{ s.mode }}">{{ {'toeic':'TOEIC','opic':'OPIC','talk':'회화','vocab':'단어'}[s.mode] }}</span>
                     <span class="score-pill {% if s.score >= 80 %}good{% elif s.score >= 60 %}mid{% else %}low{% endif %}">{{ s.score }}</span>
                     <span class="corrected">{{ s.corrected }}</span>
                     <button class="speak-btn" data-text="{{ s.corrected }}" title="발음 듣기">🔊</button>

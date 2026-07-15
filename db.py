@@ -154,7 +154,7 @@ def _now():
 # ---------------------------------------------------------------------------
 # 저장
 # ---------------------------------------------------------------------------
-VALID_MODES = ("toeic", "opic", "talk")
+VALID_MODES = ("toeic", "opic", "talk", "vocab")
 
 
 def _clean_mode(mode):
@@ -288,7 +288,8 @@ def get_today_items(mode=None):
 def get_today_mode_summary():
     """홈 화면 모드 카드용 — 모드별 오늘 학습량 요약.
 
-    반환: {"toeic": {"words": n, "quiz": n}, "opic": {"answers": n}, "talk": {"words": n, "sentences": n}}
+    반환: {"toeic": {"words": n, "quiz": n}, "opic": {"answers": n},
+           "talk": {"words": n, "sentences": n}, "vocab": {"words": n}}
     """
     today = today_str()
     with get_conn() as conn:
@@ -302,10 +303,13 @@ def get_today_mode_summary():
             "SELECT COUNT(*) FROM words WHERE date=? AND mode='talk'", (today,)).fetchone()[0]
         talk_sents = conn.execute(
             "SELECT COUNT(*) FROM sentences WHERE date=? AND mode='talk'", (today,)).fetchone()[0]
+        vocab_words = conn.execute(
+            "SELECT COUNT(*) FROM words WHERE date=? AND mode='vocab'", (today,)).fetchone()[0]
     return {
         "toeic": {"words": toeic_words, "quiz": toeic_quiz},
         "opic": {"answers": opic_answers},
         "talk": {"words": talk_words, "sentences": talk_sents},
+        "vocab": {"words": vocab_words},
     }
 
 

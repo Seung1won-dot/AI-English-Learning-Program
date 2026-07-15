@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>단어 암기 — English World</title>
+  <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}" />
+  <meta name="theme-color" content="#4f6ef7" />
+  <link rel="icon" type="image/png" href="{{ url_for('static', filename='icons/icon-192.png') }}" />
+  <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/icon-192.png') }}" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/"><span class="brand-mark">E</span>English World</a>
+    <nav>
+      <a href="/">홈</a>
+      <a href="/vocab" class="active">단어</a>
+      <a href="/toeic">TOEIC</a>
+      <a href="/opic">OPIC</a>
+      <a href="/talk">회화</a>
+      <a href="/history">기록</a>
+      <a href="/review">복습</a>
+      <a href="/quiz">퀴즈</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div class="page-head">
+      <h2>단어 암기</h2>
+      <span class="mode-tag vocab">단어</span>
+    </div>
+
+    {% if not using_real_ai %}
+      <p class="mode-badge">🧩 목업 모드 — .env 에 GROQ_API_KEY(무료) 를 넣으면 AI가 뜻·발음·예문을 자동으로 정리해 줍니다</p>
+    {% endif %}
+
+    <!-- 복습 현황 -->
+    <section class="card review-banner">
+      <div class="review-banner-text">
+        <b>오늘 복습할 단어 <span class="review-count">{{ due_count }}</span>개</b>
+        <span class="hint">외운 단어는 1→3→7→14→30일 간격으로 다시 나옵니다.</span>
+      </div>
+      <div class="review-banner-actions">
+        <a class="btn-link primary" href="/quiz">퀴즈 풀기</a>
+        <a class="btn-link" href="/review">플래시카드</a>
+      </div>
+    </section>
+
+    <!-- 단어 추가 -->
+    <section class="card">
+      <h2>오늘의 단어 추가</h2>
+      <p class="hint">단어를 입력하면 AI가 뜻·발음·예문을 정리해 저장합니다. 저장한 단어는 바로 복습 대상이 됩니다.</p>
+      <div class="inline-form">
+        <input type="text" id="wordInput" placeholder="예: persist" />
+        <button id="wordBtn" class="vocab-btn">단어 추가</button>
+      </div>
+      <p id="wordError" class="error hidden"></p>
+      <p id="wordFallback" class="fallback-note hidden">⚠️ AI 연결에 실패해서 준비된 예비 단어로 대체되었어요. 잠시 후 다시 시도해 보세요.</p>
+      <span id="wordLoading" class="loading hidden">AI가 단어를 정리 중...</span>
+
+      <div class="topic-row">
+        <span class="topic-label">추천 주제</span>
+        <button class="topic-chip active" data-topic="일상생활">일상생활</button>
+        <button class="topic-chip" data-topic="비즈니스">비즈니스</button>
+        <button class="topic-chip" data-topic="여행">여행</button>
+        <button class="topic-chip" data-topic="음식">음식</button>
+        <button class="topic-chip" data-topic="감정 표현">감정</button>
+        <button id="recommendBtn" class="ghost">AI 추천 받기</button>
+      </div>
+
+      <div id="recommendBox" class="recommend-box hidden">
+        <p class="hint">마음에 드는 단어를 눌러 오늘 학습에 담으세요.</p>
+        <div id="recommendList" class="recommend-list"></div>
+      </div>
+    </section>
+
+    <!-- 오늘 외운 단어 -->
+    <section class="card">
+      <h2>오늘 외운 단어 <small id="todayCount" class="due-badge">{{ items.words|length }}개</small></h2>
+      <div id="wordList" class="item-list">
+        {% for w in items.words %}
+          <div class="word-item" data-word-id="{{ w.id }}">
+            <div class="word-head"><b>{{ w.word }}</b>
+              <span class="pron">{{ w.pronunciation }}</span>
+              <button class="speak-btn" data-text="{{ w.word }}" title="발음 듣기">🔊</button>
+              <button class="word-del" data-id="{{ w.id }}" title="단어 삭제">✕</button></div>
+            <div class="word-mean">{{ w.meaning }}</div>
+            {% if w.example %}<div class="word-ex">“{{ w.example }}”<br><span>{{ w.example_kr }}</span></div>{% endif %}
+          </div>
+        {% endfor %}
+      </div>
+      <p id="emptyHint" class="hint {% if items.words %}hidden{% endif %}">아직 오늘 외운 단어가 없어요. 위에서 첫 단어를 추가해 보세요!</p>
+    </section>
+  </main>
+
+  <script src="{{ url_for('static', filename='tts.js') }}"></script>
+  <script src="{{ url_for('static', filename='vocab.js') }}"></script>
+</body>
+</html>

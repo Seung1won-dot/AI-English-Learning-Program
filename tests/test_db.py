@@ -37,6 +37,15 @@ def test_invalid_mode_falls_back_to_talk():
     assert db.get_today_items()["words"][0]["mode"] == "talk"
 
 
+def test_vocab_mode_is_valid():
+    db.add_word("memorize", "암기하다", mode="vocab")
+    items = db.get_today_items(mode="vocab")
+    assert len(items["words"]) == 1
+    assert items["words"][0]["mode"] == "vocab"
+    summary = db.get_today_mode_summary()
+    assert summary["vocab"]["words"] == 1
+
+
 def test_add_opic_answer():
     oid = db.add_opic_answer(
         topic="자기소개", question="Tell me about yourself.",

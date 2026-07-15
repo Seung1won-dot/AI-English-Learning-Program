@@ -70,6 +70,17 @@ def home():
     )
 
 
+@app.route("/vocab")
+def vocab():
+    """단어 암기 모드 — 단어 추가/추천 + 오늘 단어 + 복습 현황."""
+    return render_template(
+        "vocab.html",
+        items=db.get_today_items(mode="vocab"),
+        due_count=db.count_due_words(),
+        **_ai_context(),
+    )
+
+
 @app.route("/toeic")
 def toeic():
     return render_template(
