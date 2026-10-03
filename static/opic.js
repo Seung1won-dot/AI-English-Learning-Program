@@ -1,17 +1,5 @@
 // opic.js — OPIC 모드 (질문 받기 → 타이핑/음성 답변 → AI 첨삭)
-
-async function postJSON(url, payload) {
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || "오류가 발생했습니다.");
-  return data;
-}
-
-function show(el, on = true) { el.classList.toggle("hidden", !on); }
+// 공통 유틸(postJSON, show, esc …)은 common.js 에 있다.
 
 // ---- 요소 ----
 const topicChips = document.querySelectorAll(".opic-chip");
@@ -45,19 +33,13 @@ let topic = "자기소개";
 let currentQuestion = "";
 
 // ---- 주제 선택 ----
-topicChips.forEach((chip) => {
-  chip.addEventListener("click", () => {
-    topicChips.forEach((c) => c.classList.remove("active"));
-    chip.classList.add("active");
-    topic = chip.dataset.topic;
-  });
-});
+chipGroup(".opic-chip", (chip) => { topic = chip.dataset.topic; });
 
 // ---- 질문 받기 ----
 questionBtn.addEventListener("click", async () => {
-  qError.classList.add("hidden");
+  show(qError, false);
   show(qLoading, true);
-  questionBtn.disabled = true;
+  setBusy(questionBtn, true, "질문 만드는 중...");
   try {
     const data = await postJSON("/api/opic/question", { topic });
     show(document.getElementById("opicQFallback"), !!data.fallback);
@@ -69,15 +51,14 @@ questionBtn.addEventListener("click", async () => {
     show(answerCard, true);
     show(resultBox, false);
     answerInput.value = "";
-    questionBtn.textContent = "다른 질문 받기";
+    questionBtn.dataset.idle = "다른 질문 받기";
     // 실전처럼 질문을 읽어준다
     if (window.speakText) window.speakText(data.question);
   } catch (e) {
-    qError.textContent = e.message;
-    show(qError, true);
+    showError(qError, e.message);
   } finally {
     show(qLoading, false);
-    questionBtn.disabled = false;
+    setBusy(questionBtn, false);
   }
 });
 
@@ -122,13 +103,13 @@ if (SpeechRecognition) {
 function startRecognition() {
   recognizing = true;
   micBtn.classList.add("recording");
-  micBtn.textContent = "⏹ 녹음 끝내기";
+  micBtn.querySelector(".mic-label").textContent = "녹음 끝내기";
   recognition.start();
 }
 function stopRecognition() {
   recognizing = false;
   micBtn.classList.remove("recording");
-  micBtn.textContent = "🎤 말로 답하기";
+  micBtn.querySelector(".mic-label").textContent = "말로 답하기";
   try { recognition.stop(); } catch (e) { /* 이미 멈춤 */ }
 }
 
@@ -138,17 +119,15 @@ micBtn.addEventListener("click", () => {
 });
 
 // ---- 첨삭 받기 ----
-function scoreClass(s) { return s >= 80 ? "good" : s >= 60 ? "mid" : "low"; }
-
 submitBtn.addEventListener("click", async () => {
   const answer = answerInput.value.trim();
-  aError.classList.add("hidden");
-  if (!currentQuestion) { aError.textContent = "먼저 질문을 받아 주세요."; show(aError, true); return; }
-  if (!answer) { aError.textContent = "답변을 말하거나 입력해 주세요."; show(aError, true); return; }
+  show(aError, false);
+  if (!currentQuestion) { showError(aError, "먼저 질문을 받아 주세요."); return; }
+  if (!answer) { showError(aError, "답변을 말하거나 입력해 주세요."); answerInput.focus(); return; }
   if (recognizing) stopRecognition();
 
   show(aLoading, true);
-  submitBtn.disabled = true;
+  setBusy(submitBtn, true, "검토 중...");
   try {
     const data = await postJSON("/api/opic/answer", {
       topic, question: currentQuestion, answer,
@@ -164,11 +143,10 @@ submitBtn.addEventListener("click", async () => {
     show(resultBox, true);
     resultBox.scrollIntoView({ behavior: "smooth", block: "nearest" });
   } catch (e) {
-    aError.textContent = e.message;
-    show(aError, true);
+    showError(aError, e.message);
   } finally {
     show(aLoading, false);
-    submitBtn.disabled = false;
+    setBusy(submitBtn, false);
   }
 });
 

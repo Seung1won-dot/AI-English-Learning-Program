@@ -243,3 +243,13 @@ def test_migration_preserves_existing_rows(tmp_path, monkeypatch):
     hist = db.get_history()
     assert hist[0]["words"][0]["word"] == "legacy"
     assert hist[0]["words"][0]["mode"] == "talk"
+
+
+def test_week_activity_counts_today():
+    db.add_word("improve", "향상시키다", mode="vocab")
+    db.add_sentence("i go", "I go.", "좋아요", score=90)
+    week = db.get_week_activity()
+    assert len(week) == 7
+    assert week[-1]["is_today"] and week[-1]["date"] == db.today_str()
+    assert week[-1]["count"] == 2
+    assert all(d["count"] == 0 for d in week[:-1])

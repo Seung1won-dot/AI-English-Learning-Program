@@ -1,167 +1,132 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>영어 회화 — English World</title>
-  <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}" />
-  <meta name="theme-color" content="#0f172a" />
-  <link rel="icon" type="image/png" href="{{ url_for('static', filename='icons/icon-192.png') }}" />
-  <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/icon-192.png') }}" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
-</head>
-<body data-words-goal="{{ words_goal }}" data-sents-goal="{{ sentences_goal }}" data-mode="talk">
-  <header class="topbar">
-    <a class="brand" href="/"><span class="brand-mark">E</span>English World</a>
-    <nav>
-      <a href="/">홈</a>
-      <a href="/vocab">단어</a>
-      <a href="/toeic">TOEIC</a>
-      <a href="/opic">OPIC</a>
-      <a href="/talk" class="active">회화</a>
-      <a href="/history">기록</a>
-      <a href="/review">복습</a>
-      <a href="/quiz">퀴즈</a>
-    </nav>
-  </header>
+{% extends "base.html" %}
+{% from "_macros.html" import icon, speak, word_row, page_head, score_class %}
+{% block title %}영어 회화 — English World{% endblock %}
+{% block body_attrs %}data-words-goal="{{ words_goal }}" data-sents-goal="{{ sentences_goal }}" data-mode="talk"{% endblock %}
 
-  <main class="container">
-    <div class="page-head">
-      <h2>💬 영어 회화</h2>
-      <span class="mode-tag talk">회화</span>
-    </div>
+{% block content %}
+  {{ page_head("chat", "영어 회화", "오늘의 회화", "단어와 문장을 쌓고, AI 와 자유롭게 대화하며 실수를 교정받으세요.", using_real_ai, provider_label) }}
 
-    <p class="mode-badge">
-      {% if using_real_ai %}
-        🤖 {{ provider_label }} 실시간 사용 중
-      {% else %}
-        🧩 목업 모드 — .env 에 GROQ_API_KEY(무료) 를 넣으면 실제 AI로 전환됩니다
-      {% endif %}
-      <span class="today-tag">{{ today }}</span>
-    </p>
+  <div class="segmented talk-tabs" role="tablist" aria-label="회화 모드" style="margin-bottom:16px">
+    <button type="button" class="talk-tab active" data-tab="study" role="tab" aria-selected="true">오늘 학습</button>
+    <button type="button" class="talk-tab" data-tab="chat" role="tab" aria-selected="false">AI 프리토킹</button>
+  </div>
 
-    <!-- 탭: 오늘 학습 / AI 프리토킹 -->
-    <div class="talk-tabs">
-      <button class="talk-tab active" data-tab="study">📖 오늘 학습</button>
-      <button class="talk-tab" data-tab="chat">🗣️ AI 프리토킹</button>
-    </div>
-
-    <!-- ===== 탭 1: 오늘 학습 (단어 + 문장) ===== -->
-    <div id="tab-study">
-      <!-- 진행도 -->
-      <section class="goal-grid">
-        <div class="goal-box">
-          <div class="goal-head"><span>📖 오늘의 단어</span>
-            <b id="wordCountLabel">{{ counts.words }} / {{ words_goal }}</b></div>
-          <div class="progress"><div id="wordBar" class="progress-fill"
+  <!-- ===== 탭 1: 오늘 학습 (단어 + 문장) ===== -->
+  <div id="tab-study" role="tabpanel">
+    <section class="surface">
+      <div class="goal-grid" style="margin:0">
+        <div>
+          <div class="goal-head"><span>오늘의 단어</span><b id="wordCountLabel">{{ counts.words }} / {{ words_goal }}</b></div>
+          <div class="meter"><div id="wordBar" class="meter-fill"
             style="width: {{ (counts.words / words_goal * 100) | round(0) if counts.words < words_goal else 100 }}%"></div></div>
         </div>
-        <div class="goal-box">
-          <div class="goal-head"><span>💬 오늘의 문장</span>
-            <b id="sentCountLabel">{{ counts.sentences }} / {{ sentences_goal }}</b></div>
-          <div class="progress"><div id="sentBar" class="progress-fill"
+        <div>
+          <div class="goal-head"><span>오늘의 문장</span><b id="sentCountLabel">{{ counts.sentences }} / {{ sentences_goal }}</b></div>
+          <div class="meter"><div id="sentBar" class="meter-fill"
             style="width: {{ (counts.sentences / sentences_goal * 100) | round(0) if counts.sentences < sentences_goal else 100 }}%"></div></div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- 단어 학습 -->
-      <section class="card">
-        <h2>📖 단어 외우기</h2>
-        <p class="hint">오늘 외울 단어를 입력하면 AI가 뜻·발음·예문을 정리해 줍니다.</p>
-        <div class="inline-form">
-          <input type="text" id="wordInput" placeholder="예: improve" />
-          <button id="wordBtn" class="talk-btn">단어 추가</button>
-          <button id="recommendBtn" class="ghost">✨ AI 추천 단어</button>
-        </div>
-        <p id="wordError" class="error hidden"></p>
-        <p id="wordFallback" class="fallback-note hidden">⚠️ AI 연결에 실패해서 준비된 예비 단어로 대체되었어요. 잠시 후 다시 시도해 보세요.</p>
-        <span id="wordLoading" class="loading hidden">AI가 단어를 정리 중...</span>
+    <!-- 문장 첨삭 -->
+    <section class="surface">
+      <div class="surface-head"><h2>문장 첨삭</h2></div>
+      <p class="hint">하고 싶은 말을 영어로 써 보세요. AI 가 교정·피드백·한글 뜻·점수를 줍니다. <kbd>Ctrl</kbd>+<kbd>Enter</kbd> 로 제출.</p>
+      <label class="sr-only" for="sentInput">영어 문장</label>
+      <textarea id="sentInput" rows="2" placeholder="예: I want to order a coffee"></textarea>
+      <div class="actions">
+        <button type="button" id="sentBtn" class="primary">문장 첨삭</button>
+        <span id="sentLoading" class="loading hidden">AI 가 검토하는 중</span>
+      </div>
+      <p id="sentError" class="error hidden" role="alert"></p>
 
-        <div id="recommendBox" class="recommend-box hidden">
-          <p class="hint">마음에 드는 단어를 눌러 오늘 학습에 담으세요.</p>
-          <div id="recommendList" class="recommend-list"></div>
-        </div>
-
-        <div id="wordList" class="item-list">
-          {% for w in items.words %}
-            <div class="word-item">
-              <div class="word-head"><b>{{ w.word }}</b>
-                <span class="pron">{{ w.pronunciation }}</span>
-                <button class="speak-btn" data-text="{{ w.word }}" title="발음 듣기">🔊</button></div>
-              <div class="word-mean">{{ w.meaning }}</div>
-              {% if w.example %}<div class="word-ex">“{{ w.example }}”<br><span>{{ w.example_kr }}</span></div>{% endif %}
+      <ul id="sentList" class="rows">
+        {% for s in items.sentences %}
+          <li class="row sent-item">
+            <div class="row-body">
+              <div class="row-title"><span class="score-pill {{ score_class(s.score) }}">{{ s.score }}</span><span class="corrected">{{ s.corrected }}</span></div>
+              {% if s.meaning %}<div class="row-sub">{{ s.meaning }}</div>{% endif %}
+              <div class="row-sub">{{ s.feedback }}</div>
             </div>
-          {% endfor %}
-        </div>
-      </section>
+            <div class="row-actions">{{ speak(s.corrected) }}</div>
+          </li>
+        {% endfor %}
+      </ul>
+    </section>
 
-      <!-- 문장 학습 -->
-      <section class="card">
-        <h2>💬 회화 문장 첨삭</h2>
-        <p class="hint">하고 싶은 말을 영어로 써보세요. AI가 교정·피드백·한글뜻·점수를 줍니다.</p>
-        <textarea id="sentInput" rows="2" placeholder="예: I want to order a coffee"></textarea>
-        <div class="actions">
-          <button id="sentBtn" class="talk-btn">문장 첨삭</button>
-          <span id="sentLoading" class="loading hidden">AI가 검토 중...</span>
-        </div>
-        <p id="sentError" class="error hidden"></p>
+    <!-- 단어 -->
+    <section class="surface">
+      <div class="surface-head"><h2>단어 외우기</h2></div>
+      <p class="hint">오늘 외울 단어를 입력하면 AI 가 뜻·발음·예문을 정리합니다.</p>
+      <div class="inline-form">
+        <label class="sr-only" for="wordInput">영어 단어</label>
+        <input type="text" id="wordInput" placeholder="예: improve" autocomplete="off" />
+        <button type="button" id="wordBtn" class="primary">{{ icon("plus") }}단어 추가</button>
+        <button type="button" id="recommendBtn">{{ icon("sparkles") }}AI 추천</button>
+      </div>
+      <p id="wordError" class="error hidden" role="alert"></p>
+      <p id="wordFallback" class="fallback-note hidden">AI 연결에 실패해 준비된 예비 단어로 대체했어요. 잠시 후 다시 시도해 보세요.</p>
+      <span id="wordLoading" class="loading hidden" style="margin-top:12px">AI 가 단어를 정리하는 중</span>
 
-        <div id="sentList" class="item-list">
-          {% for s in items.sentences %}
-            <div class="sent-item">
-              <div class="sent-top">
-                <span class="score-pill {% if s.score >= 80 %}good{% elif s.score >= 60 %}mid{% else %}low{% endif %}">{{ s.score }}</span>
-                <span class="corrected">{{ s.corrected }}</span>
-                <button class="speak-btn" data-text="{{ s.corrected }}" title="발음 듣기">🔊</button>
-              </div>
-              {% if s.meaning %}<div class="sent-mean">🇰🇷 {{ s.meaning }}</div>{% endif %}
-              <div class="sent-fb">{{ s.feedback }}</div>
-            </div>
-          {% endfor %}
-        </div>
-      </section>
-    </div>
+      <div id="recommendBox" class="recommend-box hidden">
+        <p class="hint">마음에 드는 단어를 눌러 오늘 학습에 담으세요.</p>
+        <div id="recommendList" class="recommend-list"></div>
+      </div>
 
-    <!-- ===== 탭 2: AI 프리토킹 ===== -->
-    <div id="tab-chat" class="hidden">
-      <section class="card">
-        <h2>🗣️ AI 회화 연습</h2>
-        <p class="hint">AI와 영어로 대화하세요. 답변에 실수가 있으면 📝 로 한국어 교정을 덧붙여 줍니다.</p>
+      <ul id="wordList" class="rows">
+        {% for w in items.words %}{{ word_row(w, deletable=True) }}{% endfor %}
+      </ul>
+    </section>
+  </div>
 
-        <div class="chat-topics">
-          <span>주제:</span>
-          <button class="topic-chip active" data-topic="">자유</button>
-          <button class="topic-chip" data-topic="ordering food at a cafe">카페 주문</button>
-          <button class="topic-chip" data-topic="traveling and asking directions">여행/길찾기</button>
-          <button class="topic-chip" data-topic="a job interview">면접</button>
-          <button class="topic-chip" data-topic="small talk about hobbies">취미 잡담</button>
-        </div>
+  <!-- ===== 탭 2: AI 프리토킹 ===== -->
+  <div id="tab-chat" class="hidden" role="tabpanel">
+    <section class="surface">
+      <div class="surface-head"><h2>AI 회화 연습</h2></div>
+      <p class="hint">영어로 대화하세요. 실수가 있으면 AI 가 한국어 교정을 덧붙여 줍니다. 주제를 바꾸면 새 대화가 시작돼요.</p>
 
-        <div id="chatLog" class="chat-log"></div>
+      <div class="chip-row" role="radiogroup" aria-label="대화 주제">
+        <span class="label">주제</span>
+        <button type="button" class="chip topic-chip active" data-topic="" aria-pressed="true">자유</button>
+        <button type="button" class="chip topic-chip" data-topic="ordering food at a cafe">카페 주문</button>
+        <button type="button" class="chip topic-chip" data-topic="traveling and asking directions">여행·길찾기</button>
+        <button type="button" class="chip topic-chip" data-topic="a job interview">면접</button>
+        <button type="button" class="chip topic-chip" data-topic="small talk about hobbies">취미 잡담</button>
+      </div>
 
-        <form id="chatForm" class="chat-form" autocomplete="off">
-          <input type="text" id="chatInput" placeholder="영어로 입력하고 Enter…" autocomplete="off" />
-          <button type="submit" id="chatSend" class="talk-btn">보내기</button>
-        </form>
-        <p id="chatError" class="error hidden"></p>
-      </section>
-    </div>
-  </main>
+      <div id="chatLog" class="chat-log" aria-live="polite"></div>
 
-  <script src="{{ url_for('static', filename='tts.js') }}"></script>
+      <form id="chatForm" class="composer" autocomplete="off">
+        <label class="sr-only" for="chatInput">메시지</label>
+        <input type="text" id="chatInput" placeholder="영어로 입력하고 Enter" autocomplete="off" />
+        <button type="submit" id="chatSend" class="primary">{{ icon("send") }}보내기</button>
+      </form>
+      <p id="chatError" class="error hidden" role="alert"></p>
+    </section>
+  </div>
+{% endblock %}
+
+{% block scripts %}
   <script src="{{ url_for('static', filename='app.js') }}"></script>
   <script src="{{ url_for('static', filename='chat.js') }}"></script>
   <script>
-    // 탭 전환 (오늘 학습 ↔ AI 프리토킹)
-    document.querySelectorAll(".talk-tab").forEach((tab) => {
-      tab.addEventListener("click", () => {
-        document.querySelectorAll(".talk-tab").forEach((t) => t.classList.remove("active"));
-        tab.classList.add("active");
-        document.getElementById("tab-study").classList.toggle("hidden", tab.dataset.tab !== "study");
-        document.getElementById("tab-chat").classList.toggle("hidden", tab.dataset.tab !== "chat");
-      });
-    });
+    // 탭 전환 (오늘 학습 ↔ AI 프리토킹) — 주소의 #chat 으로 새로고침해도 유지
+    (function () {
+      const tabs = document.querySelectorAll(".talk-tab");
+      let chatStarted = false;
+      function select(name) {
+        tabs.forEach((t) => {
+          const on = t.dataset.tab === name;
+          t.classList.toggle("active", on);
+          t.setAttribute("aria-selected", on ? "true" : "false");
+        });
+        show(document.getElementById("tab-study"), name === "study");
+        show(document.getElementById("tab-chat"), name === "chat");
+        if (name === "chat" && !chatStarted) { chatStarted = true; window.startChat(); }
+        window.history.replaceState(null, "", name === "chat" ? "#chat" : location.pathname);
+      }
+      tabs.forEach((t) => t.addEventListener("click", () => select(t.dataset.tab)));
+      if (location.hash === "#chat") select("chat");
+    })();
   </script>
-</body>
-</html>
+{% endblock %}

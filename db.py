@@ -27,7 +27,8 @@ from contextlib import contextmanager
 from datetime import datetime, timedelta
 
 # DB 파일 경로 (이 파일과 같은 폴더에 생성)
-DB_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), "learning.db")
+# 배포 시 영구 디스크 경로를 DB_PATH 환경변수로 지정할 수 있다 (예: /data/learning.db)
+DB_PATH = os.getenv("DB_PATH") or os.path.join(os.path.dirname(os.path.abspath(__file__)), "learning.db")
 
 
 @contextmanager
@@ -326,6 +327,34 @@ def get_today_mode_summary():
         "talk": {"words": talk_words, "sentences": talk_sents},
         "vocab": {"words": vocab_words},
     }
+
+
+def get_week_activity(days=7):
+    """홈 화면 주간 그래프용 — 최근 N일(오늘 포함) 날짜별 학습 항목 수.
+
+    반환: [{"date": "2026-09-23", "weekday": "화", "count": n, "is_today": bool}, ...] (오래된 날 → 오늘)
+    """
+    today = datetime.now().date()
+    dates = [(today - timedelta(days=i)).strftime("%Y-%m-%d") for i in range(days - 1, -1, -1)]
+    counts = {d: 0 for d in dates}
+    with get_conn() as conn:
+        for table in ("words", "sentences", "opic_answers", "toeic_quiz_log"):
+            rows = conn.execute(
+                f"SELECT date, COUNT(*) FROM {table} WHERE date >= ? GROUP BY date", (dates[0],)
+            ).fetchall()
+            for d, n in rows:
+                if d in counts:
+                    counts[d] += n
+    weekdays = "월화수목금토일"
+    return [
+        {
+            "date": d,
+            "weekday": weekdays[datetime.strptime(d, "%Y-%m-%d").weekday()],
+            "count": counts[d],
+            "is_today": d == dates[-1],
+        }
+        for d in dates
+    ]
 
 
 def get_history(limit_days=60):

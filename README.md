@@ -6,6 +6,7 @@
 - **기간:** 2026.06 ~ 현재
 - **역할:** 개인 프로젝트 (기획 · 개발 전부)
 - **스택:** Python **Flask** · **OpenAI/Groq API** · **SQLite** · HTML/CSS/JS · Web Speech API
+- **디자인:** [DESIGN.md](DESIGN.md) "공책(Notebook)" — 눈이 편한 미색 종이/따뜻한 다크, 잉크 블루 강조색 하나, Pretendard + Noto Serif KR
 
 > 🔎 프로젝트 구조와 동작 원리는 [프로젝트설명.md](프로젝트설명.md)에,
 > 기술 선택 이유는 [text.MD](text.MD)에 자세히 정리되어 있습니다.
@@ -78,7 +79,7 @@
 - 같은 단어 중복 저장은 자동으로 막습니다 (409 안내)
 
 ### 🔊 발음 듣기 (전 화면)
-- 단어·문장·정답·AI 답변 옆 🔊 버튼으로 원어민 발음 재생
+- 단어·문장·정답·AI 답변 옆 스피커 버튼으로 원어민 발음 재생
 - 브라우저 내장 음성합성 사용 → **무료·키 불필요**
 
 > 💡 **AI 키가 없어도** 규칙기반 목업으로 동작합니다.
@@ -101,6 +102,38 @@ python app.py                      # 실행 (127.0.0.1:5000)
 
 자세한 단계: [실행가이드.md](실행가이드.md)
 
+### ⌨️ 단축키
+- **퀴즈 / 토익 Part 5** — `1`~`4` 보기 선택, `Enter` 다음 문제
+- **플래시카드** — `Space` 뒤집기, `←` `→` 이동
+- **문장 첨삭** — `Ctrl`+`Enter` 제출
+
+---
+
+## ☁️ 배포하기
+
+인터넷에 올릴 때는 **반드시 `APP_PASSWORD`를 설정**하세요. 비워 두면 누구나 접속해
+기록을 바꾸고 내 AI 키를 쓸 수 있습니다. (브라우저 로그인 창 — 아이디는 아무거나, 비밀번호만 확인)
+
+| 환경변수 | 설명 |
+|---|---|
+| `GROQ_API_KEY` / `OPENAI_API_KEY` | AI 키 (없으면 목업 모드) |
+| `APP_PASSWORD` | 접근 비밀번호 (공개 서버 필수) |
+| `DB_PATH` | 학습 기록 DB 경로 — 플랫폼의 **영구 디스크**로 지정 (예: `/data/learning.db`) |
+| `PORT` | 서버 포트 (플랫폼이 자동 지정) |
+
+**Render / Railway 등 (Procfile)** — 저장소를 연결하면 `Procfile`
+(`gunicorn app:app`)로 실행됩니다. 영구 디스크를 붙이고 `DB_PATH`를 그 경로로 지정하세요.
+헬스 체크 경로는 `/healthz` 입니다.
+
+**Docker**
+
+```bash
+docker build -t english-world .
+docker run -p 8000:8000 -v ew-data:/data   -e GROQ_API_KEY=... -e APP_PASSWORD=... english-world
+```
+
+> SQLite 는 파일 하나에 저장하므로 서버 인스턴스는 **1대**로 운영하세요.
+
 ---
 
 ## 🗂️ 프로젝트 구조
@@ -113,8 +146,10 @@ english world/
 ├─ text.MD           # 📖 프로젝트 기술 설명 문서 (왜 이 기술을 썼는지)
 ├─ requirements.txt
 ├─ .env.example      # GROQ_API_KEY(무료) / OPENAI_API_KEY
-├─ templates/        # home(모드선택) · toeic · opic · talk(회화) · history · review · quiz
-├─ static/           # style.css + 페이지별 JS (toeic.js, opic.js, app.js, chat.js ...)
+├─ DESIGN.md         # 🎨 디자인 시스템 (색·글꼴·컴포넌트 규칙)
+├─ Procfile · Dockerfile  # 배포 설정
+├─ templates/        # base(공통 레이아웃) · _macros · _icons(SVG 아이콘) + 화면별 템플릿
+├─ static/           # style.css · common.js(공통 유틸) + 페이지별 JS
 └─ tests/            # pytest (DB / API 검증)
 ```
 

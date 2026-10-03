@@ -1,0 +1,12 @@
+.env
+.venv/
+venv/
+.git/
+.claude/
+__pycache__/
+.pytest_cache/
+*.db
+*.db-*
+*.log
+docs/
+tests/

@@ -20,12 +20,14 @@ document.addEventListener("click", (e) => {
   if (btn) {
     e.stopPropagation();                        // 카드 뒤집기 등과 충돌 방지
     speakText(btn.dataset.text);
+    btn.classList.add("speaking");
+    setTimeout(() => btn.classList.remove("speaking"), 900);
   }
 });
 
 // 🔊 버튼 HTML 을 만드는 헬퍼 (JS 에서 카드 생성 시 사용)
 function speakBtn(text) {
-  const safe = (text == null ? "" : String(text)).replace(/"/g, "&quot;");
-  return `<button class="speak-btn" data-text="${safe}" title="발음 듣기">🔊</button>`;
+  const safe = (text == null ? "" : String(text)).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+  return `<button type="button" class="icon-btn speak-btn" data-text="${safe}" title="발음 듣기" aria-label="발음 듣기">${window.icon("volume")}</button>`;
 }
 window.speakBtn = speakBtn;

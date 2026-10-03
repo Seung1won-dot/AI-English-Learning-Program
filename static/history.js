@@ -1,16 +1,14 @@
-// history.js — 학습 기록 필터 (모드 + 날짜)
+// history.js — 학습 기록 필터 (모드 + 날짜) · 단어 삭제
+// 공통 유틸(show, deleteWord …)은 common.js 에 있다.
 
 const datePicker = document.getElementById("datePicker");
 const clearBtn = document.getElementById("clearDate");
 const chips = document.querySelectorAll(".date-chip");
 const dayCards = document.querySelectorAll(".day-card");
 const noRecord = document.getElementById("noRecord");
-const modeTabs = document.querySelectorAll(".mode-filter-tab");
 
-let modeFilter = "all";   // all | toeic | opic | talk
+let modeFilter = "all";   // all | vocab | toeic | opic | talk
 let dateFilter = "";      // "" = 전체 날짜
-
-function show(el, on = true) { el.classList.toggle("hidden", !on); }
 
 // 모드 + 날짜 조건을 한꺼번에 적용한다.
 function applyFilters() {
@@ -31,7 +29,7 @@ function applyFilters() {
       if (hit) cardHasVisible = true;
     });
 
-    // 3) 항목이 하나도 안 남은 블록(단어/문장/오픽/토익 묶음)은 제목까지 숨긴다
+    // 3) 항목이 하나도 안 남은 묶음(단어/문장/오픽/토익)은 제목까지 숨긴다
     card.querySelectorAll(".day-block").forEach((block) => {
       const visibleItems = Array.from(block.querySelectorAll(".mode-item"))
         .some((item) => item.style.display !== "none");
@@ -42,28 +40,21 @@ function applyFilters() {
     if (cardHasVisible) anyVisible = true;
   });
 
-  // 날짜 칩 활성화 표시
   chips.forEach((chip) => chip.classList.toggle("active", chip.dataset.date === dateFilter));
   show(noRecord, !anyVisible);
 }
 
 // ---- 모드 필터 ----
-modeTabs.forEach((tab) => {
-  tab.addEventListener("click", () => {
-    modeTabs.forEach((t) => t.classList.remove("active"));
-    tab.classList.add("active");
-    modeFilter = tab.dataset.mode;
-    applyFilters();
-  });
+chipGroup(".mode-filter-tab", (tab) => {
+  modeFilter = tab.dataset.mode;
+  applyFilters();
 });
 
 // ---- 날짜 필터 ----
-if (datePicker) {
-  datePicker.addEventListener("change", () => {
-    dateFilter = datePicker.value || "";
-    applyFilters();
-  });
-}
+datePicker?.addEventListener("change", () => {
+  dateFilter = datePicker.value || "";
+  applyFilters();
+});
 
 clearBtn?.addEventListener("click", () => {
   dateFilter = "";
@@ -73,32 +64,14 @@ clearBtn?.addEventListener("click", () => {
 
 chips.forEach((chip) => {
   chip.addEventListener("click", () => {
-    dateFilter = chip.dataset.date;
+    dateFilter = dateFilter === chip.dataset.date ? "" : chip.dataset.date;  // 다시 누르면 해제
     if (datePicker) datePicker.value = dateFilter;
     applyFilters();
-    document.querySelector(`.day-card[data-date="${dateFilter}"]`)
-      ?.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 });
 
 // ---- 단어 삭제 (오타·중복 정리) ----
-document.addEventListener("click", async (e) => {
+document.addEventListener("click", (e) => {
   const btn = e.target.closest(".word-del");
-  if (!btn) return;
-  const item = btn.closest(".mode-item");
-  const word = item?.querySelector("b")?.textContent || "이 단어";
-  if (!confirm(`'${word}'를 삭제할까요? 퀴즈·복습 목록에서도 빠집니다.`)) return;
-
-  btn.disabled = true;
-  try {
-    const res = await fetch(`/api/word/${btn.dataset.id}`, { method: "DELETE" });
-    if (!res.ok) {
-      const data = await res.json().catch(() => ({}));
-      throw new Error(data.error || "삭제에 실패했습니다.");
-    }
-    item.remove();
-  } catch (err) {
-    btn.disabled = false;
-    alert(err.message);
-  }
+  if (btn) deleteWord(btn, ".mode-item", applyFilters);
 });

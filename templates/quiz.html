@@ -1,81 +1,71 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>단어 퀴즈 — English World</title>
-  <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}" />
-  <meta name="theme-color" content="#0f172a" />
-  <link rel="icon" type="image/png" href="{{ url_for('static', filename='icons/icon-192.png') }}" />
-  <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/icon-192.png') }}" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
-</head>
-<body>
-  <header class="topbar">
-    <a class="brand" href="/"><span class="brand-mark">E</span>English World</a>
-    <nav>
-      <a href="/">홈</a>
-      <a href="/vocab">단어</a>
-      <a href="/toeic">TOEIC</a>
-      <a href="/opic">OPIC</a>
-      <a href="/talk">회화</a>
-      <a href="/history">기록</a>
-      <a href="/review">복습</a>
-      <a href="/quiz" class="active">퀴즈</a>
-    </nav>
-  </header>
+{% extends "base.html" %}
+{% from "_macros.html" import icon, page_head %}
+{% block title %}단어 퀴즈 — English World{% endblock %}
 
-  <main class="container">
-    <section class="card">
-      <h2>📝 단어 퀴즈 <small class="due-badge">오늘 복습 {{ due_count }}개</small></h2>
-      <p class="hint">한글 뜻을 보고 영어 단어를 맞히세요. 맞히면 복습 간격이 늘어나고, 틀리면 오늘 다시 나옵니다. (간격 반복 학습)</p>
+{% block content %}
+  {{ page_head("quiz", "복습", "단어 퀴즈", "한글 뜻을 보고 영어 단어를 맞히세요. 맞히면 복습 간격이 늘고, 틀리면 오늘 다시 나옵니다.") }}
 
-      <!-- 객관식 / 주관식 전환 -->
-      <div class="quiz-mode-toggle">
-        <button id="modeChoice" class="quiz-mode-btn active">🔘 객관식</button>
-        <button id="modeTyping" class="quiz-mode-btn">⌨️ 주관식</button>
+  <section class="surface">
+    <div class="surface-head">
+      <div class="segmented" role="radiogroup" aria-label="문제 형식">
+        <button type="button" id="modeChoice" class="quiz-mode-btn active">객관식</button>
+        <button type="button" id="modeTyping" class="quiz-mode-btn">주관식</button>
+      </div>
+      <span class="meta">오늘 복습 <span class="num" id="dueCount">{{ due_count }}</span>개</span>
+    </div>
+
+    <div id="quizLoading" class="skeleton" style="margin-top:16px" aria-label="불러오는 중">
+      <div class="row"><div class="bar"></div><div class="bar short"></div></div>
+      <div class="row"><div class="bar"></div><div class="bar short"></div></div>
+      <div class="row"><div class="bar"></div><div class="bar short"></div></div>
+    </div>
+
+    <div id="quizEmpty" class="empty hidden">
+      {{ icon("circle-check") }}
+      <b>오늘 복습할 단어가 없어요</b>
+      새 단어를 외우면 내일부터 여기에 나타납니다.
+      <div class="actions"><a class="btn primary" href="/vocab">단어 외우러 가기 {{ icon("arrow-right") }}</a></div>
+    </div>
+
+    <div id="quizCard" class="hidden">
+      <div class="quiz-progress">
+        <span id="quizCount" class="num">1 / 1</span>
+        <span>맞은 개수 <span id="quizScore" class="num">0</span></span>
+      </div>
+      <div class="meter"><div id="quizBar" class="meter-fill" style="width:0%"></div></div>
+
+      <p class="quiz-meaning" id="quizMeaning"></p>
+
+      <form id="quizForm" class="quiz-form" autocomplete="off">
+        <label class="sr-only" for="quizInput">영어 단어</label>
+        <input type="text" id="quizInput" placeholder="영어 단어 입력" autocomplete="off" autocapitalize="off" spellcheck="false" />
+        <button type="submit" id="quizSubmit" class="primary">확인</button>
+      </form>
+
+      <div id="quizChoices" class="choices quiz-choices hidden" role="group" aria-label="보기"></div>
+
+      <div id="quizResult" class="quiz-result hidden" aria-live="polite">
+        <p id="quizVerdict" class="verdict"></p>
+        <div id="quizAnswer" class="quiz-answer"></div>
+        <div id="quizExample" class="quiz-example"></div>
+        <div class="actions"><button type="button" id="quizNext" class="primary">다음 문제 {{ icon("arrow-right") }}</button></div>
       </div>
 
-      <!-- 진행 -->
-      <div id="quizArea">
-        <div id="quizEmpty" class="hint hidden">
-          🎉 오늘 복습할 단어가 없어요! <a href="/">단어 더 외우러 가기 →</a>
-        </div>
+      <p class="kbd-tip">객관식 <kbd>1</kbd>~<kbd>4</kbd> 선택 · <kbd>Enter</kbd> 다음 문제</p>
+    </div>
 
-        <div id="quizCard" class="quiz-card hidden">
-          <div class="quiz-progress">
-            <span id="quizCount">1 / 1</span>
-            <span id="quizScore" class="quiz-score">맞은 개수 0</span>
-          </div>
-          <div class="quiz-meaning" id="quizMeaning"></div>
-
-          <form id="quizForm" class="quiz-form" autocomplete="off">
-            <input type="text" id="quizInput" placeholder="영어 단어 입력" autocomplete="off" />
-            <button type="submit" id="quizSubmit">확인</button>
-          </form>
-
-          <div id="quizChoices" class="quiz-choices hidden"></div>
-
-          <div id="quizResult" class="quiz-result hidden">
-            <div id="quizVerdict" class="quiz-verdict"></div>
-            <div id="quizAnswer" class="quiz-answer"></div>
-            <div id="quizExample" class="quiz-example"></div>
-            <button id="quizNext" class="quiz-next">다음 문제 →</button>
-          </div>
-        </div>
-
-        <div id="quizDone" class="quiz-done hidden">
-          <h3>퀴즈 완료! 🎉</h3>
-          <p id="quizDoneText"></p>
-          <button id="quizReload">다시 불러오기</button>
-          <a href="/" class="btn-link">오늘 학습으로</a>
-        </div>
+    <div id="quizDone" class="done hidden">
+      <div class="big" id="quizDoneScore">0 / 0</div>
+      <h2 style="margin-top:8px">퀴즈 완료</h2>
+      <p id="quizDoneText"></p>
+      <div class="actions">
+        <button type="button" id="quizReload">{{ icon("refresh") }}다시 불러오기</button>
+        <a href="/" class="btn primary">홈으로</a>
       </div>
-    </section>
-  </main>
+    </div>
+  </section>
+{% endblock %}
 
-  <script src="{{ url_for('static', filename='tts.js') }}"></script>
+{% block scripts %}
   <script src="{{ url_for('static', filename='quiz.js') }}"></script>
-</body>
-</html>
+{% endblock %}

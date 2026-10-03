@@ -189,3 +189,37 @@ def test_sentence_defaults_to_talk_mode(client):
     res = client.post("/api/sentence", json={"sentence": "i like coffee"})
     assert res.status_code == 200
     assert db.get_today_items(mode="talk")["sentences"][0]["mode"] == "talk"
+
+
+def test_unknown_page_renders_404(client):
+    res = client.get("/no-such-page")
+    assert res.status_code == 404
+    assert "페이지를 찾을 수 없어요".encode() in res.data
+
+
+def test_unknown_api_returns_json_404(client):
+    res = client.get("/api/no-such")
+    assert res.status_code == 404
+    assert "error" in res.get_json()
+
+
+def test_home_shows_week_activity(client):
+    client.post("/api/word", json={"word": "grit", "meaning": "끈기", "mode": "vocab"})
+    html = client.get("/").get_data(as_text=True)
+    assert "week-bar" in html and "오늘" in html
+
+
+def test_password_protection(client, monkeypatch):
+    monkeypatch.setenv("APP_PASSWORD", "s3cret")
+    assert client.get("/").status_code == 401
+    assert client.get("/healthz").status_code == 200
+    import base64
+    bad = base64.b64encode(b"me:wrong").decode()
+    good = base64.b64encode(b"me:s3cret").decode()
+    assert client.get("/", headers={"Authorization": f"Basic {bad}"}).status_code == 401
+    assert client.get("/", headers={"Authorization": f"Basic {good}"}).status_code == 200
+
+
+def test_no_password_means_open(client, monkeypatch):
+    monkeypatch.delenv("APP_PASSWORD", raising=False)
+    assert client.get("/").status_code == 200

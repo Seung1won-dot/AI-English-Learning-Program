@@ -27,12 +27,14 @@ API (JSON)
 실행:  python app.py  (기본 http://127.0.0.1:5000)
 """
 
+import hmac
 import os
 import random
 import socket
+from datetime import datetime
 
 from dotenv import load_dotenv
-from flask import Flask, render_template, request, jsonify, redirect
+from flask import Flask, Response, render_template, request, jsonify, redirect
 
 import db
 import ai_feedback
@@ -40,7 +42,36 @@ import ai_feedback
 load_dotenv()
 
 app = Flask(__name__)
+if os.path.dirname(db.DB_PATH):
+    os.makedirs(os.path.dirname(db.DB_PATH), exist_ok=True)
 db.init_db()
+
+
+# ---------------------------------------------------------------------------
+# 접근 보호 — APP_PASSWORD 를 설정하면 모든 화면/API 에 비밀번호가 걸린다.
+# 인터넷에 배포할 때 필수: 없으면 누구나 내 기록을 바꾸고 AI 키를 쓸 수 있다.
+# ---------------------------------------------------------------------------
+PUBLIC_PATHS = ("/healthz", "/static/")
+
+
+@app.before_request
+def require_password():
+    password = os.getenv("APP_PASSWORD", "")
+    if not password or request.path.startswith(PUBLIC_PATHS):
+        return None
+    auth = request.authorization
+    if auth and hmac.compare_digest((auth.password or "").encode(), password.encode()):
+        return None
+    return Response(
+        "비밀번호가 필요합니다.", 401,
+        {"WWW-Authenticate": 'Basic realm="English World", charset="UTF-8"'},
+    )
+
+
+@app.route("/healthz")
+def healthz():
+    """배포 플랫폼 헬스 체크용."""
+    return jsonify({"ok": True})
 
 # 하루 학습 목표 (회화 모드)
 WORDS_GOAL = 5
@@ -58,13 +89,31 @@ def _ai_context():
 # ---------------------------------------------------------------------------
 # 화면
 # ---------------------------------------------------------------------------
+def _greeting(hour):
+    if 5 <= hour < 12:
+        return "좋은 아침이에요"
+    if 12 <= hour < 18:
+        return "좋은 오후예요"
+    if 18 <= hour < 23:
+        return "오늘 하루도 수고했어요"
+    return "늦은 시간까지 열공 중이네요"
+
+
 @app.route("/")
 def home():
-    """홈 — 학습 모드 선택 + 오늘 학습 요약."""
+    """홈 — 학습 모드 선택 + 오늘 학습 요약 + 주간 활동."""
+    now = datetime.now()
+    summary = db.get_today_mode_summary()
+    week = db.get_week_activity()
     return render_template(
         "home.html",
-        summary=db.get_today_mode_summary(),
-        today=db.today_str(),
+        summary=summary,
+        today_total=week[-1]["count"],
+        week=week,
+        week_max=max([d["count"] for d in week] + [1]),
+        stats=db.get_stats(),
+        greeting=_greeting(now.hour),
+        today_label=f"{now.month}월 {now.day}일 {'월화수목금토일'[now.weekday()]}요일",
         due_count=db.count_due_words(),
         **_ai_context(),
     )
@@ -415,6 +464,22 @@ def api_chat():
     except Exception as e:
         return jsonify({"error": f"대화 생성 중 오류: {e}"}), 500
     return jsonify({"reply": reply})
+
+
+@app.errorhandler(404)
+def not_found(e):
+    if request.path.startswith("/api/"):
+        return jsonify({"error": "요청한 API 를 찾을 수 없습니다."}), 404
+    return render_template("error.html", code=404,
+                           message="찾으시는 페이지가 없어요. 주소를 다시 확인해 주세요."), 404
+
+
+@app.errorhandler(500)
+def server_error(e):
+    if request.path.startswith("/api/"):
+        return jsonify({"error": "서버 오류가 발생했습니다."}), 500
+    return render_template("error.html", code=500,
+                           message="잠시 문제가 생겼어요. 잠시 후 다시 시도해 주세요."), 500
 
 
 def _lan_ip():

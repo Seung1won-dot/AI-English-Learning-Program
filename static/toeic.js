@@ -1,73 +1,41 @@
 // toeic.js — TOEIC 모드 (빈출 단어 추천 + Part 5 문제 풀기)
-
-async function postJSON(url, payload) {
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.error || "오류가 발생했습니다.");
-  return data;
-}
-
-function show(el, on = true) { el.classList.toggle("hidden", !on); }
-
-function esc(s) {
-  const d = document.createElement("div");
-  d.textContent = s == null ? "" : s;
-  return d.innerHTML;
-}
+// 공통 유틸(postJSON, show, esc, wordCard …)은 common.js 에 있다.
 
 // =========================================================
 // 빈출 단어
 // =========================================================
 let level = "600";
 
-const levelChips = document.querySelectorAll(".level-chip");
 const recommendBtn = document.getElementById("toeicRecommendBtn");
 const wordError = document.getElementById("toeicWordError");
 const recommendBox = document.getElementById("toeicRecommendBox");
 const recommendList = document.getElementById("toeicRecommendList");
 const wordFallback = document.getElementById("toeicWordFallback");
 const wordList = document.getElementById("toeicWordList");
+const wordCount = document.getElementById("toeicCount");
+const wordEmpty = document.getElementById("toeicEmpty");
 
-levelChips.forEach((chip) => {
-  chip.addEventListener("click", () => {
-    levelChips.forEach((c) => c.classList.remove("active"));
-    chip.classList.add("active");
-    level = chip.dataset.level;
-  });
-});
+chipGroup(".level-chip", (chip) => { level = chip.dataset.level; });
 
-function wordCard(w) {
-  const ex = w.example
-    ? `<div class="word-ex">&ldquo;${esc(w.example)}&rdquo;<br><span>${esc(w.example_kr)}</span></div>`
-    : "";
-  return `<div class="word-item">
-    <div class="word-head"><b>${esc(w.word)}</b><span class="pron">${esc(w.pronunciation)}</span>${window.speakBtn(w.word)}</div>
-    <div class="word-mean">${esc(w.meaning)}</div>${ex}</div>`;
+function refreshCount() {
+  const n = wordList.querySelectorAll(".word-item").length;
+  wordCount.textContent = n;
+  show(wordEmpty, n === 0);
 }
 
 recommendBtn.addEventListener("click", async () => {
-  wordError.classList.add("hidden");
-  recommendBtn.disabled = true;
-  recommendBtn.textContent = "추천 받는 중...";
+  show(wordError, false);
+  setBusy(recommendBtn, true, "추천 받는 중...");
   try {
     const data = await postJSON("/api/toeic/words", { level });
     show(wordFallback, !!data.fallback);
-    recommendList.innerHTML = data.words.map((w, i) => `
-      <button class="recommend-chip" data-i="${i}">
-        <b>${esc(w.word)}</b> <span>${esc(w.meaning)}</span> <em>+ 담기</em>
-      </button>`).join("");
+    recommendList.innerHTML = recommendChips(data.words);
     recommendList._words = data.words;
     show(recommendBox, true);
   } catch (e) {
-    wordError.textContent = e.message;
-    show(wordError, true);
+    showError(wordError, e.message);
   } finally {
-    recommendBtn.disabled = false;
-    recommendBtn.textContent = "✨ 빈출 단어 추천 받기";
+    setBusy(recommendBtn, false);
   }
 });
 
@@ -75,17 +43,21 @@ recommendList.addEventListener("click", async (e) => {
   const chip = e.target.closest(".recommend-chip");
   if (!chip || chip.classList.contains("picked")) return;
   const w = recommendList._words[Number(chip.dataset.i)];
-  chip.classList.add("picked");
-  chip.querySelector("em").textContent = "✓ 담음";
+  markChip(chip, true);
   try {
     const data = await postJSON("/api/word", { ...w, mode: "toeic" });
-    wordList.insertAdjacentHTML("afterbegin", wordCard(data));
+    wordList.insertAdjacentHTML("afterbegin", wordCard(data, { deletable: true }));
+    refreshCount();
+    toast(`'${data.word}' 담음`);
   } catch (err) {
-    chip.classList.remove("picked");
-    chip.querySelector("em").textContent = "+ 담기";
-    wordError.textContent = err.message;
-    show(wordError, true);
+    markChip(chip, false);
+    showError(wordError, err.message);
   }
+});
+
+wordList.addEventListener("click", (e) => {
+  const btn = e.target.closest(".word-del");
+  if (btn) deleteWord(btn, ".word-item", refreshCount);
 });
 
 // =========================================================
@@ -113,12 +85,16 @@ let retryQueue = [];          // 오답 다시 풀기 큐 (비어 있으면 새 
 
 const LABELS = ["A", "B", "C", "D"];
 
+function setNextLabel(text) {
+  nextBtn.innerHTML = `${esc(text)} ${icon("arrow-right")}`;
+}
+
 function renderQuestion(q, isRetry = false) {
   current = q;
   questionEl.textContent = q.question;
   choicesEl.innerHTML = q.choices.map((c, i) => `
-    <button class="p5-choice" data-i="${i}">
-      <span class="p5-label">(${LABELS[i]})</span> ${esc(c)}
+    <button type="button" class="choice p5-choice" data-i="${i}">
+      <span class="p5-label">${LABELS[i]}</span><span>${esc(c)}</span>
     </button>`).join("");
   show(retryBadge, isRetry);
   show(explainBox, false);
@@ -131,38 +107,37 @@ async function loadQuestion() {
   // 오답 복습 중이면 큐에서 먼저 꺼낸다
   if (retryQueue.length > 0) {
     renderQuestion(retryQueue.shift(), true);
-    nextBtn.textContent = retryQueue.length > 0
-      ? `다음 오답 (${retryQueue.length}개 남음) →` : "다음 문제 →";
+    setNextLabel(retryQueue.length > 0 ? `다음 오답 (${retryQueue.length}개 남음)` : "다음 문제");
     return;
   }
 
-  p5Error.classList.add("hidden");
+  show(p5Error, false);
   show(p5Fallback, false);
   show(loading, true);
   startBtn.disabled = true;
+  nextBtn.disabled = true;
   try {
     const q = await postJSON("/api/toeic/question", { recent: recentQuestions });
     recentQuestions.push(q.question);
     if (recentQuestions.length > 10) recentQuestions.shift();
     renderQuestion(q, false);
-    nextBtn.textContent = "다음 문제 →";
+    setNextLabel("다음 문제");
     startBtn.textContent = "새 문제 받기";
     show(p5Fallback, !!q.fallback);
   } catch (e) {
-    p5Error.textContent = e.message;
-    show(p5Error, true);
+    showError(p5Error, e.message);
   } finally {
     show(loading, false);
     startBtn.disabled = false;
+    nextBtn.disabled = false;
   }
 }
 
 async function loadWrongQuestions() {
-  p5Error.classList.add("hidden");
-  retryBtn.disabled = true;
+  show(p5Error, false);
+  setBusy(retryBtn, true, "불러오는 중...");
   try {
-    const res = await fetch("/api/toeic/wrong");
-    const data = await res.json();
+    const data = await getJSON("/api/toeic/wrong");
     retryQueue = (data.questions || []).map((q) => ({
       question: q.question,
       choices: q.choices,
@@ -170,16 +145,14 @@ async function loadWrongQuestions() {
       explanation: q.explanation,
     }));
     if (retryQueue.length === 0) {
-      p5Error.textContent = "다시 풀 오답이 없어요! 🎉 (틀린 문제를 다시 맞히면 목록에서 빠집니다)";
-      show(p5Error, true);
+      toast("다시 풀 오답이 없어요. 틀린 문제를 다시 맞히면 목록에서 빠집니다.");
       return;
     }
     loadQuestion();
   } catch (e) {
-    p5Error.textContent = e.message;
-    show(p5Error, true);
+    showError(p5Error, e.message);
   } finally {
-    retryBtn.disabled = false;
+    setBusy(retryBtn, false);
   }
 }
 
@@ -187,12 +160,10 @@ startBtn.addEventListener("click", () => { retryQueue = []; loadQuestion(); });
 retryBtn.addEventListener("click", loadWrongQuestions);
 nextBtn.addEventListener("click", loadQuestion);
 
-choicesEl.addEventListener("click", async (e) => {
-  const btn = e.target.closest(".p5-choice");
-  if (!btn || !current || choicesEl.dataset.answered) return;
+async function answer(my) {
+  if (!current || choicesEl.dataset.answered) return;
   choicesEl.dataset.answered = "1";
 
-  const my = Number(btn.dataset.i);
   const ok = my === current.answer;
   solved += 1;
   if (ok) correct += 1;
@@ -204,12 +175,15 @@ choicesEl.addEventListener("click", async (e) => {
     else if (i === my && !ok) b.classList.add("wrong");
   });
 
-  verdictEl.textContent = ok ? "⭕ 정답이에요!" : `❌ 아쉬워요. 정답은 (${LABELS[current.answer]}) ${current.choices[current.answer]}`;
-  verdictEl.className = "p5-verdict " + (ok ? "ok" : "no");
+  verdictEl.innerHTML = ok
+    ? `${icon("circle-check")}정답이에요`
+    : `${icon("circle-x")}아쉬워요. 정답은 ${LABELS[current.answer]}. ${esc(current.choices[current.answer])}`;
+  verdictEl.className = "verdict " + (ok ? "ok" : "no");
   explainText.textContent = current.explanation || "";
   show(explainBox, true);
   show(nextBtn, true);
-  scoreEl.textContent = `이번 세션 ${correct} / ${solved}`;
+  nextBtn.focus({ preventScroll: true });
+  scoreEl.textContent = `${correct} / ${solved}`;
 
   // 풀이 결과 저장 (실패해도 학습 흐름은 계속)
   try {
@@ -221,7 +195,18 @@ choicesEl.addEventListener("click", async (e) => {
       explanation: current.explanation || "",
     });
   } catch (err) {
-    p5Error.textContent = "풀이 저장 실패: " + err.message;
-    show(p5Error, true);
+    toast("풀이 저장 실패: " + err.message, "error");
   }
+}
+
+choicesEl.addEventListener("click", (e) => {
+  const btn = e.target.closest(".p5-choice");
+  if (btn) answer(Number(btn.dataset.i));
+});
+
+// 키보드: 1~4 = 보기 선택
+document.addEventListener("keydown", (e) => {
+  if (box.classList.contains("hidden") || e.target.matches("input, textarea, select")) return;
+  const n = Number(e.key);
+  if (n >= 1 && n <= 4) answer(n - 1);
 });

@@ -1,118 +1,83 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>단어 암기 — English World</title>
-  <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}" />
-  <meta name="theme-color" content="#0f172a" />
-  <link rel="icon" type="image/png" href="{{ url_for('static', filename='icons/icon-192.png') }}" />
-  <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/icon-192.png') }}" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
-</head>
-<body>
-  <header class="topbar">
-    <a class="brand" href="/"><span class="brand-mark">E</span>English World</a>
-    <nav>
-      <a href="/">홈</a>
-      <a href="/vocab" class="active">단어</a>
-      <a href="/toeic">TOEIC</a>
-      <a href="/opic">OPIC</a>
-      <a href="/talk">회화</a>
-      <a href="/history">기록</a>
-      <a href="/review">복습</a>
-      <a href="/quiz">퀴즈</a>
-    </nav>
-  </header>
+{% extends "base.html" %}
+{% from "_macros.html" import icon, word_row, page_head %}
+{% block title %}단어 암기 — English World{% endblock %}
 
-  <main class="container">
-    <div class="page-head">
-      <h2>단어 암기</h2>
-      <span class="mode-tag vocab">단어</span>
+{% block content %}
+  {{ page_head("book", "단어 암기", "오늘의 단어", "단어를 넣으면 AI 가 뜻·발음·예문을 정리하고, 1→3→7→14→30일 간격으로 다시 보여줍니다.", using_real_ai, provider_label) }}
+
+  <div class="due-bar {% if not due_count %}calm{% endif %}">
+    <p><span class="dot"></span><span>오늘 복습할 단어 <span class="num">{{ due_count }}</span>개</span></p>
+    <div class="actions" style="margin:0">
+      <a class="btn" href="/review">플래시카드</a>
+      <a class="btn primary" href="/quiz">퀴즈 풀기</a>
     </div>
+  </div>
 
-    {% if not using_real_ai %}
-      <p class="mode-badge">🧩 목업 모드 — .env 에 GROQ_API_KEY(무료) 를 넣으면 AI가 뜻·발음·예문을 자동으로 정리해 줍니다</p>
-    {% endif %}
+  <!-- 단어 추가 -->
+  <section class="surface">
+    <div class="surface-head"><h2>단어 추가</h2></div>
+    <p class="hint">모르는 단어를 입력하세요. 저장하면 바로 복습 대상이 됩니다.</p>
+    <div class="inline-form">
+      <label class="sr-only" for="wordInput">영어 단어</label>
+      <input type="text" id="wordInput" placeholder="예: persist" autocomplete="off" />
+      <button type="button" id="wordBtn" class="primary">{{ icon("plus") }}단어 추가</button>
+    </div>
+    <p id="wordError" class="error hidden" role="alert"></p>
+    <p id="wordFallback" class="fallback-note hidden">AI 연결에 실패해 준비된 예비 단어로 대체했어요. 잠시 후 다시 시도해 보세요.</p>
+    <span id="wordLoading" class="loading hidden" style="margin-top:12px">AI 가 단어를 정리하는 중</span>
 
-    <!-- 복습 현황 -->
-    <section class="card review-banner">
-      <div class="review-banner-text">
-        <b>오늘 복습할 단어 <span class="review-count">{{ due_count }}</span>개</b>
-        <span class="hint">외운 단어는 1→3→7→14→30일 간격으로 다시 나옵니다.</span>
+    <div class="recommend-box">
+      <div class="chip-row" role="radiogroup" aria-label="추천 주제" style="margin-bottom:8px">
+        <span class="label">추천 주제</span>
+        <button type="button" class="chip topic-chip active" data-topic="일상생활" aria-pressed="true">일상생활</button>
+        <button type="button" class="chip topic-chip" data-topic="비즈니스">비즈니스</button>
+        <button type="button" class="chip topic-chip" data-topic="여행">여행</button>
+        <button type="button" class="chip topic-chip" data-topic="음식">음식</button>
+        <button type="button" class="chip topic-chip" data-topic="감정 표현">감정</button>
+        <button type="button" id="recommendBtn" class="push">{{ icon("sparkles") }}AI 추천 받기</button>
       </div>
-      <div class="review-banner-actions">
-        <a class="btn-link primary" href="/quiz">퀴즈 풀기</a>
-        <a class="btn-link" href="/review">플래시카드</a>
-      </div>
-    </section>
-
-    <!-- 내 단어장 -->
-    {% if wordbook.total > 0 %}
-    <section class="card" id="wordbookCard">
-      <h2>내 단어장 <small class="due-badge"><span id="wbRemaining">{{ wordbook.remaining }}</span>개 남음 / 전체 {{ wordbook.total }}개</small></h2>
-      <p class="hint">PDF 단어장에서 적재한 단어들입니다. 매일 조금씩 가져와 외우면 자동으로 복습 일정에 들어갑니다.</p>
-      <div class="wb-progress progress"><div id="wbBar" class="progress-fill" style="width: {{ (wordbook.added / wordbook.total * 100) | round(0) }}%"></div></div>
-      <div class="actions">
-        <label class="wb-count-label">한 번에
-          <select id="wbCount"><option>5</option><option selected>10</option><option>20</option></select>개
-        </label>
-        <button id="wbPullBtn" class="vocab-btn">새 단어 가져오기</button>
-      </div>
-      <p id="wbError" class="error hidden"></p>
-      <p id="wbDone" class="hint hidden">🎉 단어장의 모든 단어를 가져왔어요!</p>
-    </section>
-    {% endif %}
-
-    <!-- 단어 추가 -->
-    <section class="card">
-      <h2>오늘의 단어 추가</h2>
-      <p class="hint">단어를 입력하면 AI가 뜻·발음·예문을 정리해 저장합니다. 저장한 단어는 바로 복습 대상이 됩니다.</p>
-      <div class="inline-form">
-        <input type="text" id="wordInput" placeholder="예: persist" />
-        <button id="wordBtn" class="vocab-btn">단어 추가</button>
-      </div>
-      <p id="wordError" class="error hidden"></p>
-      <p id="wordFallback" class="fallback-note hidden">⚠️ AI 연결에 실패해서 준비된 예비 단어로 대체되었어요. 잠시 후 다시 시도해 보세요.</p>
-      <span id="wordLoading" class="loading hidden">AI가 단어를 정리 중...</span>
-
-      <div class="topic-row">
-        <span class="topic-label">추천 주제</span>
-        <button class="topic-chip active" data-topic="일상생활">일상생활</button>
-        <button class="topic-chip" data-topic="비즈니스">비즈니스</button>
-        <button class="topic-chip" data-topic="여행">여행</button>
-        <button class="topic-chip" data-topic="음식">음식</button>
-        <button class="topic-chip" data-topic="감정 표현">감정</button>
-        <button id="recommendBtn" class="ghost">AI 추천 받기</button>
-      </div>
-
-      <div id="recommendBox" class="recommend-box hidden">
-        <p class="hint">마음에 드는 단어를 눌러 오늘 학습에 담으세요.</p>
+      <div id="recommendBox" class="hidden">
+        <p class="hint" style="margin:8px 0">마음에 드는 단어를 눌러 오늘 학습에 담으세요.</p>
         <div id="recommendList" class="recommend-list"></div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- 오늘 외운 단어 -->
-    <section class="card">
-      <h2>오늘 외운 단어 <small id="todayCount" class="due-badge">{{ items.words|length }}개</small></h2>
-      <div id="wordList" class="item-list">
-        {% for w in items.words %}
-          <div class="word-item" data-word-id="{{ w.id }}">
-            <div class="word-head"><b>{{ w.word }}</b>
-              <span class="pron">{{ w.pronunciation }}</span>
-              <button class="speak-btn" data-text="{{ w.word }}" title="발음 듣기">🔊</button>
-              <button class="word-del" data-id="{{ w.id }}" title="단어 삭제">✕</button></div>
-            <div class="word-mean">{{ w.meaning }}</div>
-            {% if w.example %}<div class="word-ex">“{{ w.example }}”<br><span>{{ w.example_kr }}</span></div>{% endif %}
-          </div>
-        {% endfor %}
-      </div>
-      <p id="emptyHint" class="hint {% if items.words %}hidden{% endif %}">아직 오늘 외운 단어가 없어요. 위에서 첫 단어를 추가해 보세요!</p>
-    </section>
-  </main>
+  <!-- 내 단어장 -->
+  {% if wordbook.total > 0 %}
+  <section class="surface" id="wordbookCard">
+    <div class="surface-head">
+      <h2>내 단어장</h2>
+      <span class="meta tnum"><span id="wbRemaining" class="num">{{ wordbook.remaining }}</span>개 남음</span>
+    </div>
+    <p class="hint">PDF 에서 적재한 단어장입니다. 매일 조금씩 가져오면 복습 일정에 들어갑니다.</p>
+    <div class="meter"><div id="wbBar" class="meter-fill" style="width: {{ (wordbook.added / wordbook.total * 100) | round(0) }}%"></div></div>
+    <div class="meter-caption"><span>진행</span><span class="num"><span id="wbAdded">{{ wordbook.added }}</span> / {{ wordbook.total }}</span></div>
+    <div class="actions">
+      <label class="wb-count-label" for="wbCount">한 번에
+        <select id="wbCount"><option>5</option><option selected>10</option><option>20</option></select>개
+      </label>
+      <button type="button" id="wbPullBtn" class="primary">{{ icon("download") }}새 단어 가져오기</button>
+    </div>
+    <p id="wbError" class="error hidden" role="alert"></p>
+    <p id="wbDone" class="hint hidden" style="margin-top:12px">단어장의 모든 단어를 가져왔어요.</p>
+  </section>
+  {% endif %}
 
-  <script src="{{ url_for('static', filename='tts.js') }}"></script>
+  <!-- 오늘 외운 단어 -->
+  <h2 class="group-label">오늘 외운 단어 <span id="todayCount" class="num">{{ items.words|length }}</span></h2>
+  <section class="surface flush">
+    <ul id="wordList" class="rows">
+      {% for w in items.words %}{{ word_row(w, deletable=True) }}{% endfor %}
+    </ul>
+    <div id="emptyHint" class="empty {% if items.words %}hidden{% endif %}">
+      {{ icon("book") }}
+      <b>아직 오늘 외운 단어가 없어요</b>
+      위에서 단어를 입력하거나 주제별 AI 추천을 받아 보세요.
+    </div>
+  </section>
+{% endblock %}
+
+{% block scripts %}
   <script src="{{ url_for('static', filename='vocab.js') }}"></script>
-</body>
-</html>
+{% endblock %}

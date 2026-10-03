@@ -1,68 +1,50 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>복습 — English World</title>
-  <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}" />
-  <meta name="theme-color" content="#0f172a" />
-  <link rel="icon" type="image/png" href="{{ url_for('static', filename='icons/icon-192.png') }}" />
-  <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/icon-192.png') }}" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
-</head>
-<body>
-  <header class="topbar">
-    <a class="brand" href="/"><span class="brand-mark">E</span>English World</a>
-    <nav>
-      <a href="/">홈</a>
-      <a href="/vocab">단어</a>
-      <a href="/toeic">TOEIC</a>
-      <a href="/opic">OPIC</a>
-      <a href="/talk">회화</a>
-      <a href="/history">기록</a>
-      <a href="/review" class="active">복습</a>
-      <a href="/quiz">퀴즈</a>
-    </nav>
-  </header>
+{% extends "base.html" %}
+{% from "_macros.html" import icon, page_head %}
+{% block title %}플래시카드 — English World{% endblock %}
 
-  <main class="container">
-    <section class="card">
-      <h2>🃏 플래시카드 복습</h2>
-      <p class="hint">한글 뜻을 보고 영어를 떠올린 뒤, 카드를 눌러 정답을 확인하세요.</p>
+{% block content %}
+  {{ page_head("layers", "복습", "플래시카드", "한글 뜻을 보고 영어를 떠올린 뒤, 카드를 눌러 정답을 확인하세요.") }}
 
-      <div class="review-tabs">
-        <button class="tab active" data-kind="words">단어</button>
-        <button class="tab" data-kind="sentences">문장</button>
-      </div>
+  <div class="segmented" role="tablist" aria-label="카드 종류" style="margin-bottom:16px">
+    <button type="button" class="tab active" data-kind="words" role="tab" aria-selected="true">단어</button>
+    <button type="button" class="tab" data-kind="sentences" role="tab" aria-selected="false">문장</button>
+  </div>
 
-      <div id="reviewArea">
-        <div id="emptyMsg" class="hint hidden">아직 복습할 항목이 없습니다. <a href="/">학습하러 가기 →</a></div>
+  <div id="reviewArea">
+    <div id="reviewLoading" class="surface skeleton" aria-label="불러오는 중">
+      <div class="row"><div class="bar"></div><div class="bar short"></div></div>
+      <div class="row"><div class="bar"></div><div class="bar short"></div></div>
+    </div>
 
-        <div id="card" class="flashcard hidden">
-          <div class="flashcard-inner">
-            <div class="flash-front" id="flashFront"></div>
-            <div class="flash-back hidden" id="flashBack">
-              <div class="flash-answer">
-                <span id="flashAnswer"></span>
-                <button class="speak-btn" id="flashSpeak" data-text="" title="발음 듣기">🔊</button>
-              </div>
-              <div class="flash-extra" id="flashExtra"></div>
-            </div>
+    <div id="emptyMsg" class="surface empty hidden">
+      {{ icon("layers") }}
+      <b>아직 복습할 카드가 없어요</b>
+      단어나 문장을 학습하면 여기에 카드로 쌓입니다.
+      <div class="actions"><a class="btn primary" href="/vocab">학습하러 가기 {{ icon("arrow-right") }}</a></div>
+    </div>
+
+    <div id="card" class="flashcard hidden">
+      <div class="flashcard-inner" role="button" tabindex="0" aria-label="카드 뒤집기">
+        <div class="flash-front" id="flashFront"></div>
+        <div class="flash-back hidden" id="flashBack">
+          <div class="flash-answer">
+            <span id="flashAnswer"></span>
+            <button type="button" class="icon-btn speak-btn" id="flashSpeak" data-text="" title="발음 듣기" aria-label="발음 듣기">{{ icon("volume") }}</button>
           </div>
-          <p class="flash-tip" id="flashTip">카드를 클릭하면 정답이 보여요</p>
-        </div>
-
-        <div id="controls" class="review-controls hidden">
-          <button id="prevBtn" class="ghost">← 이전</button>
-          <span id="progress" class="review-progress">1 / 1</span>
-          <button id="nextBtn">다음 →</button>
+          <div class="flash-extra" id="flashExtra"></div>
         </div>
       </div>
-    </section>
-  </main>
+      <p class="flash-tip" id="flashTip">카드를 누르거나 <kbd>Space</kbd> 로 정답 보기 · <kbd>←</kbd> <kbd>→</kbd> 이동</p>
+    </div>
 
-  <script src="{{ url_for('static', filename='tts.js') }}"></script>
+    <div id="controls" class="review-controls hidden">
+      <button type="button" id="prevBtn">{{ icon("arrow-left") }}이전</button>
+      <span id="progress" class="review-progress num">1 / 1</span>
+      <button type="button" id="nextBtn" class="primary">다음 {{ icon("arrow-right") }}</button>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
   <script src="{{ url_for('static', filename='review.js') }}"></script>
-</body>
-</html>
+{% endblock %}

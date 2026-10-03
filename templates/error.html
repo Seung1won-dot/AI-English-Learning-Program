@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% from "_macros.html" import icon %}
+{% block title %}{{ code }} — English World{% endblock %}
+
+{% block content %}
+  <section class="error-page">
+    <div class="code">{{ code }}</div>
+    <h1>{% if code == 404 %}페이지를 찾을 수 없어요{% else %}문제가 생겼어요{% endif %}</h1>
+    <p>{{ message }}</p>
+    <a class="btn primary" href="/">{{ icon("home") }}홈으로</a>
+  </section>
+{% endblock %}

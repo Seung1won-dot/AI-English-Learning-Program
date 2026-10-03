@@ -1,0 +1,44 @@
+{# 공용 매크로 — 아이콘 / AI 상태 / 단어 행 / 페이지 머리 #}
+
+{% macro icon(name, cls="") -%}
+<svg class="ic {{ cls }}" aria-hidden="true" viewBox="0 0 24 24"><use href="#i-{{ name }}"/></svg>
+{%- endmacro %}
+
+{% macro speak(text, label="발음 듣기") -%}
+<button type="button" class="icon-btn speak-btn" data-text="{{ text }}" title="{{ label }}" aria-label="{{ label }}">{{ icon("volume") }}</button>
+{%- endmacro %}
+
+{% macro ai_status(using_real_ai, provider_label) -%}
+{% if using_real_ai %}
+  <span class="status live" title="실제 AI 가 답합니다"><span class="dot"></span>{{ provider_label }} 연결됨</span>
+{% else %}
+  <span class="status mock" title=".env 에 GROQ_API_KEY(무료) 를 넣으면 실제 AI 로 전환됩니다"><span class="dot"></span>목업 모드 · .env 에 GROQ_API_KEY 를 넣으면 실제 AI</span>
+{% endif %}
+{%- endmacro %}
+
+{% macro score_class(score) -%}
+{% if score >= 80 %}good{% elif score >= 60 %}mid{% else %}low{% endif %}
+{%- endmacro %}
+
+{% macro word_row(w, deletable=False) -%}
+<li class="row word-item" data-word-id="{{ w.id }}">
+  <div class="row-body">
+    <div class="row-title"><b>{{ w.word }}</b><span class="pron">{{ w.pronunciation }}</span></div>
+    <div class="row-text">{{ w.meaning }}</div>
+    {% if w.example %}<div class="row-sub">“{{ w.example }}”<span>{{ w.example_kr }}</span></div>{% endif %}
+  </div>
+  <div class="row-actions">
+    {{ speak(w.word) }}
+    {% if deletable %}<button type="button" class="icon-btn danger word-del" data-id="{{ w.id }}" title="단어 삭제" aria-label="단어 삭제">{{ icon("trash") }}</button>{% endif %}
+  </div>
+</li>
+{%- endmacro %}
+
+{% macro page_head(eyebrow_icon, eyebrow, title, desc, using_real_ai=None, provider_label="") -%}
+<header class="page-head">
+  <div class="eyebrow">{{ icon(eyebrow_icon) }}{{ eyebrow }}</div>
+  <h1>{{ title }}</h1>
+  <p>{{ desc }}</p>
+  {% if using_real_ai is not none %}<div style="margin-top:12px">{{ ai_status(using_real_ai, provider_label) }}</div>{% endif %}
+</header>
+{%- endmacro %}

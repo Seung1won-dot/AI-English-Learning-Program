@@ -1,95 +1,72 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>학습 기록 — English World</title>
-  <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}" />
-  <meta name="theme-color" content="#0f172a" />
-  <link rel="icon" type="image/png" href="{{ url_for('static', filename='icons/icon-192.png') }}" />
-  <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/icon-192.png') }}" />
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" />
-  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" />
-</head>
-<body>
-  <header class="topbar">
-    <a class="brand" href="/"><span class="brand-mark">E</span>English World</a>
-    <nav>
-      <a href="/">홈</a>
-      <a href="/vocab">단어</a>
-      <a href="/toeic">TOEIC</a>
-      <a href="/opic">OPIC</a>
-      <a href="/talk">회화</a>
-      <a href="/history" class="active">기록</a>
-      <a href="/review">복습</a>
-      <a href="/quiz">퀴즈</a>
-    </nav>
-  </header>
+{% extends "base.html" %}
+{% from "_macros.html" import icon, speak, page_head, score_class %}
+{% block title %}학습 기록 — English World{% endblock %}
 
-  <main class="container">
-    <section class="stats-grid">
-      <div class="stat-box"><span class="stat-num">{{ stats.total_words }}</span><span class="stat-label">외운 단어</span></div>
-      <div class="stat-box"><span class="stat-num">{{ stats.total_sentences }}</span><span class="stat-label">공부한 문장</span></div>
-      <div class="stat-box"><span class="stat-num">{{ stats.total_opic }}</span><span class="stat-label">오픽 답변</span></div>
-      <div class="stat-box"><span class="stat-num">{{ stats.total_toeic }}</span><span class="stat-label">토익 문제</span></div>
-      <div class="stat-box"><span class="stat-num">{{ stats.total_days }}</span><span class="stat-label">학습한 날</span></div>
-      <div class="stat-box"><span class="stat-num">🔥 {{ stats.streak }}</span><span class="stat-label">연속 학습일</span></div>
-    </section>
+{% block content %}
+  {% set MODE_LABEL = {'toeic':'TOEIC','opic':'OPIC','talk':'회화','vocab':'단어'} %}
+  {{ page_head("chart", "기록", "학습 기록", "날짜별로 무엇을 공부했는지 모아 봅니다. 오타나 중복 단어는 여기서 지울 수 있어요.") }}
 
-    <h2 class="section-title">날짜별 기록</h2>
+  <section class="stat-strip six" aria-label="전체 통계">
+    <div class="stat-cell"><span class="label">{{ icon("book") }}외운 단어</span><span class="stat-value">{{ stats.total_words }}</span></div>
+    <div class="stat-cell"><span class="label">{{ icon("chat") }}공부한 문장</span><span class="stat-value">{{ stats.total_sentences }}</span></div>
+    <div class="stat-cell"><span class="label">{{ icon("mic") }}오픽 답변</span><span class="stat-value">{{ stats.total_opic }}</span></div>
+    <div class="stat-cell"><span class="label">{{ icon("pen") }}토익 문제</span><span class="stat-value">{{ stats.total_toeic }}</span></div>
+    <div class="stat-cell"><span class="label">{{ icon("calendar") }}학습한 날</span><span class="stat-value">{{ stats.total_days }}<small>일</small></span></div>
+    <div class="stat-cell"><span class="label">{{ icon("flame") }}연속 학습</span><span class="stat-value">{{ stats.streak }}<small>일</small></span></div>
+  </section>
 
-    {% if history %}
-      <!-- 모드 필터 -->
-      <div class="mode-filter">
-        <button class="mode-filter-tab active" data-mode="all">전체</button>
-        <button class="mode-filter-tab f-vocab" data-mode="vocab">📖 단어</button>
-        <button class="mode-filter-tab f-toeic" data-mode="toeic">📘 TOEIC</button>
-        <button class="mode-filter-tab f-opic" data-mode="opic">🎤 OPIC</button>
-        <button class="mode-filter-tab f-talk" data-mode="talk">💬 회화</button>
-      </div>
+  {% if history %}
+    <h2 class="group-label">날짜별 기록</h2>
 
-      <!-- 날짜 선택 필터 -->
-      <section class="filter-bar">
-        <div class="filter-row">
-          <label for="datePicker">📅 날짜 선택</label>
-          <input type="date" id="datePicker"
-                 min="{{ history[-1].date }}" max="{{ history[0].date }}" />
-          <button id="clearDate" class="ghost">전체 보기</button>
-        </div>
-        <div class="date-chips">
-          {% for day in history %}
-            <button class="date-chip" data-date="{{ day.date }}">
-              {{ day.date[5:] }}
-              <small>{{ day.words|length + day.sentences|length + day.opic|length + day.toeic|length }}개 학습</small>
-            </button>
-          {% endfor %}
-        </div>
-        <p id="noRecord" class="hint hidden">선택한 조건에는 학습 기록이 없습니다.</p>
-      </section>
+    <div class="chip-row" role="radiogroup" aria-label="모드 필터">
+      <button type="button" class="chip mode-filter-tab active" data-mode="all" aria-pressed="true">전체</button>
+      <button type="button" class="chip mode-filter-tab" data-mode="vocab">단어</button>
+      <button type="button" class="chip mode-filter-tab" data-mode="toeic">TOEIC</button>
+      <button type="button" class="chip mode-filter-tab" data-mode="opic">OPIC</button>
+      <button type="button" class="chip mode-filter-tab" data-mode="talk">회화</button>
+    </div>
 
+    <div class="filter-row">
+      <label for="datePicker">날짜</label>
+      <input type="date" id="datePicker" min="{{ history[-1].date }}" max="{{ history[0].date }}" />
+      <button type="button" id="clearDate">전체 날짜</button>
+    </div>
+    <div class="date-chips">
       {% for day in history %}
-        <section class="card day-card" data-date="{{ day.date }}">
-          <div class="day-head">
-            <h3>{{ day.date }}</h3>
-            <span class="day-meta">
-              단어 {{ day.words|length }} · 문장 {{ day.sentences|length }}
-              · 오픽 {{ day.opic|length }} · 토익문제 {{ day.toeic|length }}
-            </span>
-          </div>
+        <button type="button" class="date-chip" data-date="{{ day.date }}">
+          <b>{{ day.date[5:] }}</b>
+          <small class="tnum">{{ day.words|length + day.sentences|length + day.opic|length + day.toeic|length }}개</small>
+        </button>
+      {% endfor %}
+    </div>
+    <div id="noRecord" class="surface empty hidden">
+      {{ icon("calendar") }}
+      <b>선택한 조건의 기록이 없어요</b>
+      다른 날짜나 모드를 골라 보세요.
+    </div>
 
+    {% for day in history %}
+      <section class="day day-card" data-date="{{ day.date }}">
+        <div class="day-head">
+          <h2>{{ day.date }}</h2>
+          <span class="day-meta tnum">단어 {{ day.words|length }} · 문장 {{ day.sentences|length }} · 오픽 {{ day.opic|length }} · 토익 {{ day.toeic|length }}</span>
+        </div>
+        <div class="surface">
           {% if day.words %}
-            <div class="day-block" data-modes="{{ day.words|map(attribute='mode')|unique|join(',') }}">
-              <h4>📖 단어</h4>
-              <ul class="day-words">
+            <div class="day-block">
+              <h3>{{ icon("book") }}단어</h3>
+              <ul class="rows">
                 {% for w in day.words %}
-                  <li class="mode-item" data-mode="{{ w.mode }}" data-word-id="{{ w.id }}">
-                    <span class="mode-tag {{ w.mode }}">{{ {'toeic':'TOEIC','opic':'OPIC','talk':'회화','vocab':'단어'}[w.mode] }}</span>
-                    <b>{{ w.word }}</b>
-                    {% if w.pronunciation %}<span class="pron">{{ w.pronunciation }}</span>{% endif %}
-                    <button class="speak-btn" data-text="{{ w.word }}" title="발음 듣기">🔊</button>
-                    <button class="word-del" data-id="{{ w.id }}" title="단어 삭제 (오타·중복 정리)">✕</button>
-                    <span class="dash">—</span> {{ w.meaning }}
-                    {% if w.example %}<div class="mini-ex">“{{ w.example }}” <span>{{ w.example_kr }}</span></div>{% endif %}
+                  <li class="row mode-item" data-mode="{{ w.mode }}" data-word-id="{{ w.id }}">
+                    <div class="row-body">
+                      <div class="row-title"><b>{{ w.word }}</b>{% if w.pronunciation %}<span class="pron">{{ w.pronunciation }}</span>{% endif %}<span class="tag">{{ MODE_LABEL[w.mode] }}</span></div>
+                      <div class="row-text">{{ w.meaning }}</div>
+                      {% if w.example %}<div class="row-sub">“{{ w.example }}”<span>{{ w.example_kr }}</span></div>{% endif %}
+                    </div>
+                    <div class="row-actions">
+                      {{ speak(w.word) }}
+                      <button type="button" class="icon-btn danger word-del" data-id="{{ w.id }}" title="단어 삭제 (오타·중복 정리)" aria-label="단어 삭제">{{ icon("trash") }}</button>
+                    </div>
                   </li>
                 {% endfor %}
               </ul>
@@ -98,15 +75,15 @@
 
           {% if day.sentences %}
             <div class="day-block">
-              <h4>💬 문장</h4>
-              <ul class="day-sents">
+              <h3>{{ icon("chat") }}문장</h3>
+              <ul class="rows">
                 {% for s in day.sentences %}
-                  <li class="mode-item" data-mode="{{ s.mode }}">
-                    <span class="mode-tag {{ s.mode }}">{{ {'toeic':'TOEIC','opic':'OPIC','talk':'회화','vocab':'단어'}[s.mode] }}</span>
-                    <span class="score-pill {% if s.score >= 80 %}good{% elif s.score >= 60 %}mid{% else %}low{% endif %}">{{ s.score }}</span>
-                    <span class="corrected">{{ s.corrected }}</span>
-                    <button class="speak-btn" data-text="{{ s.corrected }}" title="발음 듣기">🔊</button>
-                    {% if s.meaning %}<div class="mini-mean">🇰🇷 {{ s.meaning }}</div>{% endif %}
+                  <li class="row mode-item" data-mode="{{ s.mode }}">
+                    <div class="row-body">
+                      <div class="row-title"><span class="score-pill {{ score_class(s.score) }}">{{ s.score }}</span><span class="corrected">{{ s.corrected }}</span><span class="tag">{{ MODE_LABEL[s.mode] }}</span></div>
+                      {% if s.meaning %}<div class="row-sub">{{ s.meaning }}</div>{% endif %}
+                    </div>
+                    <div class="row-actions">{{ speak(s.corrected) }}</div>
                   </li>
                 {% endfor %}
               </ul>
@@ -115,17 +92,17 @@
 
           {% if day.opic %}
             <div class="day-block">
-              <h4>🎤 오픽 답변 연습</h4>
-              <ul class="day-words">
+              <h3>{{ icon("mic") }}오픽 답변</h3>
+              <ul class="rows">
                 {% for o in day.opic %}
-                  <li class="mode-item day-opic-item" data-mode="opic">
-                    <span class="mode-tag opic">OPIC</span>
-                    {% if o.topic %}<b>[{{ o.topic }}]</b>{% endif %}
-                    <span class="score-pill {% if o.score >= 80 %}good{% elif o.score >= 60 %}mid{% else %}low{% endif %}">{{ o.score }}</span>
-                    <div class="q">Q. {{ o.question }}</div>
-                    <div>🗣 {{ o.corrected or o.answer }}
-                      <button class="speak-btn" data-text="{{ o.corrected or o.answer }}" title="듣기">🔊</button></div>
-                    {% if o.model_answer %}<div class="mini-ex">🌟 모범답변: {{ o.model_answer }}</div>{% endif %}
+                  <li class="row mode-item" data-mode="opic">
+                    <div class="row-body">
+                      <div class="row-title"><span class="score-pill {{ score_class(o.score) }}">{{ o.score }}</span>{% if o.topic %}<span class="tag">{{ o.topic }}</span>{% endif %}</div>
+                      <div class="row-sub">Q. {{ o.question }}</div>
+                      <div class="row-text" style="margin-top:6px">{{ o.corrected or o.answer }}</div>
+                      {% if o.model_answer %}<div class="row-sub">모범답변 · {{ o.model_answer }}</div>{% endif %}
+                    </div>
+                    <div class="row-actions">{{ speak(o.corrected or o.answer, "듣기") }}</div>
                   </li>
                 {% endfor %}
               </ul>
@@ -134,31 +111,34 @@
 
           {% if day.toeic %}
             <div class="day-block">
-              <h4>✏️ 토익 Part 5</h4>
-              <ul class="day-words">
+              <h3>{{ icon("pen") }}토익 Part 5</h3>
+              <ul class="rows">
                 {% for t in day.toeic %}
-                  <li class="mode-item day-toeic-item" data-mode="toeic">
-                    <span class="mode-tag toeic">TOEIC</span>
-                    {% if t.is_correct %}<span class="verdict-ok">⭕ 정답</span>{% else %}<span class="verdict-no">❌ 오답</span>{% endif %}
-                    <div class="q">{{ t.question }}</div>
-                    <div>정답: <b>{{ t.choices[t.correct_answer] }}</b>
-                      {% if not t.is_correct %} · 내 답: {{ t.choices[t.my_answer] }}{% endif %}</div>
-                    {% if t.explanation %}<div class="mini-ex">{{ t.explanation }}</div>{% endif %}
+                  <li class="row mode-item" data-mode="toeic">
+                    <div class="row-body">
+                      <div class="row-title">{% if t.is_correct %}<span class="verdict-ok">정답</span>{% else %}<span class="verdict-no">오답</span>{% endif %}</div>
+                      <div class="row-text">{{ t.question }}</div>
+                      <div class="row-sub">정답 <b>{{ t.choices[t.correct_answer] }}</b>{% if not t.is_correct %} · 내 답 {{ t.choices[t.my_answer] }}{% endif %}</div>
+                      {% if t.explanation %}<div class="row-sub">{{ t.explanation }}</div>{% endif %}
+                    </div>
                   </li>
                 {% endfor %}
               </ul>
             </div>
           {% endif %}
-        </section>
-      {% endfor %}
-    {% else %}
-      <section class="card">
-        <p class="hint">아직 학습 기록이 없습니다. <a href="/">오늘 학습 시작하기 →</a></p>
+        </div>
       </section>
-    {% endif %}
-  </main>
+    {% endfor %}
+  {% else %}
+    <section class="surface empty" style="margin-top:24px">
+      {{ icon("calendar") }}
+      <b>아직 학습 기록이 없어요</b>
+      오늘 첫 단어를 외우면 여기에 날짜별로 쌓입니다.
+      <div class="actions"><a class="btn primary" href="/">학습 시작하기 {{ icon("arrow-right") }}</a></div>
+    </section>
+  {% endif %}
+{% endblock %}
 
-  <script src="{{ url_for('static', filename='tts.js') }}"></script>
+{% block scripts %}
   <script src="{{ url_for('static', filename='history.js') }}"></script>
-</body>
-</html>
+{% endblock %}
