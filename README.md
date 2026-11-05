@@ -50,7 +50,7 @@ TOEIC · OPIC · 영어 회화 · 단어 암기 중 학습 목적에 맞는 모�
 
 - **발음 듣기** — 단어·문장·정답·AI 답변 옆 스피커 버튼으로 원어민 발음 재생 (브라우저 음성합성, 무료)
 - **중복 방지** — 같은 단어는 다시 저장되지 않고 안내가 나옵니다
-- **AI 키가 없어도 동작** — 규칙기반 목업으로 돌아가고, 무료 Groq 키를 넣으면 실제 AI로 자동 전환됩니다 → [무료AI설정.md](무료AI설정.md)
+- **AI 키가 없어도 동작** — 규칙기반 목업으로 돌아가고, 무료 Groq 키를 넣으면 실제 AI로 자동 전환됩니다 → [무료AI설정.md](docs/무료AI설정.md)
 - **폰에서도 사용** — 같은 와이파이에서 접속하고, "홈 화면에 추가"로 앱처럼 설치(PWA)
 - **단축키** — 퀴즈·Part 5는 `1`~`4` 선택 / `Enter` 다음, 플래시카드는 `Space` 뒤집기 / `←` `→` 이동, 문장 첨삭은 `Ctrl`+`Enter` 제출
 
@@ -58,7 +58,7 @@ TOEIC · OPIC · 영어 회화 · 단어 암기 중 학습 목적에 맞는 모�
 
 ### 사전 요구사항
 
-- Python 3 (Docker 이미지는 Python 3.11 기준)
+- Python 3.9 이상 (Docker 이미지는 Python 3.11 기준)
 - (선택) AI 키 — `.env.example` 을 `.env` 로 복사해 `GROQ_API_KEY`(무료) 또는 `OPENAI_API_KEY` 하나만 채웁니다. 비워 두면 목업 모드로 동작합니다.
 
 ### 가장 쉬운 방법 (Windows)
@@ -68,6 +68,7 @@ TOEIC · OPIC · 영어 회화 · 단어 암기 중 학습 목적에 맞는 모�
 ### 터미널로 실행
 
 ```bash
+python3 -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
@@ -75,7 +76,7 @@ pip install -r requirements.txt
 python app.py
 ```
 
-브라우저에서 http://127.0.0.1:5000 으로 접속합니다. 자세한 단계는 [실행가이드.md](실행가이드.md)에 있습니다.
+브라우저에서 http://127.0.0.1:5000 으로 접속합니다. 포트는 `PORT`, 같은 와이파이 공개는 `HOST=0.0.0.0` 으로 바꿉니다. 자세한 단계는 [실행가이드.md](docs/실행가이드.md)에 있습니다.
 
 ### PDF 단어장 적재 (선택)
 
@@ -92,8 +93,14 @@ python scripts/import_wordbook.py "내단어장.pdf"
 ### 테스트
 
 ```bash
-python -m pytest
+python -m pytest -q
 ```
+
+AI 키 없이 목업 모드 + 임시 DB 로 DB 계층과 전체 API 를 검증합니다.
+
+### 배포
+
+`Procfile`(gunicorn)과 `Dockerfile` 이 준비되어 있습니다. 공개 서버라면 `APP_PASSWORD`·`SECRET_KEY` 를 꼭 설정하고, `DB_PATH` 를 영구 디스크로 지정하세요. 환경변수 목록과 플랫폼별 방법은 [docs/배포.md](docs/배포.md)에 있습니다.
 
 ## 프로젝트 구조
 
@@ -106,7 +113,7 @@ AI-English-Learning-Program/
 ├─ static/            style.css · common.js(공통 유틸) + 페이지별 JS · PWA manifest
 ├─ scripts/           import_wordbook.py (PDF 단어장 적재)
 ├─ tests/             pytest (DB / API 검증)
-├─ docs/              상세 문서 + 스크린샷
+├─ docs/              실행가이드 · 무료AI설정 · 배포 · 프로젝트설명 · 기술 선택(text.MD) · API/DB · 스크린샷
 ├─ DESIGN.md          디자인 시스템 (색·글꼴·컴포넌트 규칙)
 ├─ Procfile · Dockerfile  배포 설정
 └─ 시작하기.bat        Windows 더블클릭 실행
@@ -114,10 +121,10 @@ AI-English-Learning-Program/
 
 ## 더 읽을거리
 
-- [프로젝트설명.md](프로젝트설명.md) — 프로젝트 구조, 동작 원리, 학습 루틴
-- [text.MD](text.MD) — 기술 선택 이유
-- [실행가이드.md](실행가이드.md) — 처음 실행하는 사람을 위한 단계별 안내
-- [무료AI설정.md](무료AI설정.md) — 무료 Groq 키 설정
+- [docs/프로젝트설명.md](docs/프로젝트설명.md) — 프로젝트 구조, 동작 원리, 학습 루틴
+- [docs/text.MD](docs/text.MD) — 기술 선택 이유
+- [docs/실행가이드.md](docs/실행가이드.md) — 처음 실행하는 사람을 위한 단계별 안내
+- [docs/무료AI설정.md](docs/무료AI설정.md) — 무료 Groq 키 설정
 - [docs/배포.md](docs/배포.md) — 환경변수, Render/Railway, Docker 배포
 - [docs/API_및_DB.md](docs/API_및_DB.md) — 페이지·API 목록과 DB 스키마
 - [docs/트러블슈팅.md](docs/트러블슈팅.md) — "학습 기록이 가끔 사라지던 문제" 해결 기록 (commit 누락, WAL 모드, 에러 처리)

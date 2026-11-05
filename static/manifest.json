@@ -1,8 +1,10 @@
 {
   "name": "English World — AI 영어 학습",
   "short_name": "English World",
-  "description": "TOEIC · OPIC · 회화 모드로 공부하고 간격 반복으로 복습하는 개인 영어 학습 앱",
+  "description": "단어 암기 · TOEIC · OPIC · 회화 모드로 공부하고 간격 반복으로 복습하는 개인 영어 학습 앱",
   "start_url": "/",
+  "scope": "/",
+  "lang": "ko",
   "display": "standalone",
   "background_color": "#f5f2eb",
   "theme_color": "#f5f2eb",
@@ -15,7 +17,8 @@
     {
       "src": "/static/icons/icon-512.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any"
     }
   ]
 }

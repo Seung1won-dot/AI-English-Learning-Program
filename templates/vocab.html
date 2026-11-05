@@ -19,7 +19,7 @@
     <p class="hint">모르는 단어를 입력하세요. 저장하면 바로 복습 대상이 됩니다.</p>
     <div class="inline-form">
       <label class="sr-only" for="wordInput">영어 단어</label>
-      <input type="text" id="wordInput" placeholder="예: persist" autocomplete="off" />
+      <input type="text" id="wordInput" maxlength="60" placeholder="예: persist" autocomplete="off" />
       <button type="button" id="wordBtn" class="primary">{{ icon("plus") }}단어 추가</button>
     </div>
     <p id="wordError" class="error hidden" role="alert"></p>
@@ -27,13 +27,13 @@
     <span id="wordLoading" class="loading hidden" style="margin-top:12px">AI 가 단어를 정리하는 중</span>
 
     <div class="recommend-box">
-      <div class="chip-row" role="radiogroup" aria-label="추천 주제" style="margin-bottom:8px">
+      <div class="chip-row" role="group" aria-label="추천 주제" style="margin-bottom:8px">
         <span class="label">추천 주제</span>
         <button type="button" class="chip topic-chip active" data-topic="일상생활" aria-pressed="true">일상생활</button>
-        <button type="button" class="chip topic-chip" data-topic="비즈니스">비즈니스</button>
-        <button type="button" class="chip topic-chip" data-topic="여행">여행</button>
-        <button type="button" class="chip topic-chip" data-topic="음식">음식</button>
-        <button type="button" class="chip topic-chip" data-topic="감정 표현">감정</button>
+        <button type="button" class="chip topic-chip" data-topic="비즈니스" aria-pressed="false">비즈니스</button>
+        <button type="button" class="chip topic-chip" data-topic="여행" aria-pressed="false">여행</button>
+        <button type="button" class="chip topic-chip" data-topic="음식" aria-pressed="false">음식</button>
+        <button type="button" class="chip topic-chip" data-topic="감정 표현" aria-pressed="false">감정</button>
         <button type="button" id="recommendBtn" class="push">{{ icon("sparkles") }}AI 추천 받기</button>
       </div>
       <div id="recommendBox" class="hidden">

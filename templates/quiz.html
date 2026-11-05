@@ -7,9 +7,9 @@
 
   <section class="surface">
     <div class="surface-head">
-      <div class="segmented" role="radiogroup" aria-label="문제 형식">
-        <button type="button" id="modeChoice" class="quiz-mode-btn active">객관식</button>
-        <button type="button" id="modeTyping" class="quiz-mode-btn">주관식</button>
+      <div class="segmented" role="group" aria-label="문제 형식">
+        <button type="button" id="modeChoice" class="quiz-mode-btn active" aria-pressed="true">객관식</button>
+        <button type="button" id="modeTyping" class="quiz-mode-btn" aria-pressed="false">주관식</button>
       </div>
       <span class="meta">오늘 복습 <span class="num" id="dueCount">{{ due_count }}</span>개</span>
     </div>

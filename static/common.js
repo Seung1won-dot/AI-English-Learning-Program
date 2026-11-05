@@ -1,21 +1,31 @@
 // common.js — 모든 화면이 함께 쓰는 유틸 (API 호출 · 표시 · 아이콘 · 토스트 · 테마)
 
-async function postJSON(url, payload) {
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
+// 네트워크가 끊겼을 때 브라우저 기본 영어 메시지("Failed to fetch") 대신 한국어로 안내한다
+async function request(url, options, fallbackMsg) {
+  let res;
+  try {
+    res = await fetch(url, options);
+  } catch (e) {
+    throw new Error("서버에 연결하지 못했어요. 인터넷 연결이나 서버 상태를 확인해 주세요.");
+  }
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || "오류가 발생했습니다.");
+  if (!res.ok) {
+    if (res.status === 401) throw new Error("비밀번호 확인이 필요해요. 페이지를 새로고침해 주세요.");
+    throw new Error(data.error || fallbackMsg);
+  }
   return data;
 }
 
-async function getJSON(url) {
-  const res = await fetch(url);
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || "불러오지 못했습니다.");
-  return data;
+function postJSON(url, payload) {
+  return request(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  }, "오류가 발생했습니다.");
+}
+
+function getJSON(url) {
+  return request(url, undefined, "불러오지 못했습니다.");
 }
 
 function show(el, on = true) { if (el) el.classList.toggle("hidden", !on); }

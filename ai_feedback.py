@@ -70,13 +70,24 @@ def current_provider_label():
     return {"groq": "Groq (무료 AI)", "openai": "OpenAI"}.get(name)
 
 
+# AI 응답이 늦어도 서버 작업자(gunicorn --timeout 60)가 막히지 않도록 짧게 끊고 목업으로 넘어간다.
+AI_TIMEOUT_SECONDS = float(os.getenv("AI_TIMEOUT_SECONDS", "25"))
+
+
+def _client(api_key, base_url):
+    kwargs = {"api_key": api_key, "timeout": AI_TIMEOUT_SECONDS, "max_retries": 1}
+    if base_url:
+        kwargs["base_url"] = base_url
+    return OpenAI(**kwargs)
+
+
 def _chat_json(system_prompt, user_content):
     """AI 에 JSON 응답을 요청해 dict 로 반환. 키가 없으면 RuntimeError."""
     name, api_key, base_url, model = _select_provider()
     if name is None:
         raise RuntimeError("AI 키가 설정되어 있지 않습니다.")
 
-    client = OpenAI(api_key=api_key, base_url=base_url) if base_url else OpenAI(api_key=api_key)
+    client = _client(api_key, base_url)
     resp = client.chat.completions.create(
         model=model,
         messages=[
@@ -413,7 +424,7 @@ def chat_reply(history, topic=""):
                 messages.append({"role": role, "content": str(m.get("content", ""))})
 
             name, api_key, base_url, model = _select_provider()
-            client = OpenAI(api_key=api_key, base_url=base_url) if base_url else OpenAI(api_key=api_key)
+            client = _client(api_key, base_url)
             resp = client.chat.completions.create(
                 model=model,
                 messages=messages,
@@ -426,8 +437,20 @@ def chat_reply(history, topic=""):
     return _chat_mock(history, topic)
 
 
+_CHAT_MOCK_GREETINGS = {
+    "ordering food at a cafe": "Hi, welcome to our cafe! What would you like to order today?",
+    "traveling and asking directions": "Hello! You look a little lost. Where are you trying to go?",
+    "a job interview": "Nice to meet you. Could you start by telling me a little about yourself?",
+    "small talk about hobbies": "Hey! What do you usually do in your free time?",
+}
+
+
 def _chat_mock(history, topic):
     last = history[-1]["content"] if history else ""
+    # 화면이 대화를 열 때 보내는 시작 신호 — 그대로 따라 말하지 않고 인사로 시작한다
+    if last.startswith("(Start the conversation"):
+        greeting = _CHAT_MOCK_GREETINGS.get(topic, "Hi! How is your day going so far?")
+        return f"(목업 모드 — AI 키를 넣으면 실제 대화가 됩니다) {greeting}"
     return (
         f"(목업 모드 — AI 키를 넣으면 실제 대화가 됩니다) "
         f"Nice! You said: \"{last}\". Can you tell me more?"
@@ -456,7 +479,7 @@ def _feedback_mock(sentence):
         corrected = new_corrected
         score -= 8
     if not notes:
-        notes.append("문법과 표현이 자연스러워요. 좋아요! 👍")
+        notes.append("문법과 표현이 자연스러워요. 좋아요!")
 
     return {
         "corrected": corrected,

@@ -2,7 +2,8 @@
 app.py — Flask 서버 진입점
 
 화면
-  GET  /          : 홈 — 학습 모드 선택 (TOEIC / OPIC / 회화) + 오늘 요약
+  GET  /          : 홈 — 학습 모드 선택 (단어 / TOEIC / OPIC / 회화) + 오늘 요약
+  GET  /vocab     : 단어 암기 모드 (단어 추가·추천 + 내 단어장)
   GET  /toeic     : TOEIC 모드 (빈출 단어 + Part 5 문제)
   GET  /opic      : OPIC 모드 (질문 → 타이핑/음성 답변 → AI 첨삭)
   GET  /talk      : 회화 모드 (단어 외우기 + 문장 첨삭 + AI 챗봇)
@@ -12,11 +13,14 @@ app.py — Flask 서버 진입점
 
 API (JSON)
   POST /api/word            : 단어 분석 + 저장 (mode 태그)
+  DELETE /api/word/<id>     : 단어 삭제
+  POST /api/wordbook/pull   : 내 단어장에서 새 단어 N개 가져오기
   POST /api/recommend-words : 오늘의 추천 단어 (저장 안 함, 미리보기)
   POST /api/sentence        : 회화 문장 첨삭 + 저장 (mode 태그)
   POST /api/toeic/words     : 토익 빈출 단어 추천 (저장 안 함)
   POST /api/toeic/question  : 토익 Part 5 문제 생성
   POST /api/toeic/answer    : Part 5 풀이 결과 저장
+  GET  /api/toeic/wrong     : 다시 풀 토익 오답 목록
   POST /api/opic/question   : 오픽 질문 생성
   POST /api/opic/answer     : 오픽 답변 첨삭 + 저장
   GET  /api/review?kind=words|sentences : 복습 카드 데이터
@@ -24,7 +28,8 @@ API (JSON)
   POST /api/quiz/answer     : 퀴즈 채점 → 복습 일정 갱신
   POST /api/chat            : AI 회화 응답
 
-실행:  python app.py  (기본 http://127.0.0.1:5000)
+실행:  python app.py  (기본 http://127.0.0.1:5000, PORT·HOST 환경변수로 변경)
+배포:  gunicorn app:app  (Procfile / Dockerfile 참고)
 """
 
 import hmac
@@ -34,7 +39,8 @@ import socket
 from datetime import datetime
 
 from dotenv import load_dotenv
-from flask import Flask, Response, render_template, request, jsonify, redirect
+from flask import Flask, Response, render_template, request, jsonify, redirect, url_for
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 import db
 import ai_feedback
@@ -42,6 +48,12 @@ import ai_feedback
 load_dotenv()
 
 app = Flask(__name__)
+# Render·Railway 같은 플랫폼은 앞단 프록시가 https 를 처리한다 — 원래 주소(https, 호스트)를 그대로 쓰게 한다.
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
+# 세션/플래시를 쓰게 될 때를 대비해 비밀 키는 환경변수로 받는다 (없으면 실행마다 임의 생성).
+app.config["SECRET_KEY"] = os.getenv("SECRET_KEY") or os.urandom(32).hex()
+# 요청 본문 상한 — 비정상적으로 큰 요청이 AI 비용·메모리를 잡아먹지 않게 한다.
+app.config["MAX_CONTENT_LENGTH"] = 256 * 1024
 if os.path.dirname(db.DB_PATH):
     os.makedirs(os.path.dirname(db.DB_PATH), exist_ok=True)
 db.init_db()
@@ -51,7 +63,7 @@ db.init_db()
 # 접근 보호 — APP_PASSWORD 를 설정하면 모든 화면/API 에 비밀번호가 걸린다.
 # 인터넷에 배포할 때 필수: 없으면 누구나 내 기록을 바꾸고 AI 키를 쓸 수 있다.
 # ---------------------------------------------------------------------------
-PUBLIC_PATHS = ("/healthz", "/static/")
+PUBLIC_PATHS = ("/healthz", "/static/", "/favicon.ico")
 
 
 @app.before_request
@@ -68,6 +80,12 @@ def require_password():
     )
 
 
+@app.route("/favicon.ico")
+def favicon():
+    """브라우저가 기본으로 찾는 /favicon.ico 를 앱 아이콘으로 돌려준다."""
+    return redirect(url_for("static", filename="icons/icon-192.png"), code=301)
+
+
 @app.route("/healthz")
 def healthz():
     """배포 플랫폼 헬스 체크용."""
@@ -76,6 +94,23 @@ def healthz():
 # 하루 학습 목표 (회화 모드)
 WORDS_GOAL = 5
 SENTENCES_GOAL = 3
+
+# 입력 길이 상한 — AI 호출 비용과 화면 깨짐을 막는다.
+MAX_WORD_LEN = 60
+MAX_SENTENCE_LEN = 500
+MAX_ANSWER_LEN = 3000
+
+
+def _bad_request(message):
+    return jsonify({"error": message}), 400
+
+
+def _to_int(value):
+    """정수로 바꿀 수 없으면 None."""
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return None
 
 
 def _ai_context():
@@ -192,10 +227,12 @@ def quiz():
 def api_word():
     """단어 분석 후 저장."""
     data = request.get_json(silent=True) or {}
-    word = (data.get("word") or "").strip()
-    mode = (data.get("mode") or "talk").strip()
+    word = str(data.get("word") or "").strip()
+    mode = db._clean_mode(str(data.get("mode") or "talk").strip())
     if not word:
-        return jsonify({"error": "단어를 입력해 주세요."}), 400
+        return _bad_request("단어를 입력해 주세요.")
+    if len(word) > MAX_WORD_LEN:
+        return _bad_request(f"단어(구)는 {MAX_WORD_LEN}자 이내로 입력해 주세요.")
 
     # 같은 단어를 두 번 저장하지 않는다 (퀴즈에 중복 출제되는 것을 방지)
     existing = db.find_word(word)
@@ -253,9 +290,11 @@ def api_delete_word(word_id):
 def api_wordbook_pull():
     """단어장에서 새 단어 N개를 오늘 학습 목록으로 가져온다."""
     data = request.get_json(silent=True) or {}
-    count = data.get("count") or 10
+    count = _to_int(data.get("count") or 10)
+    if count is None or count < 1:
+        return _bad_request("가져올 단어 수가 올바르지 않습니다.")
     try:
-        pulled = db.pull_wordbook(int(count))
+        pulled = db.pull_wordbook(count)
     except Exception as e:
         return jsonify({"error": f"단어장에서 가져오지 못했습니다: {e}"}), 500
     return jsonify({
@@ -269,7 +308,7 @@ def api_wordbook_pull():
 def api_recommend_words():
     """오늘의 추천 단어 (미리보기 — 저장은 사용자가 선택)."""
     data = request.get_json(silent=True) or {}
-    topic = (data.get("topic") or "일상생활").strip()
+    topic = str(data.get("topic") or "일상생활").strip()[:40] or "일상생활"
     try:
         words = ai_feedback.recommend_words(topic=topic, count=WORDS_GOAL)
     except Exception as e:
@@ -282,10 +321,12 @@ def api_recommend_words():
 def api_sentence():
     """회화 문장 첨삭 후 저장."""
     data = request.get_json(silent=True) or {}
-    sentence = (data.get("sentence") or "").strip()
-    mode = (data.get("mode") or "talk").strip()
+    sentence = str(data.get("sentence") or "").strip()
+    mode = db._clean_mode(str(data.get("mode") or "talk").strip())
     if not sentence:
-        return jsonify({"error": "문장을 입력해 주세요."}), 400
+        return _bad_request("문장을 입력해 주세요.")
+    if len(sentence) > MAX_SENTENCE_LEN:
+        return _bad_request(f"문장은 {MAX_SENTENCE_LEN}자 이내로 입력해 주세요.")
 
     try:
         result = ai_feedback.get_feedback(sentence)
@@ -316,6 +357,8 @@ def api_toeic_words():
     """토익 빈출 단어 추천 (미리보기 — 담으면 /api/word 로 저장)."""
     data = request.get_json(silent=True) or {}
     level = str(data.get("level") or "600").strip()
+    if level not in ("600", "800", "900"):
+        level = "600"
     try:
         words = ai_feedback.recommend_toeic_words(level=level, count=WORDS_GOAL)
     except Exception as e:
@@ -329,6 +372,9 @@ def api_toeic_question():
     """토익 Part 5 문제 1개 생성."""
     data = request.get_json(silent=True) or {}
     recent = data.get("recent") or []  # 같은 문제 반복 방지용 최근 문제 목록
+    if not isinstance(recent, list):
+        recent = []
+    recent = [str(q)[:300] for q in recent[-10:]]
     try:
         q = ai_feedback.generate_part5_question(recent_questions=recent)
     except Exception as e:
@@ -340,20 +386,21 @@ def api_toeic_question():
 def api_toeic_answer():
     """Part 5 풀이 결과를 날짜별 기록에 저장."""
     data = request.get_json(silent=True) or {}
-    question = (data.get("question") or "").strip()
+    question = str(data.get("question") or "").strip()
     choices = data.get("choices") or []
-    my_answer = data.get("my_answer")
-    correct_answer = data.get("correct_answer")
-    if not question or len(choices) != 4 or my_answer is None or correct_answer is None:
-        return jsonify({"error": "문제 정보가 올바르지 않습니다."}), 400
+    my_answer = _to_int(data.get("my_answer"))
+    correct_answer = _to_int(data.get("correct_answer"))
+    if (not question or not isinstance(choices, list) or len(choices) != 4
+            or my_answer not in range(4) or correct_answer not in range(4)):
+        return _bad_request("문제 정보가 올바르지 않습니다.")
 
-    is_correct = int(my_answer) == int(correct_answer)
+    is_correct = my_answer == correct_answer
     try:
         qid = db.add_toeic_quiz(
             question=question,
-            choices=choices,
-            my_answer=int(my_answer),
-            correct_answer=int(correct_answer),
+            choices=[str(c) for c in choices],
+            my_answer=my_answer,
+            correct_answer=correct_answer,
             explanation=(data.get("explanation") or "").strip(),
             is_correct=is_correct,
         )
@@ -375,7 +422,7 @@ def api_toeic_wrong():
 def api_opic_question():
     """오픽 주제별 질문 생성."""
     data = request.get_json(silent=True) or {}
-    topic = (data.get("topic") or "자기소개").strip()
+    topic = str(data.get("topic") or "자기소개").strip()[:40] or "자기소개"
     try:
         q = ai_feedback.opic_question(topic)
     except Exception as e:
@@ -388,11 +435,13 @@ def api_opic_question():
 def api_opic_answer():
     """오픽 답변 첨삭 + 저장."""
     data = request.get_json(silent=True) or {}
-    topic = (data.get("topic") or "").strip()
-    question = (data.get("question") or "").strip()
-    answer = (data.get("answer") or "").strip()
+    topic = str(data.get("topic") or "").strip()[:40]
+    question = str(data.get("question") or "").strip()
+    answer = str(data.get("answer") or "").strip()
     if not question or not answer:
-        return jsonify({"error": "질문과 답변이 모두 필요합니다."}), 400
+        return _bad_request("질문과 답변이 모두 필요합니다.")
+    if len(answer) > MAX_ANSWER_LEN or len(question) > 1000:
+        return _bad_request(f"답변은 {MAX_ANSWER_LEN}자 이내로 입력해 주세요.")
 
     try:
         result = ai_feedback.opic_feedback(question, answer)
@@ -441,12 +490,14 @@ def api_quiz():
 def api_quiz_answer():
     """퀴즈 채점 결과로 SRS 일정 갱신."""
     data = request.get_json(silent=True) or {}
-    word_id = data.get("id")
+    word_id = _to_int(data.get("id"))
     correct = bool(data.get("correct"))
     if word_id is None:
-        return jsonify({"error": "단어 id가 필요합니다."}), 400
+        return _bad_request("단어 id가 필요합니다.")
     try:
-        result = db.update_word_review(int(word_id), correct)
+        result = db.update_word_review(word_id, correct)
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 404
     except Exception as e:
         return jsonify({"error": f"갱신 실패: {e}"}), 500
     return jsonify({"id": word_id, **result, "due_count": db.count_due_words()})
@@ -456,9 +507,15 @@ def api_quiz_answer():
 def api_chat():
     data = request.get_json(silent=True) or {}
     history = data.get("history") or []
-    topic = (data.get("topic") or "").strip()
-    if not history:
-        return jsonify({"error": "메시지가 비어 있습니다."}), 400
+    topic = str(data.get("topic") or "").strip()[:40]
+    if not isinstance(history, list):
+        return _bad_request("대화 형식이 올바르지 않습니다.")
+    history = [
+        {"role": m.get("role"), "content": str(m.get("content", ""))[:MAX_SENTENCE_LEN]}
+        for m in history[-12:] if isinstance(m, dict)
+    ]
+    if not history or not history[-1]["content"].strip():
+        return _bad_request("메시지가 비어 있습니다.")
     try:
         reply = ai_feedback.chat_reply(history, topic)
     except Exception as e:
@@ -472,6 +529,19 @@ def not_found(e):
         return jsonify({"error": "요청한 API 를 찾을 수 없습니다."}), 404
     return render_template("error.html", code=404,
                            message="찾으시는 페이지가 없어요. 주소를 다시 확인해 주세요."), 404
+
+
+@app.errorhandler(405)
+def method_not_allowed(e):
+    if request.path.startswith("/api/"):
+        return jsonify({"error": "허용되지 않는 요청 방식입니다."}), 405
+    return render_template("error.html", code=405,
+                           message="이 주소는 그렇게 열 수 없어요."), 405
+
+
+@app.errorhandler(413)
+def too_large(e):
+    return jsonify({"error": "요청이 너무 큽니다."}), 413
 
 
 @app.errorhandler(500)
@@ -497,8 +567,9 @@ def _lan_ip():
 if __name__ == "__main__":
     host = os.getenv("HOST", "127.0.0.1")
     port = int(os.getenv("PORT", "5000"))
-    # 같은 와이파이에 공개(0.0.0.0)할 때는 디버거를 꺼서 원격 코드 실행 위험을 막는다
-    debug = os.getenv("FLASK_DEBUG", "0" if host == "0.0.0.0" else "1") == "1"
+    # 디버거는 기본으로 끈다(원격 코드 실행 위험). 개발 중에만 FLASK_DEBUG=1 로 켠다.
+    # 같은 와이파이에 공개(0.0.0.0)할 때는 설정과 상관없이 끈다.
+    debug = os.getenv("FLASK_DEBUG", "0") == "1" and host != "0.0.0.0"
 
     # 참고: 한국어 Windows 콘솔(cp949)은 이모지를 출력하지 못하므로 텍스트만 쓴다
     print()

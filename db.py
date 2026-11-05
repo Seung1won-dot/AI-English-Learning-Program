@@ -23,6 +23,7 @@ import json
 import os
 import random
 import sqlite3
+import time
 from contextlib import contextmanager
 from datetime import datetime, timedelta
 
@@ -41,7 +42,12 @@ def get_conn():
     """
     conn = sqlite3.connect(DB_PATH, timeout=10)
     conn.row_factory = sqlite3.Row
-    conn.execute("PRAGMA journal_mode=WAL;")
+    try:
+        conn.execute("PRAGMA journal_mode=WAL;")
+    except sqlite3.OperationalError:
+        # 여러 서버 프로세스(gunicorn workers)가 새 DB 를 동시에 열면 WAL 전환이 잠깐 겹친다.
+        # WAL 설정은 파일에 영구 저장되므로 다른 프로세스가 켠 설정을 그대로 쓰면 된다.
+        pass
     conn.execute("PRAGMA synchronous=NORMAL;")
     conn.execute("PRAGMA foreign_keys=ON;")
     try:
@@ -54,8 +60,24 @@ def get_conn():
         conn.close()
 
 
+def _enable_wal(retries=20):
+    """WAL 모드를 켠다. 다른 프로세스와 겹쳐 잠겨 있으면 잠깐 기다렸다 다시 시도한다."""
+    for _ in range(retries):
+        conn = sqlite3.connect(DB_PATH, timeout=10)
+        try:
+            mode = conn.execute("PRAGMA journal_mode=WAL;").fetchone()[0]
+            if str(mode).lower() == "wal":
+                return
+        except sqlite3.OperationalError:
+            pass
+        finally:
+            conn.close()
+        time.sleep(0.1)
+
+
 def init_db():
     """테이블이 없으면 생성한다. 앱 시작 시 1회 호출."""
+    _enable_wal()
     with get_conn() as conn:
         conn.execute(
             """

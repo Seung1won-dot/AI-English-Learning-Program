@@ -223,3 +223,51 @@ def test_password_protection(client, monkeypatch):
 def test_no_password_means_open(client, monkeypatch):
     monkeypatch.delenv("APP_PASSWORD", raising=False)
     assert client.get("/").status_code == 200
+
+
+# ----- 입력 검증 / 배포 마감 -----
+def test_toeic_answer_rejects_non_numeric_choice(client):
+    res = client.post("/api/toeic/answer", json={
+        "question": "q", "choices": ["a", "b", "c", "d"], "my_answer": "x", "correct_answer": 2,
+    })
+    assert res.status_code == 400
+
+
+def test_quiz_answer_unknown_word_is_404(client):
+    assert client.post("/api/quiz/answer", json={"id": 9999, "correct": True}).status_code == 404
+    assert client.post("/api/quiz/answer", json={"id": "abc"}).status_code == 400
+
+
+def test_wordbook_pull_rejects_bad_count(client):
+    assert client.post("/api/wordbook/pull", json={"count": "many"}).status_code == 400
+
+
+def test_too_long_inputs_are_rejected(client):
+    assert client.post("/api/word", json={"word": "a" * 200}).status_code == 400
+    assert client.post("/api/sentence", json={"sentence": "a" * 2000}).status_code == 400
+
+
+def test_chat_mock_greets_instead_of_echoing_start_signal(client):
+    res = client.post("/api/chat", json={
+        "history": [{"role": "user", "content": "(Start the conversation with a short greeting and a question.)"}],
+        "topic": "a job interview",
+    })
+    assert res.status_code == 200
+    assert "Start the conversation" not in res.get_json()["reply"]
+
+
+def test_wrong_method_on_api_is_json_405(client):
+    res = client.get("/api/chat")
+    assert res.status_code == 405
+    assert "error" in res.get_json()
+
+
+def test_favicon_redirects_to_app_icon(client):
+    res = client.get("/favicon.ico")
+    assert res.status_code == 301
+    assert "icon-192.png" in res.headers["Location"]
+
+
+def test_pages_have_social_meta(client):
+    html = client.get("/").get_data(as_text=True)
+    assert 'property="og:title"' in html and 'name="description"' in html

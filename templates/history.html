@@ -18,12 +18,12 @@
   {% if history %}
     <h2 class="group-label">날짜별 기록</h2>
 
-    <div class="chip-row" role="radiogroup" aria-label="모드 필터">
+    <div class="chip-row" role="group" aria-label="모드 필터">
       <button type="button" class="chip mode-filter-tab active" data-mode="all" aria-pressed="true">전체</button>
-      <button type="button" class="chip mode-filter-tab" data-mode="vocab">단어</button>
-      <button type="button" class="chip mode-filter-tab" data-mode="toeic">TOEIC</button>
-      <button type="button" class="chip mode-filter-tab" data-mode="opic">OPIC</button>
-      <button type="button" class="chip mode-filter-tab" data-mode="talk">회화</button>
+      <button type="button" class="chip mode-filter-tab" data-mode="vocab" aria-pressed="false">단어</button>
+      <button type="button" class="chip mode-filter-tab" data-mode="toeic" aria-pressed="false">TOEIC</button>
+      <button type="button" class="chip mode-filter-tab" data-mode="opic" aria-pressed="false">OPIC</button>
+      <button type="button" class="chip mode-filter-tab" data-mode="talk" aria-pressed="false">회화</button>
     </div>
 
     <div class="filter-row">

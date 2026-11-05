@@ -38,11 +38,11 @@
   <section class="surface">
     <div class="surface-head"><h2>빈출 단어</h2></div>
     <p class="hint">담은 단어는 퀴즈에 자동으로 들어가 1→3→7→14→30일 간격으로 복습합니다.</p>
-    <div class="chip-row" role="radiogroup" aria-label="목표 점수">
+    <div class="chip-row" role="group" aria-label="목표 점수">
       <span class="label">목표 점수</span>
       <button type="button" class="chip level-chip active" data-level="600" aria-pressed="true"><span class="num">600</span></button>
-      <button type="button" class="chip level-chip" data-level="800"><span class="num">800</span></button>
-      <button type="button" class="chip level-chip" data-level="900"><span class="num">900</span></button>
+      <button type="button" class="chip level-chip" data-level="800" aria-pressed="false"><span class="num">800</span></button>
+      <button type="button" class="chip level-chip" data-level="900" aria-pressed="false"><span class="num">900</span></button>
       <button type="button" id="toeicRecommendBtn" class="push">{{ icon("sparkles") }}빈출 단어 추천</button>
     </div>
     <p id="toeicWordError" class="error hidden" role="alert"></p>

@@ -33,7 +33,7 @@
       <div class="surface-head"><h2>문장 첨삭</h2></div>
       <p class="hint">하고 싶은 말을 영어로 써 보세요. AI 가 교정·피드백·한글 뜻·점수를 줍니다. <kbd>Ctrl</kbd>+<kbd>Enter</kbd> 로 제출.</p>
       <label class="sr-only" for="sentInput">영어 문장</label>
-      <textarea id="sentInput" rows="2" placeholder="예: I want to order a coffee"></textarea>
+      <textarea id="sentInput" rows="2" maxlength="500" placeholder="예: I want to order a coffee"></textarea>
       <div class="actions">
         <button type="button" id="sentBtn" class="primary">문장 첨삭</button>
         <span id="sentLoading" class="loading hidden">AI 가 검토하는 중</span>
@@ -60,7 +60,7 @@
       <p class="hint">오늘 외울 단어를 입력하면 AI 가 뜻·발음·예문을 정리합니다.</p>
       <div class="inline-form">
         <label class="sr-only" for="wordInput">영어 단어</label>
-        <input type="text" id="wordInput" placeholder="예: improve" autocomplete="off" />
+        <input type="text" id="wordInput" maxlength="60" placeholder="예: improve" autocomplete="off" />
         <button type="button" id="wordBtn" class="primary">{{ icon("plus") }}단어 추가</button>
         <button type="button" id="recommendBtn">{{ icon("sparkles") }}AI 추천</button>
       </div>
@@ -85,20 +85,20 @@
       <div class="surface-head"><h2>AI 회화 연습</h2></div>
       <p class="hint">영어로 대화하세요. 실수가 있으면 AI 가 한국어 교정을 덧붙여 줍니다. 주제를 바꾸면 새 대화가 시작돼요.</p>
 
-      <div class="chip-row" role="radiogroup" aria-label="대화 주제">
+      <div class="chip-row" role="group" aria-label="대화 주제">
         <span class="label">주제</span>
         <button type="button" class="chip topic-chip active" data-topic="" aria-pressed="true">자유</button>
-        <button type="button" class="chip topic-chip" data-topic="ordering food at a cafe">카페 주문</button>
-        <button type="button" class="chip topic-chip" data-topic="traveling and asking directions">여행·길찾기</button>
-        <button type="button" class="chip topic-chip" data-topic="a job interview">면접</button>
-        <button type="button" class="chip topic-chip" data-topic="small talk about hobbies">취미 잡담</button>
+        <button type="button" class="chip topic-chip" data-topic="ordering food at a cafe" aria-pressed="false">카페 주문</button>
+        <button type="button" class="chip topic-chip" data-topic="traveling and asking directions" aria-pressed="false">여행·길찾기</button>
+        <button type="button" class="chip topic-chip" data-topic="a job interview" aria-pressed="false">면접</button>
+        <button type="button" class="chip topic-chip" data-topic="small talk about hobbies" aria-pressed="false">취미 잡담</button>
       </div>
 
       <div id="chatLog" class="chat-log" aria-live="polite"></div>
 
       <form id="chatForm" class="composer" autocomplete="off">
         <label class="sr-only" for="chatInput">메시지</label>
-        <input type="text" id="chatInput" placeholder="영어로 입력하고 Enter" autocomplete="off" />
+        <input type="text" id="chatInput" maxlength="500" placeholder="영어로 입력하고 Enter" autocomplete="off" />
         <button type="submit" id="chatSend" class="primary">{{ icon("send") }}보내기</button>
       </form>
       <p id="chatError" class="error hidden" role="alert"></p>
