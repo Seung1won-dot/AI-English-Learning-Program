@@ -5,10 +5,48 @@
 {% block content %}
   <header class="home-head">
     <div class="date tnum">{{ today_label }}</div>
-    <h1>{{ greeting }}</h1>
-    <p>오늘 공부할 모드를 고르세요. 모든 학습은 날짜별로 기록되고, 외운 단어는 알아서 복습 일정에 들어갑니다.</p>
+    <h1>{{ greeting }}, {{ current_user.username }}님</h1>
+    {% if stats.streak %}
+      <p>{{ stats.streak }}일째 이어서 공부 중이에요.{% if not stats.studied_today %} 오늘도 하나만 하면 {{ stats.streak + 1 }}일이 됩니다.{% endif %}</p>
+    {% else %}
+      <p>오늘 할 일을 위에서부터 하나씩 끝내 보세요. 하루 목표는 <a href="/account">내 계정</a>에서 바꿀 수 있어요.</p>
+    {% endif %}
     <div style="margin-top:12px">{{ ai_status(using_real_ai, provider_label) }}</div>
   </header>
+
+  <section class="surface plan" aria-labelledby="planTitle">
+    <div class="surface-head">
+      <h2 id="planTitle">오늘 할 일</h2>
+      <span class="meta tnum">{{ plan.percent }}% 완료</span>
+    </div>
+    <div class="meter" role="progressbar" aria-label="오늘 할 일 진행률" aria-valuemin="0" aria-valuemax="100" aria-valuenow="{{ plan.percent }}">
+      <div class="meter-fill" style="width: {{ plan.percent }}%"></div>
+    </div>
+    <ol class="rows plan-list">
+      {% for it in plan["items"] %}
+        {% set idle = it.key in ("review", "wrong") and it.goal == 0 %}
+        <li>
+          <a class="plan-row {% if it.complete %}complete{% endif %}" href="{{ it.href }}">
+            <span class="plan-check" aria-hidden="true">{% if it.complete %}{{ icon("check") }}{% endif %}</span>
+            <span class="row-body">
+              <b>{{ it.title }}</b>
+              <span class="plan-sub tnum">
+                {% if idle %}오늘은 복습할 게 없어요
+                {% elif it.key in ("review", "wrong") %}{% if it.complete %}모두 끝냈어요{% else %}{{ it.remaining }}{{ it.unit }} 남음{% endif %}
+                {% elif it.goal == 0 %}목표 없음 · 오늘 {{ it.done }}{{ it.unit }}
+                {% else %}{{ it.done }} / {{ it.goal }}{{ it.unit }}{% endif %}
+              </span>
+            </span>
+            <span class="sr-only">{% if it.complete %}완료{% else %}남음{% endif %}</span>
+            {{ icon("chevron-right", "go") }}
+          </a>
+        </li>
+      {% endfor %}
+    </ol>
+    {% if plan.complete %}
+      <p class="plan-done">{{ icon("circle-check") }}오늘 목표를 모두 끝냈어요. 내일 복습 일정은 자동으로 잡혀 있습니다.</p>
+    {% endif %}
+  </section>
 
   <section class="stat-strip" aria-label="학습 요약">
     <div class="stat-cell">
@@ -29,49 +67,59 @@
     </div>
   </section>
 
-  {% if due_count > 0 %}
-    <div class="due-bar">
-      <p><span class="dot"></span><span>복습할 단어 <span class="num">{{ due_count }}</span>개가 기다리고 있어요</span></p>
-      <a class="btn primary" href="/quiz">퀴즈 시작 {{ icon("arrow-right") }}</a>
-    </div>
-  {% else %}
-    <div class="due-bar calm">
-      <p><span class="dot"></span><span>오늘 복습은 끝났어요. 새 단어를 추가해 보세요.</span></p>
-      <a class="btn" href="/vocab">단어 추가 {{ icon("arrow-right") }}</a>
-    </div>
+  {% if weak %}
+    <h2 class="group-label">약한 유형 <a href="/history#weakness">자세히</a></h2>
+    <section class="surface flush">
+      <nav class="rows" aria-label="약한 유형">
+        {% for c in weak %}
+            <a class="mode-row" href="/toeic?cat={{ c.category | urlencode }}">
+              <span class="slot">{{ icon("target") }}</span>
+              <span class="row-body"><b>{{ c.category }}</b><p>{{ c.total }}문제 중 {{ c.correct }}개 정답</p></span>
+              <span class="today tnum {% if c.rate < 60 %}low{% endif %}">정답률 {{ c.rate }}%</span>
+              {{ icon("chevron-right", "go") }}
+            </a>
+        {% endfor %}
+      </nav>
+    </section>
   {% endif %}
 
   <h2 class="group-label">학습 모드</h2>
   <section class="surface flush">
     <nav class="rows" aria-label="학습 모드">
-      <a class="mode-row" href="/vocab">
-        <span class="slot">{{ icon("book") }}</span>
-        <span class="row-body"><b>단어 암기</b><p>단어를 모아 외우고 간격 반복으로 오래 기억하기</p></span>
-        <span class="today tnum {% if summary.vocab.words %}on{% endif %}">오늘 {{ summary.vocab.words }}단어</span>
-        {{ icon("chevron-right", "go") }}
-      </a>
       <a class="mode-row" href="/toeic">
         <span class="slot">{{ icon("pen") }}</span>
-        <span class="row-body"><b>TOEIC</b><p>빈출 단어 암기와 Part 5 문제 풀이</p></span>
+        <span class="row-body"><b>TOEIC</b><p>빈출 어휘 · Part 5 유형별 문제 · 오답 복습</p></span>
         <span class="today tnum {% if summary.toeic.words or summary.toeic.quiz %}on{% endif %}">단어 {{ summary.toeic.words }} · 문제 {{ summary.toeic.quiz }}</span>
+        {{ icon("chevron-right", "go") }}
+      </a>
+      <a class="mode-row" href="/toeic/test">
+        <span class="slot">{{ icon("timer") }}</span>
+        <span class="row-body"><b>미니 모의고사</b><p>시간 제한 안에 Part 5 10~30문제</p></span>
+        <span class="today tnum">{{ stats.total_tests }}회</span>
         {{ icon("chevron-right", "go") }}
       </a>
       <a class="mode-row" href="/opic">
         <span class="slot">{{ icon("mic") }}</span>
-        <span class="row-body"><b>OPIC</b><p>실전 유형 질문에 말로 답하고 AI 첨삭 받기</p></span>
+        <span class="row-body"><b>OPIC</b><p>주제별 질문 은행 · 답변 틀 · 첨삭</p></span>
         <span class="today tnum {% if summary.opic.answers %}on{% endif %}">답변 {{ summary.opic.answers }}</span>
+        {{ icon("chevron-right", "go") }}
+      </a>
+      <a class="mode-row" href="/vocab">
+        <span class="slot">{{ icon("book") }}</span>
+        <span class="row-body"><b>단어 암기</b><p>모르는 단어를 직접 모아 간격 반복으로 외우기</p></span>
+        <span class="today tnum {% if summary.vocab.words %}on{% endif %}">오늘 {{ summary.vocab.words }}단어</span>
         {{ icon("chevron-right", "go") }}
       </a>
       <a class="mode-row" href="/talk">
         <span class="slot">{{ icon("chat") }}</span>
         <span class="row-body"><b>영어 회화</b><p>문장 첨삭과 AI 프리토킹</p></span>
-        <span class="today tnum {% if summary.talk.words or summary.talk.sentences %}on{% endif %}">단어 {{ summary.talk.words }} · 문장 {{ summary.talk.sentences }}</span>
+        <span class="today tnum {% if summary.talk.words or summary.talk.sentences %}on{% endif %}">문장 {{ summary.talk.sentences }}</span>
         {{ icon("chevron-right", "go") }}
       </a>
     </nav>
   </section>
 
-  <h2 class="group-label">이번 주 <span class="tnum">최근 7일</span></h2>
+  <h2 class="group-label">이번 주 <span class="tnum">최근 7일 · 최장 연속 {{ stats.best_streak }}일</span></h2>
   <section class="surface" aria-label="최근 7일 학습량">
     <div class="week-bars">
       {% for d in week %}
@@ -82,28 +130,5 @@
         </div>
       {% endfor %}
     </div>
-  </section>
-
-  <h2 class="group-label">복습</h2>
-  <section class="surface flush">
-    <nav class="rows" aria-label="복습">
-      <a class="mode-row" href="/quiz">
-        <span class="slot">{{ icon("quiz") }}</span>
-        <span class="row-body"><b>단어 퀴즈</b><p>맞히면 간격이 늘고 틀리면 오늘 다시</p></span>
-        <span class="today tnum {% if due_count %}on{% endif %}">대기 {{ due_count }}</span>
-        {{ icon("chevron-right", "go") }}
-      </a>
-      <a class="mode-row" href="/review">
-        <span class="slot">{{ icon("layers") }}</span>
-        <span class="row-body"><b>플래시카드</b><p>외운 단어·문장을 카드로 되새기기</p></span>
-        {{ icon("chevron-right", "go") }}
-      </a>
-      <a class="mode-row" href="/history">
-        <span class="slot">{{ icon("chart") }}</span>
-        <span class="row-body"><b>학습 기록</b><p>날짜별·모드별로 모아보기</p></span>
-        <span class="today tnum">{{ stats.total_days }}일 학습</span>
-        {{ icon("chevron-right", "go") }}
-      </a>
-    </nav>
   </section>
 {% endblock %}

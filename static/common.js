@@ -10,7 +10,7 @@ async function request(url, options, fallbackMsg) {
   }
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
-    if (res.status === 401) throw new Error("비밀번호 확인이 필요해요. 페이지를 새로고침해 주세요.");
+    if (res.status === 401) throw new Error(data.error || "로그인이 필요해요. 페이지를 새로고침해 주세요.");
     throw new Error(data.error || fallbackMsg);
   }
   return data;
@@ -93,7 +93,7 @@ function wordCard(w, { deletable = false } = {}) {
     : "";
   return `<li class="row word-item fresh" data-word-id="${w.id}">
     <div class="row-body">
-      <div class="row-title"><b>${esc(w.word)}</b><span class="pron">${esc(w.pronunciation)}</span></div>
+      <div class="row-title"><b>${esc(w.word)}</b>${w.pos ? `<span class="pos">${esc(w.pos)}</span>` : ""}<span class="pron">${esc(w.pronunciation)}</span></div>
       <div class="row-text">${esc(w.meaning)}</div>${ex}
     </div>
     <div class="row-actions">${window.speakBtn(w.word)}${del}</div></li>`;
@@ -103,7 +103,7 @@ function wordCard(w, { deletable = false } = {}) {
 function recommendChips(words) {
   return words.map((w, i) => `
     <button type="button" class="recommend-chip" data-i="${i}">
-      <b>${esc(w.word)}</b><span>${esc(w.meaning)}</span><em>${icon("plus")}담기</em>
+      <b>${esc(w.word)}</b>${w.pos ? `<i>${esc(w.pos)}</i>` : ""}<span>${esc(w.meaning)}</span><em>${icon("plus")}담기</em>
     </button>`).join("");
 }
 

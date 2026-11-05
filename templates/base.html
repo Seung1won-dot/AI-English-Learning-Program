@@ -57,6 +57,7 @@
         <span>English World</span>
       </a>
 
+      {% if current_user %}
       <nav class="nav" aria-label="주요 메뉴">
         <a href="/" class="nav-link {% if request.path == '/' %}active{% endif %}" {% if request.path == '/' %}aria-current="page"{% endif %}>{{ icon("home") }}<span>홈</span></a>
         <span class="nav-sep" aria-hidden="true"></span>
@@ -68,7 +69,13 @@
           <a href="{{ href }}" class="nav-link {% if request.path == href %}active{% endif %}" {% if request.path == href %}aria-current="page"{% endif %}>{{ icon(ic) }}<span>{{ label }}</span></a>
         {% endfor %}
       </nav>
+      {% else %}
+      <span class="nav-spacer"></span>
+      {% endif %}
 
+      {% if current_user %}
+      <a class="icon-link {% if request.path == '/account' %}active{% endif %}" href="/account" aria-label="내 계정 ({{ current_user.username }})" title="내 계정 ({{ current_user.username }})">{{ icon("user") }}</a>
+      {% endif %}
       <button type="button" class="icon-btn" id="themeToggle" aria-label="밝은 화면/어두운 화면 전환" title="밝은 화면/어두운 화면 전환">
         {{ icon("sun") }}
       </button>
@@ -76,12 +83,15 @@
   </header>
 
   <main class="container">
+    {% with messages = get_flashed_messages() %}
+      {% for m in messages %}<p class="banner ok" role="status">{{ icon("circle-check") }}<span>{{ m }}</span></p>{% endfor %}
+    {% endwith %}
     {% block content %}{% endblock %}
   </main>
 
   <footer class="footer">
     <span>English World · 매일 조금씩, 오래 기억하기</span>
-    <a href="/history">학습 기록 보기</a>
+    {% if current_user %}<a href="/history">학습 기록 보기</a>{% endif %}
   </footer>
 
   <div id="toastRoot" class="toast-root" aria-live="polite"></div>

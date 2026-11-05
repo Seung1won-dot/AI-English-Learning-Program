@@ -11,6 +11,9 @@ import db
 import app as app_module
 
 
+TEST_HASH = app_module.hash_password("password123")
+
+
 @pytest.fixture(autouse=True)
 def mock_env(tmp_path, monkeypatch):
     """AI 키를 제거해 목업 모드로 강제하고, 임시 DB 를 쓴다."""
@@ -22,8 +25,13 @@ def mock_env(tmp_path, monkeypatch):
 
 @pytest.fixture
 def client():
+    """로그인한 사용자(첫 계정 = id 1)의 테스트 클라이언트."""
     app_module.app.config["TESTING"] = True
-    return app_module.app.test_client()
+    c = app_module.app.test_client()
+    uid = db.create_user("tester", TEST_HASH)
+    with c.session_transaction() as s:
+        s["uid"] = uid
+    return c
 
 
 # ----- 화면 -----

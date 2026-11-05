@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% from "_macros.html" import icon, page_head %}
+{% block title %}미니 모의고사 — English World{% endblock %}
+
+{% block content %}
+  {{ page_head("timer", "TOEIC", "Part 5 미니 모의고사", "실전처럼 시간을 재고 한 번에 풀어요. 문제당 " ~ seconds_per_q ~ "초, 시간이 끝나면 자동으로 제출됩니다. 틀린 문제는 오답 복습에 들어가요.") }}
+
+  <section class="surface" id="testSetup">
+    <div class="surface-head"><h2>문제 수 고르기</h2></div>
+    <p class="hint">10가지 유형이 고르게 섞여 나옵니다. 안 푼 문제가 먼저 나와요.</p>
+    <div class="chip-row" role="group" aria-label="문제 수">
+      <button type="button" class="chip count-chip active" data-count="10" aria-pressed="true"><span class="num">10</span>문제 · {{ (10 * seconds_per_q) // 60 }}분</button>
+      <button type="button" class="chip count-chip" data-count="20" aria-pressed="false"><span class="num">20</span>문제 · {{ (20 * seconds_per_q) // 60 }}분</button>
+      <button type="button" class="chip count-chip" data-count="30" aria-pressed="false"><span class="num">30</span>문제 · {{ (30 * seconds_per_q) // 60 }}분</button>
+    </div>
+    <div class="actions"><button type="button" id="testStart" class="primary">{{ icon("timer") }}시작하기</button></div>
+    <p id="testError" class="error hidden" role="alert"></p>
+  </section>
+
+  <section id="testRun" class="hidden" aria-label="모의고사">
+    <div class="test-bar" role="status">
+      <span class="tnum"><b id="testAnswered">0</b> / <span id="testTotal">0</span> 답함</span>
+      <span class="test-clock tnum" id="testClock" aria-label="남은 시간">00:00</span>
+      <button type="button" id="testSubmit" class="primary">제출</button>
+    </div>
+    <ol id="testList" class="test-list"></ol>
+    <div class="actions"><button type="button" id="testSubmit2" class="primary wide">제출하고 채점하기</button></div>
+  </section>
+
+  <section id="testResult" class="hidden" aria-live="polite">
+    <section class="surface">
+      <div class="done">
+        <div class="big tnum" id="resScore">0 / 0</div>
+        <h2 style="margin-top:8px" id="resTitle">채점 결과</h2>
+        <p id="resText"></p>
+      </div>
+      <ul id="resCats" class="rows cat-bars"></ul>
+      <div class="actions">
+        <a class="btn" href="/toeic?review=1">{{ icon("refresh") }}오답 복습하기</a>
+        <button type="button" id="testAgain" class="primary push">다시 보기</button>
+      </div>
+    </section>
+    <h2 class="group-label">문제별 해설</h2>
+    <ol id="resList" class="test-list"></ol>
+  </section>
+
+  {% if tests %}
+    <h2 class="group-label" id="pastTests">지난 모의고사</h2>
+    <section class="surface flush">
+      <ul class="rows">
+        {% for t in tests %}
+          <li class="row">
+            <div class="row-body">
+              <div class="row-title"><b class="tnum">{{ t.correct }} / {{ t.total }}</b><span class="pron tnum">정답률 {{ (t.correct * 100 / t.total) | round | int }}%</span></div>
+              <div class="row-sub tnum">{{ t.created_at[:10] }} · {{ t.seconds // 60 }}분 {{ t.seconds % 60 }}초 사용 (제한 {{ t.limit_sec // 60 }}분)</div>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    </section>
+  {% endif %}
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='test.js') }}"></script>
+{% endblock %}

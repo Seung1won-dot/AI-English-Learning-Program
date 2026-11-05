@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+{% from "_macros.html" import icon, page_head %}
+{% block title %}내 계정 — English World{% endblock %}
+
+{% block content %}
+  {{ page_head("user", "내 계정", user.username, "하루 목표를 정하면 홈의 '오늘 할 일'이 그에 맞춰 바뀝니다.") }}
+  {% if error %}<p class="error" role="alert" style="margin:0 0 16px">{{ error }}</p>{% endif %}
+
+  <form class="surface" method="post" action="{{ url_for('account') }}">
+    <input type="hidden" name="csrf" value="{{ csrf_token() }}" />
+    <input type="hidden" name="action" value="goals" />
+    <div class="surface-head"><h2>하루 목표</h2></div>
+    <p class="hint">처음엔 작게 잡고, 매일 지키는 게 더 중요해요. 0 으로 두면 그 항목은 쉬어 갑니다.</p>
+    <div class="form-grid">
+      <div class="field">
+        <label for="goal_words">새 단어</label>
+        <input type="number" inputmode="numeric" id="goal_words" name="goal_words" min="0" max="50" value="{{ user.goal_words }}" required />
+      </div>
+      <div class="field">
+        <label for="goal_p5">Part 5 문제</label>
+        <input type="number" inputmode="numeric" id="goal_p5" name="goal_p5" min="0" max="100" value="{{ user.goal_p5 }}" required />
+      </div>
+      <div class="field">
+        <label for="goal_opic">오픽 답변</label>
+        <input type="number" inputmode="numeric" id="goal_opic" name="goal_opic" min="0" max="10" value="{{ user.goal_opic }}" required />
+      </div>
+      <div class="field">
+        <label for="target_level">토익 목표</label>
+        <select id="target_level" name="target_level">
+          {% for lv in ["600", "800", "900"] %}<option value="{{ lv }}" {% if user.target_level == lv %}selected{% endif %}>{{ lv }}점대 어휘</option>{% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="actions"><button type="submit" class="primary">목표 저장</button></div>
+  </form>
+
+  <form class="surface" method="post" action="{{ url_for('account') }}">
+    <input type="hidden" name="csrf" value="{{ csrf_token() }}" />
+    <input type="hidden" name="action" value="password" />
+    <input type="text" name="username" value="{{ user.username }}" autocomplete="username" class="sr-only" tabindex="-1" aria-hidden="true" readonly />
+    <div class="surface-head"><h2>비밀번호 변경</h2></div>
+    <div class="form-grid">
+      <div class="field wide">
+        <label for="current">현재 비밀번호</label>
+        <input type="password" id="current" name="current" autocomplete="current-password" required maxlength="128" />
+      </div>
+      <div class="field">
+        <label for="new">새 비밀번호</label>
+        <input type="password" id="new" name="new" autocomplete="new-password" required minlength="8" maxlength="128" />
+      </div>
+      <div class="field">
+        <label for="new2">새 비밀번호 확인</label>
+        <input type="password" id="new2" name="new2" autocomplete="new-password" required minlength="8" maxlength="128" />
+      </div>
+    </div>
+    <div class="actions"><button type="submit">비밀번호 바꾸기</button></div>
+  </form>
+
+  <section class="surface">
+    <div class="surface-head"><h2>내 기록</h2><span class="meta tnum">가입 {{ user.created_at[:10] }}</span></div>
+    <p class="hint">단어 {{ stats.total_words }}개 · 토익 문제 {{ stats.total_toeic }}개 · 오픽 답변 {{ stats.total_opic }}개 · 학습한 날 {{ stats.total_days }}일 · 최장 연속 {{ stats.best_streak }}일</p>
+    <form method="post" action="{{ url_for('logout') }}" class="actions">
+      <input type="hidden" name="csrf" value="{{ csrf_token() }}" />
+      <button type="submit">{{ icon("logout") }}로그아웃</button>
+    </form>
+  </section>
+{% endblock %}

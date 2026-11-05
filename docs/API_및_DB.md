@@ -38,7 +38,8 @@ English World 서버([`app.py`](../app.py))가 제공하는 API와 SQLite 테이
 | `POST` | `/api/quiz/answer` | `{id, correct}` → 박스/다음 복습일 갱신 |
 | `POST` | `/api/chat` | `{history, topic}` → AI 회화 응답 |
 
-`APP_PASSWORD` 를 설정하면 `/healthz` 와 `/static/` 을 제외한 모든 경로에 HTTP 기본 인증이 걸립니다.
+`/healthz`·`/static/`·`/login`·`/signup` 을 뺀 모든 경로는 로그인이 필요합니다 (화면은 `/login` 으로 이동, API 는 401). 모든 기록 테이블에 `user_id` 가 있어 계정마다 분리됩니다. 전체 API 목록은 `app.py` 맨 위 설명을 참고하세요.
+`APP_PASSWORD` 를 설정하면 그 앞에 HTTP 기본 인증이 한 겹 더 걸립니다.
 
 ## DB 스키마
 

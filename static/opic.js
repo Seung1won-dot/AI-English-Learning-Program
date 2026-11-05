@@ -29,11 +29,34 @@ const corrSpeak = document.getElementById("opicCorrSpeak");
 const modelSpeak = document.getElementById("opicModelSpeak");
 const retryBtn = document.getElementById("opicRetryBtn");
 
-let topic = "자기소개";
+let topic = (document.querySelector(".opic-chip.active") || {}).dataset?.topic || "자기소개";
 let currentQuestion = "";
+const recentIds = [];
+const tipEl = document.getElementById("opicQTip");
+const guide = document.getElementById("opicGuide");
+const wordsEl = document.getElementById("opicWords");
+
+function renderGuide(data) {
+  tipEl.textContent = data.tip ? `팁 · ${data.tip}` : "";
+  show(tipEl, Boolean(data.tip));
+  if (!data.template) { show(guide, false); return; }
+  document.getElementById("opicTemplate").innerHTML = data.template.map((t) => `<li>${esc(t)}</li>`).join("");
+  document.getElementById("opicExpr").innerHTML = data.expressions.map((e) => `
+    <li class="row"><div class="row-body"><div class="row-text">${esc(e.en)}</div><div class="row-sub">${esc(e.ko)}</div></div>
+    <div class="row-actions">${window.speakBtn(e.en)}</div></li>`).join("");
+  document.getElementById("opicSampleQ").textContent = data.sample_question;
+  document.getElementById("opicSample").textContent = data.sample;
+  show(guide, true);
+}
+
+function countWords() {
+  const t = answerInput.value.trim();
+  wordsEl.textContent = t ? t.split(/\s+/).length : 0;
+}
+answerInput.addEventListener("input", countWords);
 
 // ---- 주제 선택 ----
-chipGroup(".opic-chip", (chip) => { topic = chip.dataset.topic; });
+chipGroup(".opic-chip", (chip) => { topic = chip.dataset.topic; recentIds.length = 0; });
 
 // ---- 질문 받기 ----
 questionBtn.addEventListener("click", async () => {
@@ -41,7 +64,9 @@ questionBtn.addEventListener("click", async () => {
   show(qLoading, true);
   setBusy(questionBtn, true, "질문 만드는 중...");
   try {
-    const data = await postJSON("/api/opic/question", { topic });
+    const data = await postJSON("/api/opic/question", { topic, recent: recentIds });
+    if (data.id) { recentIds.push(data.id); if (recentIds.length > 4) recentIds.shift(); }
+    renderGuide(data);
     show(document.getElementById("opicQFallback"), !!data.fallback);
     currentQuestion = data.question;
     qText.textContent = data.question;
@@ -51,6 +76,7 @@ questionBtn.addEventListener("click", async () => {
     show(answerCard, true);
     show(resultBox, false);
     answerInput.value = "";
+    countWords();
     questionBtn.dataset.idle = "다른 질문 받기";
     // 실전처럼 질문을 읽어준다
     if (window.speakText) window.speakText(data.question);
@@ -83,6 +109,7 @@ if (SpeechRecognition) {
     }
     if (text) {
       answerInput.value = (answerInput.value + " " + text).trim();
+      countWords();
     }
   };
   recognition.onerror = (event) => {

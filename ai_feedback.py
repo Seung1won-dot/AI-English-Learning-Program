@@ -381,12 +381,30 @@ def opic_feedback(question, answer):
             }
 
     result = _feedback_mock(answer)
+    score, length_note = _opic_length_check(answer, result["score"])
     return {
         "corrected": result["corrected"],
-        "feedback": result["feedback"] + " (목업 모드 — AI 키를 넣으면 오픽 전략 피드백과 모범답변이 제공됩니다)",
+        "feedback": (result["feedback"] + " " + length_note).strip()
+        + " (기본 점검 모드 — AI 키를 넣으면 오픽 전략 피드백과 맞춤 모범답변이 제공됩니다)",
         "model_answer": "",
-        "score": result["score"],
+        "score": score,
     }
+
+
+def _opic_length_check(answer, score):
+    """목업 채점 보정 — 오픽은 분량·구체성이 점수에 크게 영향을 준다.
+
+    문장 부호만 맞으면 100점이 나오지 않도록 단어 수와 문장 수로 상한을 둔다.
+    """
+    words = len(answer.split())
+    sentences = max(1, len(re.findall(r"[.!?](\s|$)", answer.strip())))
+    if words < 30:
+        return min(score, 45), f"답변이 {words}단어로 짧아요. 실전에서는 80~150단어(1~2분)로 이유·예시·느낌을 덧붙여 보세요."
+    if words < 80:
+        return min(score, 70), f"{words}단어예요. 구체적인 경험이나 예시를 한두 문장 더하면 등급이 올라가요."
+    if sentences < 5:
+        return min(score, 80), "문장을 더 짧게 나누고 연결어(Also, Plus, Actually)를 써 보세요."
+    return score, "분량이 충분해요. 답변 틀(도입-본론-마무리)을 지켰는지 확인해 보세요."
 
 
 # ===========================================================================

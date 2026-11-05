@@ -1,0 +1,1597 @@
+{
+  "version": 1,
+  "topics": [
+    {
+      "id": "self",
+      "name": "자기소개",
+      "kind": "기본",
+      "questions": [
+        {
+          "id": "self-1",
+          "type": "자기소개",
+          "q": "Let's start the interview now. Tell me a little bit about yourself.",
+          "q_kr": "이제 인터뷰를 시작하겠습니다. 자신에 대해 간단히 말해 주세요.",
+          "tip": "이름·나이보다는 하는 일, 사는 곳, 성격, 요즘 관심사를 중심으로 말하세요. 자기소개는 채점에 큰 비중이 없으니 1분 안팎으로 자연스럽게 워밍업한다고 생각하면 돼요."
+        },
+        {
+          "id": "self-2",
+          "type": "루틴",
+          "q": "Tell me about a typical weekday for you. What do you usually do from the moment you wake up until you go to bed?",
+          "q_kr": "평소 평일 하루에 대해 말해 주세요. 아침에 일어나서 잠자리에 들 때까지 보통 무엇을 하나요?",
+          "tip": "아침→오후→저녁 시간 순서로 말하고, first / after that / in the evening 같은 연결어로 흐름을 잡으세요."
+        },
+        {
+          "id": "self-3",
+          "type": "묘사",
+          "q": "Tell me about the people you live with. Who are they, and what are they like?",
+          "q_kr": "함께 사는 사람들에 대해 말해 주세요. 누구이며, 어떤 사람들인가요?",
+          "tip": "한 사람씩 성격 → 외모나 습관 → 나와의 관계 순서로 묘사하세요. 혼자 산다면 혼자 사는 생활과 가끔 만나는 가족 이야기로 바꿔도 돼요."
+        },
+        {
+          "id": "self-4",
+          "type": "과거 경험",
+          "q": "Tell me about an important change that happened in your life recently. What was it, and how did it affect you?",
+          "q_kr": "최근 당신의 삶에 일어난 중요한 변화에 대해 말해 주세요. 어떤 변화였고, 당신에게 어떤 영향을 주었나요?",
+          "tip": "이사, 취업, 졸업, 새 취미처럼 구체적인 사건 하나를 고르고, 변화 전 → 계기 → 변화 후 느낌 순서로 과거 시제를 유지하세요."
+        },
+        {
+          "id": "self-5",
+          "type": "의견",
+          "q": "What are some goals you would like to achieve in the next few years? Why are they important to you?",
+          "q_kr": "앞으로 몇 년 안에 이루고 싶은 목표는 무엇인가요? 왜 그 목표가 중요한가요?",
+          "tip": "목표 2개 정도를 고르고 각각 이유와 지금 하고 있는 노력을 덧붙이세요. I'm hoping to... / My plan is to... 같은 표현을 활용하세요."
+        }
+      ],
+      "template": [
+        "도입: 이름과 현재 하는 일을 한 문장으로 (Hi, my name is ... and I'm a ...)",
+        "본론 1: 사는 곳과 함께 사는 사람 (I live in ... with ...)",
+        "본론 2: 성격과 요즘 즐기는 활동 (People say I'm ... / These days I'm into ...)",
+        "본론 3: 요즘 고민이나 목표 한 가지 (Lately I've been trying to ...)",
+        "마무리: 짧게 정리하기 (That's a little bit about me.)"
+      ],
+      "expressions": [
+        {
+          "en": "I just graduated from college and I'm looking for a job.",
+          "ko": "얼마 전 대학을 졸업했고 지금은 일자리를 찾고 있어요."
+        },
+        {
+          "en": "I work for a small IT company as a software developer.",
+          "ko": "작은 IT 회사에서 소프트웨어 개발자로 일하고 있어요."
+        },
+        {
+          "en": "I live with my parents and my younger sister.",
+          "ko": "부모님, 여동생과 함께 살아요."
+        },
+        {
+          "en": "People say I'm easygoing and pretty outgoing.",
+          "ko": "사람들은 제가 느긋하고 꽤 외향적이라고 해요."
+        },
+        {
+          "en": "I'm the kind of person who likes to plan ahead.",
+          "ko": "저는 미리 계획하는 걸 좋아하는 사람이에요."
+        },
+        {
+          "en": "In my free time, I like to unwind by watching movies.",
+          "ko": "여가 시간에는 영화를 보면서 쉬는 걸 좋아해요."
+        },
+        {
+          "en": "These days I'm really into running.",
+          "ko": "요즘 달리기에 푹 빠져 있어요."
+        },
+        {
+          "en": "My goal for this year is to improve my English.",
+          "ko": "올해 목표는 영어 실력을 키우는 거예요."
+        },
+        {
+          "en": "I'm a morning person, so I usually get up early.",
+          "ko": "저는 아침형 인간이라 보통 일찍 일어나요."
+        },
+        {
+          "en": "That's a little bit about me.",
+          "ko": "저에 대해서는 이 정도예요."
+        }
+      ],
+      "sample": "Hi, my name is Minji, and I'm twenty-eight years old. I work as a marketing assistant at a cosmetics company in Seoul. I live in an apartment near my office with my parents and my younger brother, so it's always a little noisy at home, but I like it that way. People say I'm cheerful and easygoing, and I think that's true. I get along well with almost everyone. In my free time, I like to go jogging along the river or watch movies at home. Actually, these days I'm really into baking, so I make cookies for my coworkers on weekends. Lately I've been trying to improve my English because I want to work with overseas clients someday. It's not easy to find the time, you know, but I try to study a little every morning before work. Anyway, that's a little bit about me."
+    },
+    {
+      "id": "home",
+      "name": "집",
+      "kind": "설문",
+      "questions": [
+        {
+          "id": "home-1",
+          "type": "묘사",
+          "q": "I would like to know where you live. Can you describe your home? What does it look like and how many rooms does it have? Give me as many details as possible.",
+          "q_kr": "당신이 어디에 사는지 알고 싶어요. 집을 묘사해 주세요. 어떻게 생겼고 방은 몇 개인가요? 최대한 자세히 말해 주세요.",
+          "tip": "입구 → 거실 → 부엌 → 방 순서로 공간을 따라가며 묘사하면 길게 말하기 쉬워요. 마지막에 집에 대한 느낌을 한 문장 덧붙이세요."
+        },
+        {
+          "id": "home-2",
+          "type": "묘사",
+          "q": "Which room in your home do you like the most? Tell me what that room looks like and why you like it.",
+          "q_kr": "집에서 가장 좋아하는 방은 어디인가요? 그 방이 어떻게 생겼고 왜 좋은지 말해 주세요.",
+          "tip": "가구 배치를 '왼쪽/오른쪽/창가' 같은 위치 표현으로 설명하고, 그 방에서 주로 하는 일을 이유로 연결하세요."
+        },
+        {
+          "id": "home-3",
+          "type": "루틴",
+          "q": "What kinds of household chores do you usually do at home? Who does what in your family, and how often do you do them?",
+          "q_kr": "집에서 보통 어떤 집안일을 하나요? 가족 중 누가 무엇을 하고, 얼마나 자주 하나요?",
+          "tip": "청소·빨래·설거지·분리수거 등 2~3가지를 골라 빈도(once a week, every other day)와 담당자를 붙여 말하세요."
+        },
+        {
+          "id": "home-4",
+          "type": "비교",
+          "q": "Think about the home you lived in when you were a child. How was it different from the home you live in now?",
+          "q_kr": "어렸을 때 살던 집을 떠올려 보세요. 지금 사는 집과 어떻게 달랐나요?",
+          "tip": "크기·위치·분위기 두세 가지 기준으로 '그때는 ~, 지금은 ~' 대비 구조를 만드세요. used to를 쓰면 과거 습관이 자연스럽게 표현돼요."
+        },
+        {
+          "id": "home-5",
+          "type": "과거 경험",
+          "q": "Have you ever had a problem at home, such as a broken appliance or a leak? Tell me what happened and how you dealt with it.",
+          "q_kr": "가전제품 고장이나 누수 같은 문제가 집에서 생긴 적이 있나요? 무슨 일이 있었고 어떻게 해결했는지 말해 주세요.",
+          "tip": "언제 → 어떤 문제 → 처음 반응 → 해결 과정 → 결과와 교훈 순서의 이야기 구조로 말하세요. 감정 표현(I was so frustrated)을 넣으면 생동감이 생겨요."
+        },
+        {
+          "id": "home-6",
+          "type": "과거 경험",
+          "q": "Tell me about the last time you changed something in your home, like rearranging furniture or redecorating. What did you change and why?",
+          "q_kr": "가구 배치를 바꾸거나 인테리어를 새로 하는 등 집에서 무언가를 마지막으로 바꾼 때에 대해 말해 주세요. 무엇을 왜 바꿨나요?",
+          "tip": "바꾸기 전 불편했던 점 → 바꾼 과정 → 바꾼 뒤 달라진 점 순서로 말하세요. 작은 변화(커튼, 조명)도 충분해요."
+        }
+      ],
+      "template": [
+        "도입: 집 종류와 위치를 한 문장으로 (I live in a ... in ...)",
+        "본론 1: 전체 구조와 방 개수 (It has three bedrooms, ...)",
+        "본론 2: 가장 좋아하는 공간 자세히 (My favorite spot is ...)",
+        "본론 3: 집에서 주로 하는 일 (I usually ... there.)",
+        "마무리: 집에 대한 느낌 (Overall, it's a cozy place and I really like it.)"
+      ],
+      "expressions": [
+        {
+          "en": "I live in a three-bedroom apartment on the twelfth floor.",
+          "ko": "12층에 있는 방 세 개짜리 아파트에 살아요."
+        },
+        {
+          "en": "It's located in a quiet neighborhood.",
+          "ko": "조용한 동네에 있어요."
+        },
+        {
+          "en": "When you walk in, the first thing you see is the living room.",
+          "ko": "들어가면 가장 먼저 거실이 보여요."
+        },
+        {
+          "en": "The kitchen is connected to the living room.",
+          "ko": "부엌이 거실과 이어져 있어요."
+        },
+        {
+          "en": "It gets a lot of sunlight in the afternoon.",
+          "ko": "오후에 햇빛이 많이 들어와요."
+        },
+        {
+          "en": "It's not very big, but it's cozy.",
+          "ko": "아주 크진 않지만 아늑해요."
+        },
+        {
+          "en": "There's a big window that faces the park.",
+          "ko": "공원 쪽으로 난 큰 창문이 있어요."
+        },
+        {
+          "en": "My parents and I take turns doing the dishes.",
+          "ko": "부모님과 제가 돌아가며 설거지를 해요."
+        },
+        {
+          "en": "We moved here about five years ago.",
+          "ko": "약 5년 전에 이곳으로 이사 왔어요."
+        },
+        {
+          "en": "It's the place where I feel most comfortable.",
+          "ko": "제가 가장 편안함을 느끼는 곳이에요."
+        }
+      ],
+      "sample": "Well, I live in a three-bedroom apartment on the tenth floor of a building in Suwon. It's located in a quiet neighborhood, and there's a small park right across the street. When you walk in, the first thing you see is the living room. It's pretty spacious, and there's a big gray sofa and a TV on the wall. The kitchen is connected to the living room, so we usually eat together at a wooden table near the window. There are three bedrooms and two bathrooms. My parents use the biggest bedroom, and I have the one at the end of the hall. My room isn't very big, but it's cozy. I have a desk, a bookshelf, and a bed by the window, and it gets a lot of sunlight in the afternoon. Actually, my favorite spot is the balcony, because I can see the trees in the park. Overall, my home is the place where I feel most comfortable."
+    },
+    {
+      "id": "hobby",
+      "name": "취미",
+      "kind": "설문",
+      "questions": [
+        {
+          "id": "hobby-1",
+          "type": "묘사",
+          "q": "You indicated in the survey that you have a hobby you enjoy. What is your hobby, and why do you enjoy it? Give me as many details as possible.",
+          "q_kr": "설문에서 즐기는 취미가 있다고 하셨어요. 취미가 무엇이고, 왜 그것을 즐기나요? 최대한 자세히 말해 주세요.",
+          "tip": "취미 하나를 정해 무엇인지 → 어디서·누구와 → 좋아하는 이유 2가지 순서로 말하세요. 이유에 구체적인 예를 붙이면 길이가 자연스럽게 늘어나요."
+        },
+        {
+          "id": "hobby-2",
+          "type": "루틴",
+          "q": "When and how often do you usually spend time on your hobby? Walk me through what you typically do, step by step.",
+          "q_kr": "보통 언제, 얼마나 자주 취미 활동을 하나요? 평소에 무엇을 하는지 단계별로 설명해 주세요.",
+          "tip": "준비 → 활동 → 마무리 단계로 나누고 first, then, after that, finally 연결어를 쓰세요. 빈도 표현(twice a week)도 꼭 넣으세요."
+        },
+        {
+          "id": "hobby-3",
+          "type": "과거 경험",
+          "q": "How did you first get interested in your hobby? Tell me about when and how you started it.",
+          "q_kr": "처음에 어떻게 그 취미에 관심을 갖게 되었나요? 언제, 어떻게 시작했는지 말해 주세요.",
+          "tip": "시작 계기(친구 권유, 영상, 스트레스 해소 등)를 하나의 장면처럼 묘사하고, 처음엔 어땠는지 → 지금은 어떤지로 마무리하세요."
+        },
+        {
+          "id": "hobby-4",
+          "type": "과거 경험",
+          "q": "Tell me about a particularly memorable experience you had while doing your hobby. What happened, and why was it so memorable?",
+          "q_kr": "취미 활동을 하다가 특히 기억에 남는 경험에 대해 말해 주세요. 무슨 일이 있었고, 왜 그렇게 기억에 남나요?",
+          "tip": "배경(언제·어디서·누구와) → 사건 → 감정 → 의미 순서로 이야기를 만드세요. 과거 시제를 일관되게 유지하는 것이 중요해요."
+        },
+        {
+          "id": "hobby-5",
+          "type": "비교",
+          "q": "How has your hobby changed over time? Is the way you enjoy it now different from when you first started?",
+          "q_kr": "시간이 지나면서 취미가 어떻게 바뀌었나요? 지금 즐기는 방식은 처음 시작했을 때와 다른가요?",
+          "tip": "실력, 함께하는 사람, 쓰는 돈이나 장비 등 기준을 2개 정도 잡고 '처음에는 ~, 지금은 ~'으로 비교하세요."
+        }
+      ],
+      "template": [
+        "도입: 취미를 한 문장으로 소개 (My favorite hobby is ...)",
+        "본론 1: 언제·어디서·누구와 하는지 (I usually do it on weekends with ...)",
+        "본론 2: 좋아하는 이유 1 + 예시 (The main reason is ...)",
+        "본론 3: 좋아하는 이유 2 또는 최근 에피소드 (Also, ...)",
+        "마무리: 앞으로의 계획이나 느낌 (I'd love to keep doing it for a long time.)"
+      ],
+      "expressions": [
+        {
+          "en": "My favorite hobby is drawing.",
+          "ko": "제가 가장 좋아하는 취미는 그림 그리기예요."
+        },
+        {
+          "en": "I picked up this hobby about two years ago.",
+          "ko": "약 2년 전에 이 취미를 시작했어요."
+        },
+        {
+          "en": "It helps me relieve stress after a long day.",
+          "ko": "긴 하루를 보낸 뒤 스트레스를 푸는 데 도움이 돼요."
+        },
+        {
+          "en": "I lose track of time when I'm doing it.",
+          "ko": "하다 보면 시간 가는 줄 몰라요."
+        },
+        {
+          "en": "I try to do it at least twice a week.",
+          "ko": "적어도 일주일에 두 번은 하려고 해요."
+        },
+        {
+          "en": "A friend of mine got me into it.",
+          "ko": "친구 한 명 덕분에 빠지게 됐어요."
+        },
+        {
+          "en": "At first, I wasn't very good at it.",
+          "ko": "처음에는 잘하지 못했어요."
+        },
+        {
+          "en": "It doesn't cost much, which is a big plus.",
+          "ko": "돈이 많이 들지 않는다는 게 큰 장점이에요."
+        },
+        {
+          "en": "I've gotten a lot better since then.",
+          "ko": "그 이후로 실력이 많이 늘었어요."
+        },
+        {
+          "en": "It's become a big part of my life.",
+          "ko": "제 삶의 큰 부분이 되었어요."
+        }
+      ],
+      "sample": "My favorite hobby is drawing. I picked up this hobby about two years ago, when I was going through a stressful time at work. I usually draw in the evening at my desk, and on weekends I sometimes take my sketchbook to a cafe near my place. There are two main reasons why I enjoy it. First, it helps me relieve stress. When I'm drawing, I focus completely on the lines and colors, and I lose track of time. It's like my mind gets a little break. Second, it doesn't cost much, which is a big plus. All I need is a pencil, some markers, and a sketchbook. Actually, at first I wasn't very good at it, but I watched a lot of online videos and practiced almost every day, and I've gotten a lot better since then. Now I even post my drawings on social media. I'd love to keep doing it for a long time."
+    },
+    {
+      "id": "travel",
+      "name": "여행",
+      "kind": "설문",
+      "questions": [
+        {
+          "id": "travel-1",
+          "type": "묘사",
+          "q": "You indicated in the survey that you enjoy traveling abroad. Tell me about a country or city you have visited. What was it like, and what was special about it?",
+          "q_kr": "설문에서 해외여행을 즐긴다고 하셨어요. 가 본 나라나 도시에 대해 말해 주세요. 그곳은 어땠고, 무엇이 특별했나요?",
+          "tip": "도시 하나를 골라 위치·첫인상 → 볼거리 → 음식 → 사람과 분위기 순서로 묘사하세요. 형용사(breathtaking, lively)를 다양하게 쓰면 좋아요."
+        },
+        {
+          "id": "travel-2",
+          "type": "루틴",
+          "q": "What do you usually do to prepare for a trip abroad? Tell me about the steps you take before you leave.",
+          "q_kr": "해외여행을 가기 전에 보통 무엇을 준비하나요? 떠나기 전에 거치는 단계를 말해 주세요.",
+          "tip": "항공권·숙소 예약 → 일정 짜기 → 환전·유심 → 짐 싸기 순서로 단계별로 말하세요. 나만의 준비 습관 하나를 넣으면 개성이 살아나요."
+        },
+        {
+          "id": "travel-3",
+          "type": "과거 경험",
+          "q": "Tell me about your first trip abroad. Where did you go, who did you go with, and what did you do there?",
+          "q_kr": "첫 해외여행에 대해 말해 주세요. 어디에 갔고, 누구와 갔으며, 그곳에서 무엇을 했나요?",
+          "tip": "처음 비행기를 탔을 때의 설렘, 낯선 언어나 음식 같은 '처음'의 느낌을 강조하면 이야기가 살아나요."
+        },
+        {
+          "id": "travel-4",
+          "type": "과거 경험",
+          "q": "Have you ever had an unexpected problem while traveling, such as a lost bag or a missed flight? Tell me what happened and how you solved it.",
+          "q_kr": "여행 중에 가방 분실이나 비행기를 놓치는 것 같은 예상치 못한 문제를 겪은 적이 있나요? 무슨 일이 있었고 어떻게 해결했는지 말해 주세요.",
+          "tip": "문제 상황 → 당황한 감정 → 해결 과정 → 결과 → 배운 점 순서로 말하세요. 실제 경험이 없으면 그럴듯하게 지어내도 괜찮아요."
+        },
+        {
+          "id": "travel-5",
+          "type": "비교",
+          "q": "How has the way people travel changed compared to the past? What are some of the biggest differences?",
+          "q_kr": "사람들이 여행하는 방식이 예전과 비교해 어떻게 달라졌나요? 가장 큰 차이점은 무엇인가요?",
+          "tip": "예약 방식(여행사 → 앱), 정보 얻는 방법(가이드북 → SNS), 여행 스타일(패키지 → 자유여행) 등 2~3가지 차이를 비교하세요."
+        }
+      ],
+      "template": [
+        "도입: 다녀온 곳을 한 문장으로 (I visited ... last year.)",
+        "본론 1: 위치와 첫인상 (It's located in ..., and my first impression was ...)",
+        "본론 2: 인상적인 장소·음식 (The highlight was ...)",
+        "본론 3: 특별했던 점이나 에피소드 (What made it special was ...)",
+        "마무리: 다시 가고 싶은지와 느낌 (I'd definitely go back someday.)"
+      ],
+      "expressions": [
+        {
+          "en": "I went on a trip to Japan with my friends last spring.",
+          "ko": "지난봄에 친구들과 일본으로 여행을 갔어요."
+        },
+        {
+          "en": "It was my first time traveling abroad.",
+          "ko": "처음으로 해외여행을 간 거였어요."
+        },
+        {
+          "en": "The view from the top was breathtaking.",
+          "ko": "꼭대기에서 본 경치가 숨이 멎을 만큼 멋졌어요."
+        },
+        {
+          "en": "The highlight of the trip was the food.",
+          "ko": "여행의 하이라이트는 음식이었어요."
+        },
+        {
+          "en": "I usually book my flight and hotel a couple of months in advance.",
+          "ko": "보통 두세 달 전에 항공권과 호텔을 예약해요."
+        },
+        {
+          "en": "I always make a rough itinerary before I leave.",
+          "ko": "떠나기 전에 항상 대략적인 일정을 짜요."
+        },
+        {
+          "en": "The locals were really friendly and helpful.",
+          "ko": "현지 사람들이 정말 친절하고 많이 도와줬어요."
+        },
+        {
+          "en": "We got lost a few times, but that was part of the fun.",
+          "ko": "몇 번 길을 잃었지만 그것도 재미의 일부였어요."
+        },
+        {
+          "en": "It's a lot easier to travel on your own these days.",
+          "ko": "요즘은 혼자 여행하기가 훨씬 쉬워요."
+        },
+        {
+          "en": "I'd definitely go back there someday.",
+          "ko": "언젠가 꼭 다시 가고 싶어요."
+        }
+      ],
+      "sample": "Last spring, I went on a trip to Lisbon, Portugal, with two of my college friends. It's located on the west coast of Portugal, and my first impression was that the whole city looked like a painting. There were colorful buildings everywhere, and the streets were really steep and narrow. We rode the old yellow tram up the hills, and the view from the top was just breathtaking. You could see red roofs and the river all at once. Honestly, the highlight of the trip was the food, though. We ate grilled sardines and these little custard tarts almost every day. They were so good. What made the trip special was the people. The locals were really friendly, and one old man even helped us find our hostel when we got lost. It was a short trip, only five days, but I'd definitely go back there someday."
+    },
+    {
+      "id": "exercise",
+      "name": "운동",
+      "kind": "설문",
+      "questions": [
+        {
+          "id": "exercise-1",
+          "type": "묘사",
+          "q": "You indicated in the survey that you exercise regularly. Where do you usually go to work out? Describe that place in detail.",
+          "q_kr": "설문에서 규칙적으로 운동한다고 하셨어요. 보통 어디에서 운동하나요? 그 장소를 자세히 묘사해 주세요.",
+          "tip": "헬스장·공원·체육관 중 하나를 골라 위치 → 내부 구조와 시설 → 분위기 → 좋아하는 이유 순서로 묘사하세요."
+        },
+        {
+          "id": "exercise-2",
+          "type": "루틴",
+          "q": "Tell me about your exercise routine. How often do you work out, and what do you do from start to finish?",
+          "q_kr": "운동 루틴에 대해 말해 주세요. 얼마나 자주 운동하고, 처음부터 끝까지 무엇을 하나요?",
+          "tip": "스트레칭(warm up) → 본 운동 → 마무리(cool down) 순서로 말하고, 요일이나 시간 같은 구체적인 정보를 넣으세요."
+        },
+        {
+          "id": "exercise-3",
+          "type": "과거 경험",
+          "q": "When did you first start exercising regularly? Tell me what made you start and how it went at the beginning.",
+          "q_kr": "언제 처음 규칙적으로 운동을 시작했나요? 무엇 때문에 시작했고 처음에는 어땠는지 말해 주세요.",
+          "tip": "건강검진, 체중 증가, 친구 권유 같은 계기를 구체적으로 말하고, 처음의 힘들었던 점 → 극복 과정으로 이어 가세요."
+        },
+        {
+          "id": "exercise-4",
+          "type": "과거 경험",
+          "q": "Tell me about a memorable experience you had while exercising. Maybe you got injured or achieved a personal goal. What happened?",
+          "q_kr": "운동하다가 겪은 기억에 남는 경험에 대해 말해 주세요. 다쳤거나 개인 목표를 달성했을 수도 있겠죠. 무슨 일이 있었나요?",
+          "tip": "한 장면을 골라 상황 → 사건 → 감정 → 이후 달라진 점 순서로 말하세요. 기록, 대회, 부상 등 숫자가 있으면 더 구체적이에요."
+        },
+        {
+          "id": "exercise-5",
+          "type": "의견",
+          "q": "Many people say they want to exercise but find it hard to keep it up. Why do you think that is, and what advice would you give them?",
+          "q_kr": "많은 사람들이 운동하고 싶다고 하면서도 꾸준히 하기 어려워해요. 왜 그렇다고 생각하며, 어떤 조언을 해 주고 싶나요?",
+          "tip": "이유 2가지(시간 부족, 목표가 너무 큼)와 조언 2가지(작게 시작, 친구와 함께)를 짝지어 말하면 논리적으로 들려요."
+        }
+      ],
+      "template": [
+        "도입: 운동 장소를 한 문장으로 (I usually work out at a gym near my office.)",
+        "본론 1: 위치와 규모 (It's on the third floor of ...)",
+        "본론 2: 시설과 내부 모습 (There are ... and ...)",
+        "본론 3: 분위기와 좋아하는 이유 (What I like most is ...)",
+        "마무리: 운동이 내게 주는 의미 (Working out there really keeps me going.)"
+      ],
+      "expressions": [
+        {
+          "en": "I work out at a gym near my office three times a week.",
+          "ko": "일주일에 세 번 회사 근처 헬스장에서 운동해요."
+        },
+        {
+          "en": "I always start with some light stretching.",
+          "ko": "항상 가벼운 스트레칭으로 시작해요."
+        },
+        {
+          "en": "I usually run on the treadmill for about thirty minutes.",
+          "ko": "보통 러닝머신에서 30분 정도 달려요."
+        },
+        {
+          "en": "After that, I do some weight training.",
+          "ko": "그다음에는 근력 운동을 해요."
+        },
+        {
+          "en": "I cool down by walking for a few minutes.",
+          "ko": "몇 분 걸으면서 운동을 마무리해요."
+        },
+        {
+          "en": "It's not too crowded in the morning.",
+          "ko": "아침에는 그렇게 붐비지 않아요."
+        },
+        {
+          "en": "I hurt my ankle while I was running.",
+          "ko": "달리다가 발목을 다쳤어요."
+        },
+        {
+          "en": "I feel much more energetic these days.",
+          "ko": "요즘 훨씬 더 활기가 넘쳐요."
+        },
+        {
+          "en": "The hardest part is getting started.",
+          "ko": "가장 어려운 건 시작하는 거예요."
+        },
+        {
+          "en": "Consistency is more important than intensity.",
+          "ko": "강도보다 꾸준함이 더 중요해요."
+        }
+      ],
+      "sample": "I usually work out at a gym near my office. It's on the third floor of a building right next to the subway station, so it's really convenient. When you walk in, there's a front desk, and behind it there's a big open space full of machines. On the left side, there are about ten treadmills and some exercise bikes facing a wall of windows. On the right side, there's an area for weight training with dumbbells and benches. There's also a small room in the back for yoga and stretching, and the locker rooms have showers, which is a big plus. What I like most about this gym is the atmosphere. It's clean and bright, and it's not too crowded in the morning, so I never have to wait for a machine. The trainers are friendly, too. I go there three times a week before work, and honestly, it really keeps me going."
+    },
+    {
+      "id": "movie",
+      "name": "영화",
+      "kind": "설문",
+      "questions": [
+        {
+          "id": "movie-1",
+          "type": "묘사",
+          "q": "You indicated in the survey that you like to go to the movies. What kinds of movies do you like to watch, and why?",
+          "q_kr": "설문에서 영화 보러 가는 것을 좋아한다고 하셨어요. 어떤 종류의 영화를 즐겨 보며, 그 이유는 무엇인가요?",
+          "tip": "장르 1~2개를 고르고 이유를 말한 뒤, 그 장르의 영화 한 편을 예로 들어 짧게 소개하면 답이 풍성해져요."
+        },
+        {
+          "id": "movie-2",
+          "type": "루틴",
+          "q": "What do you usually do when you go to the movies? Tell me about your routine from the moment you decide to see a movie until you get home.",
+          "q_kr": "영화 보러 갈 때 보통 무엇을 하나요? 영화를 보기로 정한 순간부터 집에 돌아올 때까지의 과정을 말해 주세요.",
+          "tip": "영화 고르기 → 앱으로 예매 → 팝콘 사기 → 관람 → 끝나고 밥 먹으며 이야기 순서로 말하세요."
+        },
+        {
+          "id": "movie-3",
+          "type": "과거 경험",
+          "q": "Tell me about a movie you saw recently. What was it about, who did you see it with, and how did you feel about it?",
+          "q_kr": "최근에 본 영화에 대해 말해 주세요. 어떤 내용이었고, 누구와 함께 봤으며, 어떻게 느꼈나요?",
+          "tip": "줄거리는 2~3문장으로 짧게 하고, 함께 본 사람과 내 감상에 더 많은 시간을 쓰세요. 스포일러 걱정은 하지 않아도 돼요."
+        },
+        {
+          "id": "movie-4",
+          "type": "묘사",
+          "q": "Who is your favorite actor or actress? Tell me about this person and the movies they have been in.",
+          "q_kr": "가장 좋아하는 배우는 누구인가요? 그 배우와 출연한 영화들에 대해 말해 주세요.",
+          "tip": "외모 → 연기 스타일 → 대표작 → 좋아하게 된 계기 순서로 말하세요. 실제 배우 이름을 써도 되고, 발음이 어려우면 '그 배우'로 돌려 말해도 돼요."
+        },
+        {
+          "id": "movie-5",
+          "type": "비교",
+          "q": "How have movie theaters or the way people watch movies changed over the years? What do you think about these changes?",
+          "q_kr": "영화관이나 사람들이 영화를 보는 방식이 몇 년 사이에 어떻게 변했나요? 이런 변화에 대해 어떻게 생각하나요?",
+          "tip": "예전(극장·DVD 대여) vs 지금(스트리밍·리클라이너 좌석) 비교 후, 좋은 점과 아쉬운 점을 하나씩 말하면 의견까지 자연스럽게 연결돼요."
+        }
+      ],
+      "template": [
+        "도입: 좋아하는 장르를 한 문장으로 (I'm a big fan of ... movies.)",
+        "본론 1: 좋아하는 이유 1 (I love them because ...)",
+        "본론 2: 좋아하는 이유 2 (On top of that, ...)",
+        "본론 3: 대표 예시 영화 한 편 (For example, I recently saw ...)",
+        "마무리: 영화가 내게 주는 의미 (Movies are a great way for me to ...)"
+      ],
+      "expressions": [
+        {
+          "en": "I'm a big fan of science fiction movies.",
+          "ko": "저는 SF 영화를 정말 좋아해요."
+        },
+        {
+          "en": "I'm not really into horror movies.",
+          "ko": "공포 영화는 별로 좋아하지 않아요."
+        },
+        {
+          "en": "The plot was full of unexpected twists.",
+          "ko": "줄거리가 예상치 못한 반전으로 가득했어요."
+        },
+        {
+          "en": "The special effects were amazing.",
+          "ko": "특수 효과가 놀라웠어요."
+        },
+        {
+          "en": "I usually book tickets in advance on an app.",
+          "ko": "보통 앱으로 미리 표를 예매해요."
+        },
+        {
+          "en": "I always get a large popcorn and a soda.",
+          "ko": "항상 큰 팝콘과 탄산음료를 사요."
+        },
+        {
+          "en": "The movie was based on a true story.",
+          "ko": "그 영화는 실화를 바탕으로 했어요."
+        },
+        {
+          "en": "She's a really talented actress.",
+          "ko": "그녀는 정말 재능 있는 배우예요."
+        },
+        {
+          "en": "It was so moving that I almost cried.",
+          "ko": "너무 감동적이어서 거의 울 뻔했어요."
+        },
+        {
+          "en": "These days, most people stream movies at home.",
+          "ko": "요즘은 대부분 집에서 영화를 스트리밍으로 봐요."
+        }
+      ],
+      "sample": "I'm a big fan of science fiction movies. I also like action movies, but sci-fi is definitely my favorite genre. There are two main reasons why I love it. First, it lets me imagine a completely different world. When I watch a movie about space travel or the future, I forget about my own problems for a couple of hours. It's like a short vacation for my brain. On top of that, the special effects are usually amazing, so I always try to see these movies on a big screen. For example, last month I saw a movie about astronauts who had to find a new planet for humans. The story was a little complicated, you know, but the visuals were incredible, and the music gave me goosebumps. I talked about it with my friend for hours afterward. So for me, sci-fi movies are a great way to relax and dream a little."
+    },
+    {
+      "id": "roleplay",
+      "name": "롤플레이",
+      "kind": "롤플레이",
+      "questions": [
+        {
+          "id": "roleplay-1",
+          "type": "질문하기",
+          "q": "I'd like to give you a situation and ask you to act it out. You want to buy tickets for a concert next month. Call the ticket office and ask three or four questions to get the information you need.",
+          "q_kr": "상황을 하나 드릴 테니 연기해 주세요. 다음 달 콘서트 표를 사고 싶습니다. 매표소에 전화해서 필요한 정보를 얻기 위해 서너 가지 질문을 하세요.",
+          "tip": "인사와 전화한 목적을 먼저 말하고, 날짜·좌석·가격·할인이나 결제 방법 순서로 질문하세요. 질문마다 I was wondering if... / Could you tell me...처럼 표현을 바꾸면 좋아요."
+        },
+        {
+          "id": "roleplay-2",
+          "type": "문제 해결",
+          "q": "I'm sorry, but there is a problem I need you to resolve. You bought two concert tickets for you and a friend, but you just found out you have to work that night. Call your friend, explain the situation, and suggest two or three alternatives.",
+          "q_kr": "죄송하지만 해결해야 할 문제가 있어요. 당신과 친구를 위해 콘서트 표 두 장을 샀는데, 그날 밤 일해야 한다는 걸 방금 알게 되었습니다. 친구에게 전화해 상황을 설명하고 두세 가지 대안을 제시하세요.",
+          "tip": "사과 → 문제 설명 → 대안 2~3개(다른 친구와 가기, 표 양도, 다른 날짜로 교환) → 다시 사과하며 마무리 구조를 지키세요. 실제 통화처럼 감정을 넣으면 좋아요."
+        },
+        {
+          "id": "roleplay-3",
+          "type": "질문하기",
+          "q": "You are planning a weekend trip and want to stay at a hotel. Call the hotel and ask three or four questions about booking a room.",
+          "q_kr": "주말여행을 계획하고 있어서 호텔에 묵으려고 합니다. 호텔에 전화해 객실 예약에 관해 서너 가지 질문을 하세요.",
+          "tip": "빈방 여부 → 객실 종류와 가격 → 조식·주차 포함 여부 → 체크인 시간과 취소 규정 순서로 물어보세요."
+        },
+        {
+          "id": "roleplay-4",
+          "type": "문제 해결",
+          "q": "You dropped your phone, and now the screen is cracked and it won't turn on. Call a repair shop, explain what happened, and suggest two or three ways they could help you.",
+          "q_kr": "휴대폰을 떨어뜨려 화면이 깨졌고 이제 켜지지도 않습니다. 수리점에 전화해 무슨 일이 있었는지 설명하고, 도움을 받을 수 있는 방법을 두세 가지 제안하세요.",
+          "tip": "언제 어떻게 고장 났는지 구체적으로 말하고, 당일 수리·임대폰 대여·데이터 백업 같은 대안을 Would it be possible to...? 형태로 제안하세요."
+        },
+        {
+          "id": "roleplay-5",
+          "type": "질문하기",
+          "q": "You are thinking about joining a gym near your home. Call the gym and ask three or four questions about their membership.",
+          "q_kr": "집 근처 헬스장에 등록할까 생각 중입니다. 헬스장에 전화해 회원권에 관해 서너 가지 질문을 하세요.",
+          "tip": "운영 시간 → 회원권 종류와 가격 → PT·그룹 수업 → 샤워 시설·주차 순서로 물어보세요. 마지막에 체험 이용이 가능한지 묻는 것도 좋아요."
+        },
+        {
+          "id": "roleplay-6",
+          "type": "문제 해결",
+          "q": "You made a dinner reservation for your family's special celebration, but when you arrive, the restaurant has no record of it. Explain the situation to the staff and offer two or three possible solutions.",
+          "q_kr": "가족의 특별한 축하 자리를 위해 저녁 예약을 했는데, 도착해 보니 식당에 예약 기록이 없습니다. 직원에게 상황을 설명하고 두세 가지 해결 방법을 제시하세요.",
+          "tip": "예약한 날짜·이름·인원을 구체적으로 말해 신뢰를 주고, 다른 자리 마련·잠깐 대기·근처 지점 안내 같은 대안을 정중하게 제안하세요."
+        },
+        {
+          "id": "roleplay-7",
+          "type": "과거 경험",
+          "q": "Have you ever had to cancel or change your plans because of an unexpected problem? Tell me what happened and how you handled it.",
+          "q_kr": "예상치 못한 문제 때문에 계획을 취소하거나 바꿔야 했던 적이 있나요? 무슨 일이 있었고 어떻게 대처했는지 말해 주세요.",
+          "tip": "롤플레이 마지막 문제는 앞 상황과 비슷한 실제 경험을 묻는 경우가 많아요. 배경 → 문제 → 대처 → 결과 → 느낀 점 순서로 과거 시제로 말하세요."
+        },
+        {
+          "id": "roleplay-8",
+          "type": "질문하기",
+          "q": "I live in a small apartment in the city. Ask me three or four questions about where I live.",
+          "q_kr": "저는 도시의 작은 아파트에 살아요. 제가 사는 곳에 대해 서너 가지 질문을 해 보세요.",
+          "tip": "면접관에게 직접 묻는 유형이에요. 위치 → 크기와 구조 → 좋아하는 공간 → 이웃이나 동네 순서로 질문하고, 마지막에 Thanks for sharing!으로 끝내세요."
+        }
+      ],
+      "template": [
+        "도입: 인사와 전화한 목적 (Hi, I'm calling about ...)",
+        "본론 1: 상황 설명 또는 첫 질문 (First, I was wondering if ...)",
+        "본론 2: 이어지는 질문들 또는 문제 설명 (Also, could you tell me ...? / The problem is ...)",
+        "본론 3: 추가 질문 또는 대안 2~3개 (One more thing ... / Maybe we could ...)",
+        "마무리: 감사 인사와 정리 (Thank you so much. I'll call you back later.)"
+      ],
+      "expressions": [
+        {
+          "en": "Hi, I'm calling to ask about the concert next month.",
+          "ko": "안녕하세요, 다음 달 콘서트에 대해 여쭤보려고 전화했어요."
+        },
+        {
+          "en": "I was wondering if there are any seats left.",
+          "ko": "남은 좌석이 있는지 궁금해요."
+        },
+        {
+          "en": "Could you tell me how much the tickets are?",
+          "ko": "표 가격이 얼마인지 알려 주시겠어요?"
+        },
+        {
+          "en": "Is there a discount for students?",
+          "ko": "학생 할인이 있나요?"
+        },
+        {
+          "en": "I'm afraid I have some bad news.",
+          "ko": "안타깝지만 안 좋은 소식이 있어."
+        },
+        {
+          "en": "Something came up at work.",
+          "ko": "회사에 일이 생겼어."
+        },
+        {
+          "en": "How about going with someone else instead?",
+          "ko": "대신 다른 사람이랑 가는 건 어때?"
+        },
+        {
+          "en": "Would it be possible to get it fixed today?",
+          "ko": "오늘 안에 수리가 가능할까요?"
+        },
+        {
+          "en": "I made a reservation under the name Kim for six people.",
+          "ko": "김이라는 이름으로 6명 예약했어요."
+        },
+        {
+          "en": "I'm really sorry for the trouble.",
+          "ko": "번거롭게 해서 정말 미안해요."
+        }
+      ],
+      "sample": "Hi, how are you? I'm calling to ask about the jazz concert at your hall next month. I saw the poster online, and I'm really interested. I have a few questions, if that's okay. First, I was wondering if there are still seats available for Saturday, the fifteenth. I'd like to buy two tickets, and if possible, I'd love to sit close to the stage. Also, could you tell me how much the tickets are? Is there a price difference depending on the section? Oh, and is there a discount for students? My friend is a college student, so that would really help. One more thing. What time does the concert start, and how long does it usually last? I need to know because I have to catch the last train home. Finally, can I pay by credit card over the phone, or do I have to pick up the tickets in person? Okay, thank you so much for your help. Have a nice day!"
+    },
+    {
+      "id": "music",
+      "name": "음악 감상",
+      "kind": "설문",
+      "questions": [
+        {
+          "id": "music-1",
+          "type": "묘사",
+          "q": "You indicated in the survey that you enjoy listening to music. What kind of music do you like, and who are your favorite singers or musicians?",
+          "q_kr": "설문에서 음악 감상을 즐긴다고 하셨어요. 어떤 음악을 좋아하고, 가장 좋아하는 가수나 음악가는 누구인가요?",
+          "tip": "장르 → 좋아하는 가수 → 대표곡 → 그 음악이 주는 느낌 순서로 말하세요. 가수 이름보다 '왜 좋은지'에 시간을 더 쓰세요."
+        },
+        {
+          "id": "music-2",
+          "type": "루틴",
+          "q": "When and where do you usually listen to music? Tell me about your typical music-listening habits.",
+          "q_kr": "보통 언제, 어디서 음악을 듣나요? 평소 음악 듣는 습관에 대해 말해 주세요.",
+          "tip": "출퇴근길, 운동할 때, 자기 전처럼 상황별로 나누고 각 상황에서 듣는 음악 스타일과 기기(이어폰, 스피커)를 말하세요."
+        },
+        {
+          "id": "music-3",
+          "type": "과거 경험",
+          "q": "How did you first become interested in music? Tell me about the first song or musician that you really loved.",
+          "q_kr": "처음에 어떻게 음악에 관심을 갖게 되었나요? 처음으로 정말 좋아했던 노래나 음악가에 대해 말해 주세요.",
+          "tip": "그 노래를 처음 들은 장소와 나이, 누구 덕분에 알게 됐는지 등 구체적인 장면을 떠올려 말하세요."
+        },
+        {
+          "id": "music-4",
+          "type": "과거 경험",
+          "q": "Have you ever been to a concert or a live music performance? Tell me about the most memorable one.",
+          "q_kr": "콘서트나 라이브 공연에 가 본 적이 있나요? 가장 기억에 남는 공연에 대해 말해 주세요.",
+          "tip": "공연 전 기대 → 현장 분위기(조명, 관객, 떼창) → 가장 인상 깊었던 순간 → 끝난 뒤 느낌 순서로 말하세요."
+        },
+        {
+          "id": "music-5",
+          "type": "비교",
+          "q": "How has the way you listen to music changed over the years? Compare how you listened to music in the past with how you listen to it now.",
+          "q_kr": "음악을 듣는 방식이 몇 년 동안 어떻게 바뀌었나요? 예전에 음악을 듣던 방식과 지금의 방식을 비교해 주세요.",
+          "tip": "CD·MP3 → 스트리밍, 앨범 단위 → 추천 플레이리스트 같은 대비를 쓰고, 좋은 점과 아쉬운 점을 하나씩 덧붙이세요."
+        }
+      ],
+      "template": [
+        "도입: 좋아하는 장르를 한 문장으로 (I mostly listen to ...)",
+        "본론 1: 좋아하는 가수나 밴드 (My favorite singer is ...)",
+        "본론 2: 그 음악을 좋아하는 이유 (What I love about their music is ...)",
+        "본론 3: 대표곡이나 관련 에피소드 (One song I never get tired of is ...)",
+        "마무리: 음악이 내게 주는 의미 (Music is a big part of my daily life.)"
+      ],
+      "expressions": [
+        {
+          "en": "I listen to all kinds of music, but I mostly listen to pop.",
+          "ko": "다양한 음악을 듣지만 주로 팝을 들어요."
+        },
+        {
+          "en": "Her voice is so soothing.",
+          "ko": "그녀의 목소리는 정말 마음을 편안하게 해 줘요."
+        },
+        {
+          "en": "I never get tired of this song.",
+          "ko": "이 노래는 아무리 들어도 질리지 않아요."
+        },
+        {
+          "en": "I always have my earphones in on my way to work.",
+          "ko": "출근길에는 항상 이어폰을 끼고 있어요."
+        },
+        {
+          "en": "I made a playlist for working out.",
+          "ko": "운동할 때 들을 플레이리스트를 만들었어요."
+        },
+        {
+          "en": "The lyrics really speak to me.",
+          "ko": "가사가 정말 와닿아요."
+        },
+        {
+          "en": "The crowd sang along to every song.",
+          "ko": "관객들이 모든 노래를 따라 불렀어요."
+        },
+        {
+          "en": "It was the best concert I've ever been to.",
+          "ko": "지금까지 가 본 콘서트 중 최고였어요."
+        },
+        {
+          "en": "Back then, I used to buy CDs.",
+          "ko": "그때는 CD를 사곤 했어요."
+        },
+        {
+          "en": "Music puts me in a good mood.",
+          "ko": "음악을 들으면 기분이 좋아져요."
+        }
+      ],
+      "sample": "I listen to all kinds of music, but I mostly listen to pop and R&B. My favorite singer is a Korean solo artist named Jiwoo. She's not super famous, but I think she's really talented. What I love about her music is her voice. It's soft and soothing, and it makes me feel calm, especially after a long day at work. Her lyrics really speak to me, too. She often sings about everyday things like missing old friends or feeling tired, so I can relate to them. One song I never get tired of is called \"Night Bus.\" It's about riding the bus home late at night and looking out the window. Actually, I listen to it almost every night on my way home, and it fits the mood perfectly. Anyway, music is a big part of my daily life. It puts me in a good mood, and it helps me get through stressful days."
+    },
+    {
+      "id": "park",
+      "name": "공원 가기",
+      "kind": "설문",
+      "questions": [
+        {
+          "id": "park-1",
+          "type": "묘사",
+          "q": "You indicated in the survey that you like going to the park. Tell me about a park you often go to. Where is it, and what does it look like?",
+          "q_kr": "설문에서 공원에 가는 것을 좋아한다고 하셨어요. 자주 가는 공원에 대해 말해 주세요. 어디에 있고, 어떻게 생겼나요?",
+          "tip": "위치 → 입구와 전체 크기 → 산책로·호수·잔디밭 같은 시설 → 계절별 풍경 순서로 묘사하면 길게 말할 수 있어요."
+        },
+        {
+          "id": "park-2",
+          "type": "루틴",
+          "q": "What do you usually do when you go to the park? Who do you go with, and how often do you go?",
+          "q_kr": "공원에 가면 보통 무엇을 하나요? 누구와 함께 가며, 얼마나 자주 가나요?",
+          "tip": "평일과 주말을 나눠서 말하거나, 도착 → 활동 → 휴식 → 귀가 순서로 말하면 루틴이 잘 드러나요."
+        },
+        {
+          "id": "park-3",
+          "type": "과거 경험",
+          "q": "Tell me about a memorable experience you had at a park. What happened, and why do you remember it so well?",
+          "q_kr": "공원에서 있었던 기억에 남는 경험에 대해 말해 주세요. 무슨 일이 있었고, 왜 그렇게 잘 기억하나요?",
+          "tip": "피크닉, 축제, 반려견 산책 중 생긴 일처럼 하나를 골라 언제·누구와 → 사건 → 감정 순서로 말하세요."
+        },
+        {
+          "id": "park-4",
+          "type": "비교",
+          "q": "Think about the parks you went to when you were a child. How are they different from the parks you go to now?",
+          "q_kr": "어렸을 때 갔던 공원들을 떠올려 보세요. 지금 가는 공원과 어떻게 다른가요?",
+          "tip": "시설(놀이터 → 운동기구, 자전거길), 사람들(아이들 → 반려견·러너), 내가 하는 활동 변화를 비교하세요."
+        },
+        {
+          "id": "park-5",
+          "type": "의견",
+          "q": "Why do you think parks are important in cities? What could be done to make parks in your area better?",
+          "q_kr": "도시에서 공원이 왜 중요하다고 생각하나요? 당신 동네의 공원을 더 좋게 만들려면 무엇을 할 수 있을까요?",
+          "tip": "중요한 이유 2가지(휴식 공간, 공기)와 개선점 1~2가지(화장실, 그늘, 쓰레기통)를 짝지어 말하세요."
+        }
+      ],
+      "template": [
+        "도입: 자주 가는 공원 소개 (There's a big park near my place called ...)",
+        "본론 1: 위치와 규모 (It's about a ten-minute walk from ...)",
+        "본론 2: 주요 시설과 풍경 (In the middle, there's ...)",
+        "본론 3: 내가 좋아하는 점 (What I like most is ...)",
+        "마무리: 공원이 내게 주는 의미 (It's my favorite place to clear my head.)"
+      ],
+      "expressions": [
+        {
+          "en": "There's a big park just a ten-minute walk from my place.",
+          "ko": "집에서 걸어서 10분 거리에 큰 공원이 있어요."
+        },
+        {
+          "en": "There's a walking trail that goes around the lake.",
+          "ko": "호수를 한 바퀴 도는 산책로가 있어요."
+        },
+        {
+          "en": "The park is full of cherry blossoms in spring.",
+          "ko": "봄이면 공원이 벚꽃으로 가득해요."
+        },
+        {
+          "en": "I usually take a walk there after dinner.",
+          "ko": "보통 저녁 먹고 거기서 산책해요."
+        },
+        {
+          "en": "A lot of people walk their dogs there.",
+          "ko": "많은 사람들이 거기서 개를 산책시켜요."
+        },
+        {
+          "en": "We spread out a mat and had a picnic on the grass.",
+          "ko": "잔디밭에 돗자리를 펴고 소풍을 즐겼어요."
+        },
+        {
+          "en": "It's a great place to clear my head.",
+          "ko": "머리를 식히기에 좋은 곳이에요."
+        },
+        {
+          "en": "There's a playground and some exercise equipment.",
+          "ko": "놀이터와 운동기구가 있어요."
+        },
+        {
+          "en": "It gets really crowded on weekends.",
+          "ko": "주말에는 정말 붐벼요."
+        },
+        {
+          "en": "Parks give people a break from the busy city.",
+          "ko": "공원은 사람들에게 바쁜 도시에서 벗어날 휴식을 줘요."
+        }
+      ],
+      "sample": "There's a big park just a ten-minute walk from my apartment. It's called Lakeside Park, and as you can guess, there's a large lake right in the middle of it. When you go through the main entrance, you see a wide path lined with tall trees. There's a walking trail that goes all the way around the lake, and it takes about forty minutes to walk the whole loop. On one side of the lake, there's a big open lawn where families have picnics, and on the other side, there's a playground and some exercise equipment. There are also lots of benches and a small convenience store near the parking lot. What I like most about this park is how it changes with the seasons. In spring, it's full of cherry blossoms, and in fall, the leaves turn red and yellow. Honestly, it's my favorite place to clear my head."
+    },
+    {
+      "id": "cafe",
+      "name": "카페·커피",
+      "kind": "설문",
+      "questions": [
+        {
+          "id": "cafe-1",
+          "type": "묘사",
+          "q": "You indicated in the survey that you enjoy going to cafes. Tell me about your favorite cafe. Where is it, and what does it look like?",
+          "q_kr": "설문에서 카페 가는 것을 즐긴다고 하셨어요. 가장 좋아하는 카페에 대해 말해 주세요. 어디에 있고, 어떻게 생겼나요?",
+          "tip": "위치 → 외관 → 실내 인테리어(조명, 테이블, 음악) → 메뉴 → 좋아하는 이유 순서로 묘사하세요."
+        },
+        {
+          "id": "cafe-2",
+          "type": "루틴",
+          "q": "How often do you go to cafes, and what do you usually do there? Tell me about a typical visit.",
+          "q_kr": "카페에 얼마나 자주 가며, 거기서 보통 무엇을 하나요? 평소 방문하는 모습을 말해 주세요.",
+          "tip": "주문하는 메뉴 → 앉는 자리 → 하는 일(공부, 수다, 독서) → 머무는 시간 순서로 말하세요."
+        },
+        {
+          "id": "cafe-3",
+          "type": "과거 경험",
+          "q": "Tell me about a memorable experience you had at a cafe. What happened, and who were you with?",
+          "q_kr": "카페에서 있었던 기억에 남는 경험에 대해 말해 주세요. 무슨 일이 있었고, 누구와 함께였나요?",
+          "tip": "오랜만에 친구를 만난 일, 음료를 쏟은 일, 우연히 좋은 카페를 발견한 일 등 하나를 골라 이야기처럼 말하세요."
+        },
+        {
+          "id": "cafe-4",
+          "type": "비교",
+          "q": "How have cafes in your country changed compared to when you first started going to them?",
+          "q_kr": "처음 카페에 다니기 시작했을 때와 비교해 당신 나라의 카페는 어떻게 변했나요?",
+          "tip": "수(훨씬 많아짐), 종류(대형·감성·무인 카페), 메뉴와 가격, 주문 방식(키오스크·앱) 중 2~3가지를 비교하세요."
+        },
+        {
+          "id": "cafe-5",
+          "type": "의견",
+          "q": "Why do you think cafes are so popular among young people in your country? Are there any problems related to this trend?",
+          "q_kr": "당신 나라의 젊은 사람들 사이에서 카페가 왜 그렇게 인기 있다고 생각하나요? 이 유행과 관련된 문제점도 있나요?",
+          "tip": "인기 이유 2가지(공부·업무 공간, 만남 장소, SNS 사진)를 말하고, 문제점 1가지(일회용 컵, 비싼 커피값)로 균형을 잡으세요."
+        }
+      ],
+      "template": [
+        "도입: 좋아하는 카페 소개 (My favorite cafe is a small place called ...)",
+        "본론 1: 위치와 외관 (It's tucked away in an alley near ...)",
+        "본론 2: 실내 분위기 (Inside, there are ...)",
+        "본론 3: 메뉴와 자주 하는 일 (I always order ... and ...)",
+        "마무리: 좋아하는 이유 정리 (It's like my second home.)"
+      ],
+      "expressions": [
+        {
+          "en": "It's tucked away in a quiet alley.",
+          "ko": "조용한 골목 안쪽에 숨어 있어요."
+        },
+        {
+          "en": "The place has a warm and cozy atmosphere.",
+          "ko": "그곳은 따뜻하고 아늑한 분위기예요."
+        },
+        {
+          "en": "They play soft jazz in the background.",
+          "ko": "잔잔한 재즈를 배경 음악으로 틀어 줘요."
+        },
+        {
+          "en": "I always order an iced Americano.",
+          "ko": "저는 항상 아이스 아메리카노를 시켜요."
+        },
+        {
+          "en": "I can't start my day without a cup of coffee.",
+          "ko": "커피 한 잔 없이는 하루를 시작할 수 없어요."
+        },
+        {
+          "en": "I often go there to study or catch up on work.",
+          "ko": "공부하거나 밀린 일을 하러 자주 가요."
+        },
+        {
+          "en": "We chatted for hours over coffee.",
+          "ko": "커피를 마시며 몇 시간 동안 수다를 떨었어요."
+        },
+        {
+          "en": "There's a cafe on almost every corner these days.",
+          "ko": "요즘은 거의 모든 길모퉁이마다 카페가 있어요."
+        },
+        {
+          "en": "Coffee prices have gone up a lot.",
+          "ko": "커피 가격이 많이 올랐어요."
+        },
+        {
+          "en": "It's like my second home.",
+          "ko": "제 두 번째 집 같은 곳이에요."
+        }
+      ],
+      "sample": "My favorite cafe is a small place called Morning Table. It's tucked away in a quiet alley near my office, so not many people know about it. From the outside, it looks like an old house with a little wooden door and some plants by the window. Inside, the place has a warm and cozy atmosphere. There are about eight wooden tables, soft yellow lights, and shelves full of books that customers can read. They always play soft jazz in the background, which I really like. I usually order an iced Americano and a piece of their homemade carrot cake. Honestly, it's the best carrot cake I've ever had. I often go there on Saturday mornings to read or catch up on work, and sometimes I just sit by the window and watch people walk by. The owner knows my name now, so it really feels like my second home."
+    },
+    {
+      "id": "shopping",
+      "name": "쇼핑",
+      "kind": "설문",
+      "questions": [
+        {
+          "id": "shopping-1",
+          "type": "묘사",
+          "q": "You indicated in the survey that you like to go shopping. Tell me about a store or shopping mall you often go to. What does it look like, and what do they sell?",
+          "q_kr": "설문에서 쇼핑을 좋아한다고 하셨어요. 자주 가는 가게나 쇼핑몰에 대해 말해 주세요. 어떻게 생겼고, 무엇을 파나요?",
+          "tip": "위치 → 건물 규모와 층별 구성 → 내가 주로 가는 매장 → 좋아하는 이유 순서로 말하세요. 층별로 설명하면 자연스럽게 길어져요."
+        },
+        {
+          "id": "shopping-2",
+          "type": "루틴",
+          "q": "How often do you go shopping, and who do you usually go with? Tell me what you typically do on a shopping day.",
+          "q_kr": "얼마나 자주 쇼핑하러 가고, 보통 누구와 함께 가나요? 쇼핑하는 날 보통 무엇을 하는지 말해 주세요.",
+          "tip": "출발 → 둘러보기 → 입어 보기·비교하기 → 구매 → 식사나 카페 순서로 하루 흐름을 말하세요."
+        },
+        {
+          "id": "shopping-3",
+          "type": "과거 경험",
+          "q": "Have you ever had a problem with something you bought, like a wrong size or a defective item? Tell me what happened and how you dealt with it.",
+          "q_kr": "사이즈가 맞지 않거나 불량품인 것처럼 구매한 물건에 문제가 있었던 적이 있나요? 무슨 일이 있었고 어떻게 처리했는지 말해 주세요.",
+          "tip": "무엇을 어디서 샀는지 → 발견한 문제 → 교환·환불 과정 → 결과 순서로 말하세요. exchange, refund, receipt 같은 단어를 활용하세요."
+        },
+        {
+          "id": "shopping-4",
+          "type": "비교",
+          "q": "Compare shopping online with shopping in stores. Which do you prefer, and how have your shopping habits changed over the years?",
+          "q_kr": "온라인 쇼핑과 매장 쇼핑을 비교해 주세요. 어느 쪽을 더 좋아하며, 몇 년 사이 쇼핑 습관은 어떻게 바뀌었나요?",
+          "tip": "각각의 장점 1~2개를 말한 뒤 내 선호와 이유를 밝히고, '예전에는 ~, 요즘은 ~'으로 습관 변화를 덧붙이세요."
+        },
+        {
+          "id": "shopping-5",
+          "type": "과거 경험",
+          "q": "Tell me about the last time you went shopping. Where did you go, what did you buy, and why?",
+          "q_kr": "마지막으로 쇼핑하러 갔던 때에 대해 말해 주세요. 어디에 가서 무엇을 샀으며, 왜 샀나요?",
+          "tip": "산 물건 하나를 중심으로 왜 필요했는지 → 고른 과정 → 가격과 만족도 순서로 말하세요."
+        }
+      ],
+      "template": [
+        "도입: 자주 가는 쇼핑 장소 (I often go to a shopping mall called ...)",
+        "본론 1: 위치와 규모 (It's right next to ... and it has ... floors.)",
+        "본론 2: 층별 구성이나 매장 종류 (On the first floor, there are ...)",
+        "본론 3: 내가 주로 하는 일과 좋아하는 이유 (I usually ... because ...)",
+        "마무리: 전체 느낌 (It's my go-to place for shopping.)"
+      ],
+      "expressions": [
+        {
+          "en": "It's my go-to place for clothes shopping.",
+          "ko": "옷 쇼핑할 때 제가 늘 가는 곳이에요."
+        },
+        {
+          "en": "It's connected to the subway station.",
+          "ko": "지하철역과 연결되어 있어요."
+        },
+        {
+          "en": "There's a huge food court on the basement level.",
+          "ko": "지하층에 큰 푸드코트가 있어요."
+        },
+        {
+          "en": "I like to look around before I buy anything.",
+          "ko": "뭔가 사기 전에 둘러보는 걸 좋아해요."
+        },
+        {
+          "en": "I tried on a few jackets, but none of them fit.",
+          "ko": "재킷을 몇 벌 입어 봤는데 맞는 게 하나도 없었어요."
+        },
+        {
+          "en": "It was on sale, so I got it for half price.",
+          "ko": "세일 중이라 반값에 샀어요."
+        },
+        {
+          "en": "I asked for a refund, but they only offered an exchange.",
+          "ko": "환불을 요청했지만 교환만 해 주겠다고 했어요."
+        },
+        {
+          "en": "Don't forget to keep your receipt.",
+          "ko": "영수증을 꼭 챙기세요."
+        },
+        {
+          "en": "Online shopping is convenient, but you can't try things on.",
+          "ko": "온라인 쇼핑은 편리하지만 입어 볼 수가 없어요."
+        },
+        {
+          "en": "I tend to buy things on impulse.",
+          "ko": "저는 충동구매를 하는 편이에요."
+        }
+      ],
+      "sample": "I often go to a shopping mall called Star Plaza. It's right next to my office, and it's connected to the subway station, so it's really easy to get to. It's a huge building with seven floors. On the first floor, there are cosmetics shops and accessory stores, and the second and third floors are full of clothing stores for men and women. The fourth floor has shoe stores and sporting goods, and on the top floor, there's a movie theater and lots of restaurants. There's also a big food court and a supermarket on the basement level. Actually, it's my go-to place for clothes shopping. I usually go there after work on Fridays and just look around. I like to compare prices and try things on before I buy anything. What I like most is that I can shop, eat, and watch a movie all in one place."
+    },
+    {
+      "id": "cooking",
+      "name": "요리",
+      "kind": "설문",
+      "questions": [
+        {
+          "id": "cooking-1",
+          "type": "묘사",
+          "q": "You indicated in the survey that you enjoy cooking. What dish are you best at making? Describe the dish and tell me how you make it.",
+          "q_kr": "설문에서 요리를 즐긴다고 하셨어요. 가장 자신 있는 요리는 무엇인가요? 그 요리를 묘사하고 어떻게 만드는지 말해 주세요.",
+          "tip": "요리 소개(맛·모양) → 재료 → 조리 단계(first, then, after that) → 누구에게 해 주는지 순서로 말하세요. 동사(chop, boil, stir, fry)를 다양하게 쓰세요."
+        },
+        {
+          "id": "cooking-2",
+          "type": "루틴",
+          "q": "How often do you cook, and where do you usually buy your ingredients? Tell me about your cooking routine.",
+          "q_kr": "얼마나 자주 요리하며, 재료는 보통 어디서 사나요? 요리 루틴에 대해 말해 주세요.",
+          "tip": "장보기 장소와 빈도 → 평일과 주말 요리 차이 → 설거지·정리까지 하루 흐름으로 말하세요."
+        },
+        {
+          "id": "cooking-3",
+          "type": "과거 경험",
+          "q": "Tell me about the first time you cooked something by yourself. What did you make, and how did it turn out?",
+          "q_kr": "처음으로 혼자 요리했던 때에 대해 말해 주세요. 무엇을 만들었고, 결과는 어땠나요?",
+          "tip": "나이와 상황 → 만든 음식 → 실수나 성공 → 가족 반응 순서로 말하면 재미있는 이야기가 돼요."
+        },
+        {
+          "id": "cooking-4",
+          "type": "과거 경험",
+          "q": "Have you ever had a cooking disaster, like burning food or using the wrong ingredient? Tell me what happened.",
+          "q_kr": "음식을 태우거나 재료를 잘못 넣는 등 요리를 망친 적이 있나요? 무슨 일이 있었는지 말해 주세요.",
+          "tip": "설탕과 소금을 헷갈린 일처럼 구체적인 실수 하나를 고르고, 당황 → 수습 → 웃으며 끝난 결말로 마무리하세요."
+        },
+        {
+          "id": "cooking-5",
+          "type": "비교",
+          "q": "How have the eating and cooking habits of people in your country changed compared to the past?",
+          "q_kr": "당신 나라 사람들의 식습관과 요리 습관은 예전과 비교해 어떻게 바뀌었나요?",
+          "tip": "예전(집밥 위주, 대가족) vs 지금(배달, 밀키트, 1인 가구) 대비를 쓰고, 그 이유를 한두 가지 덧붙이세요."
+        }
+      ],
+      "template": [
+        "도입: 자신 있는 요리 한 문장 (The dish I'm best at making is ...)",
+        "본론 1: 어떤 음식인지 (It's a ... dish that tastes ...)",
+        "본론 2: 재료 (All you need is ...)",
+        "본론 3: 조리 과정 (First, ... Then, ... Finally, ...)",
+        "마무리: 누구에게 해 주는지와 느낌 (My family loves it whenever I make it.)"
+      ],
+      "expressions": [
+        {
+          "en": "The dish I'm best at making is kimchi fried rice.",
+          "ko": "제가 가장 자신 있는 요리는 김치볶음밥이에요."
+        },
+        {
+          "en": "It's simple, but it tastes amazing.",
+          "ko": "간단하지만 맛이 끝내줘요."
+        },
+        {
+          "en": "First, I chop the onions and kimchi into small pieces.",
+          "ko": "먼저 양파와 김치를 잘게 썰어요."
+        },
+        {
+          "en": "Then I stir-fry everything in a pan with some oil.",
+          "ko": "그다음 팬에 기름을 두르고 모두 볶아요."
+        },
+        {
+          "en": "I put a fried egg on top to finish it off.",
+          "ko": "마지막으로 위에 달걀 프라이를 올려요."
+        },
+        {
+          "en": "I go grocery shopping once a week.",
+          "ko": "일주일에 한 번 장을 봐요."
+        },
+        {
+          "en": "I mixed up the salt and the sugar.",
+          "ko": "소금과 설탕을 헷갈렸어요."
+        },
+        {
+          "en": "The whole kitchen was filled with smoke.",
+          "ko": "부엌 전체가 연기로 가득 찼어요."
+        },
+        {
+          "en": "More people are ordering delivery these days.",
+          "ko": "요즘은 배달 음식을 시키는 사람이 더 많아요."
+        },
+        {
+          "en": "Cooking for others makes me happy.",
+          "ko": "다른 사람을 위해 요리하면 행복해요."
+        }
+      ],
+      "sample": "The dish I'm best at making is kimchi fried rice. It's a really common Korean dish, and it's simple, but it tastes amazing. It's a little spicy, a little sour, and really satisfying. All you need is some rice, kimchi, an onion, a bit of ham or tuna, and an egg. First, I chop the onion, the kimchi, and the ham into small pieces. Then I heat some oil in a pan and stir-fry the onion until it gets soft. After that, I add the kimchi and the ham and cook them for a few minutes. Next, I put in the rice and mix everything together with a little soy sauce and sesame oil. Finally, I put a fried egg on top to finish it off. Actually, my younger brother loves it, so I make it for him almost every weekend. Cooking for others really makes me happy."
+    },
+    {
+      "id": "domestic-travel",
+      "name": "국내 여행",
+      "kind": "설문",
+      "questions": [
+        {
+          "id": "domestic-travel-1",
+          "type": "묘사",
+          "q": "You indicated in the survey that you enjoy traveling within your country. Tell me about a place in your country that you like to visit. What is it like there?",
+          "q_kr": "설문에서 국내 여행을 즐긴다고 하셨어요. 당신 나라에서 즐겨 찾는 곳에 대해 말해 주세요. 그곳은 어떤 곳인가요?",
+          "tip": "위치와 가는 방법 → 자연·볼거리 → 먹거리 → 좋아하는 이유 순서로 묘사하세요. 강릉, 제주, 경주처럼 잘 아는 곳을 고르면 말하기 쉬워요."
+        },
+        {
+          "id": "domestic-travel-2",
+          "type": "루틴",
+          "q": "When you travel in your country, what do you usually do? Tell me about how you plan your trips and what you typically do once you get there.",
+          "q_kr": "국내 여행을 할 때 보통 무엇을 하나요? 여행을 어떻게 계획하고, 도착해서는 주로 무엇을 하는지 말해 주세요.",
+          "tip": "교통편·숙소 정하기 → 맛집 검색 → 현지에서 하는 일(산책, 카페, 시장 구경) 순서로 말하세요."
+        },
+        {
+          "id": "domestic-travel-3",
+          "type": "과거 경험",
+          "q": "Tell me about a trip you took in your country when you were young. Where did you go, who did you go with, and what do you remember most?",
+          "q_kr": "어렸을 때 국내에서 했던 여행에 대해 말해 주세요. 어디에 갔고, 누구와 함께 갔으며, 무엇이 가장 기억에 남나요?",
+          "tip": "가족 여행이나 수학여행처럼 한 번의 여행을 골라, 기억나는 장면 하나를 생생하게 묘사하는 데 집중하세요."
+        },
+        {
+          "id": "domestic-travel-4",
+          "type": "과거 경험",
+          "q": "Tell me about the most recent trip you took in your country. Describe everything you did from the beginning to the end of the trip.",
+          "q_kr": "가장 최근에 다녀온 국내 여행에 대해 말해 주세요. 여행의 처음부터 끝까지 한 일을 모두 묘사해 주세요.",
+          "tip": "출발 → 첫날 → 둘째 날 → 귀가 순서로 시간 흐름을 따라가세요. 과거 시제를 끝까지 유지하는 것이 핵심이에요."
+        },
+        {
+          "id": "domestic-travel-5",
+          "type": "비교",
+          "q": "How have popular travel destinations or travel styles in your country changed over the years?",
+          "q_kr": "당신 나라의 인기 여행지나 여행 스타일은 몇 년 사이에 어떻게 바뀌었나요?",
+          "tip": "예전 인기 여행지와 요즘 뜨는 곳, 단체 관광 → 감성 숙소·캠핑·SNS 명소 같은 변화를 두세 가지 비교하세요."
+        }
+      ],
+      "template": [
+        "도입: 좋아하는 국내 여행지 (One of my favorite places to visit is ...)",
+        "본론 1: 위치와 가는 방법 (It's on the east coast, about two hours from Seoul by train.)",
+        "본론 2: 볼거리와 자연 (The best thing about it is ...)",
+        "본론 3: 먹거리나 즐기는 활동 (You can't leave without trying ...)",
+        "마무리: 추천과 느낌 (I'd recommend it to anyone who ...)"
+      ],
+      "expressions": [
+        {
+          "en": "It's about two hours from Seoul by train.",
+          "ko": "서울에서 기차로 두 시간 정도 걸려요."
+        },
+        {
+          "en": "It's famous for its beautiful beaches.",
+          "ko": "아름다운 해변으로 유명해요."
+        },
+        {
+          "en": "You can't leave without trying the local food.",
+          "ko": "그곳 음식을 꼭 먹어 봐야 해요."
+        },
+        {
+          "en": "We stayed at a small guesthouse near the beach.",
+          "ko": "해변 근처의 작은 게스트하우스에서 묵었어요."
+        },
+        {
+          "en": "I usually search for good restaurants before I go.",
+          "ko": "보통 가기 전에 맛집을 검색해요."
+        },
+        {
+          "en": "We rented a car and drove along the coast.",
+          "ko": "차를 빌려서 해안을 따라 드라이브했어요."
+        },
+        {
+          "en": "It brings back a lot of good memories.",
+          "ko": "좋은 추억이 많이 떠올라요."
+        },
+        {
+          "en": "It was a short trip, but it was really refreshing.",
+          "ko": "짧은 여행이었지만 정말 기분 전환이 됐어요."
+        },
+        {
+          "en": "Camping has become really popular recently.",
+          "ko": "최근 캠핑이 정말 인기를 끌고 있어요."
+        },
+        {
+          "en": "I'd recommend it to anyone who loves nature.",
+          "ko": "자연을 좋아하는 사람이라면 누구에게나 추천해요."
+        }
+      ],
+      "sample": "One of my favorite places to visit in Korea is Gangneung. It's a city on the east coast, and it's only about two hours from Seoul by train, so it's perfect for a weekend trip. The best thing about Gangneung is the ocean. The water is really clear and blue, and the beaches are wide and clean. I love taking a long walk along the beach early in the morning when it's quiet. Gangneung is also famous for its coffee streets. There are dozens of cafes right in front of the sea, so you can drink coffee and watch the waves at the same time. And you can't leave without trying the local tofu dishes. They're soft and really delicious. Actually, I went there with my friends last summer, and we had a great time. I'd recommend it to anyone who loves the sea and good coffee."
+    },
+    {
+      "id": "recycling",
+      "name": "재활용",
+      "kind": "돌발",
+      "questions": [
+        {
+          "id": "recycling-1",
+          "type": "묘사",
+          "q": "I'd like to ask you about recycling. How does recycling work in your country? What kinds of things do people recycle?",
+          "q_kr": "재활용에 대해 여쭤보고 싶어요. 당신 나라에서는 재활용이 어떻게 이루어지나요? 사람들은 어떤 것들을 재활용하나요?",
+          "tip": "품목별 분리(plastic, paper, cans, glass) → 음식물 쓰레기 → 종량제 봉투 순서로 설명하세요. 돌발 주제도 묘사 틀은 똑같아요."
+        },
+        {
+          "id": "recycling-2",
+          "type": "루틴",
+          "q": "How do you recycle at home? Tell me about the steps you take and how often you take out the recycling.",
+          "q_kr": "집에서는 어떻게 재활용을 하나요? 거치는 단계와 재활용품을 얼마나 자주 내놓는지 말해 주세요.",
+          "tip": "모으기 → 헹구고 라벨 떼기 → 종류별로 나누기 → 정해진 요일에 내놓기 순서로 말하세요."
+        },
+        {
+          "id": "recycling-3",
+          "type": "과거 경험",
+          "q": "Tell me about a time when you had a problem or a memorable experience related to recycling or throwing away trash.",
+          "q_kr": "재활용이나 쓰레기 버리기와 관련해 문제가 있었거나 기억에 남는 경험에 대해 말해 주세요.",
+          "tip": "분리수거 요일을 착각한 일, 대형 폐기물 버리는 법을 몰랐던 일, 경비원에게 지적받은 일 등 작은 사건도 좋아요."
+        },
+        {
+          "id": "recycling-4",
+          "type": "비교",
+          "q": "How has recycling in your country changed compared to the past? What is different now?",
+          "q_kr": "당신 나라의 재활용은 예전과 비교해 어떻게 변했나요? 지금은 무엇이 다른가요?",
+          "tip": "예전(대충 버림, 분류 적음) vs 지금(세분화된 분류, 투명 페트병 별도 배출, 일회용품 규제)으로 대비하세요."
+        },
+        {
+          "id": "recycling-5",
+          "type": "의견",
+          "q": "What are some problems or issues related to recycling and waste in your country? What do you think could be done about them?",
+          "q_kr": "당신 나라에서 재활용 및 쓰레기와 관련된 문제나 이슈는 무엇인가요? 그에 대해 무엇을 할 수 있다고 생각하나요?",
+          "tip": "문제 2가지(배달 용기 증가, 잘못된 분리배출)와 해결책 2가지(다회용기, 교육)를 짝지어 말하세요."
+        }
+      ],
+      "template": [
+        "도입: 재활용 제도를 한 문장으로 (In Korea, recycling is pretty strict.)",
+        "본론 1: 분리하는 품목들 (People separate ... into different bins.)",
+        "본론 2: 버리는 장소와 요일 (In my apartment complex, there's ...)",
+        "본론 3: 음식물·일반 쓰레기 처리 (For general trash, we have to use ...)",
+        "마무리: 내 생각 (It can be a hassle, but I think it's worth it.)"
+      ],
+      "expressions": [
+        {
+          "en": "In Korea, recycling is pretty strict.",
+          "ko": "한국은 재활용 규정이 꽤 엄격해요."
+        },
+        {
+          "en": "We separate plastic, paper, cans, and glass.",
+          "ko": "플라스틱, 종이, 캔, 유리를 분리해요."
+        },
+        {
+          "en": "You have to rinse the containers before you throw them out.",
+          "ko": "용기는 버리기 전에 헹궈야 해요."
+        },
+        {
+          "en": "We take out the recycling every Wednesday.",
+          "ko": "매주 수요일에 재활용품을 내놓아요."
+        },
+        {
+          "en": "General trash has to go in special bags you buy.",
+          "ko": "일반 쓰레기는 따로 사는 전용 봉투에 버려야 해요."
+        },
+        {
+          "en": "Food waste is collected separately.",
+          "ko": "음식물 쓰레기는 따로 수거해요."
+        },
+        {
+          "en": "You have to peel off the labels from plastic bottles.",
+          "ko": "페트병 라벨을 떼어 내야 해요."
+        },
+        {
+          "en": "It can be a hassle, but it's worth it.",
+          "ko": "번거로울 수 있지만 그럴 만한 가치가 있어요."
+        },
+        {
+          "en": "The amount of delivery packaging has increased a lot.",
+          "ko": "배달 포장재 양이 많이 늘었어요."
+        },
+        {
+          "en": "We should try to use fewer disposable items.",
+          "ko": "일회용품을 덜 쓰도록 노력해야 해요."
+        }
+      ],
+      "sample": "Well, in Korea, recycling is pretty strict, and almost everyone does it. People separate their recyclables into several groups, like plastic, paper, cans, glass, and styrofoam. In my apartment complex, there's a recycling area in the parking lot with a big bin for each type, and we can only take out the recycling on Wednesdays. Before you throw anything away, you have to rinse the containers and peel off the labels from plastic bottles. Clear plastic bottles even have to go in a separate bag now. Food waste is collected separately, too, and for general trash, we have to use special plastic bags that we buy at the convenience store. If you don't follow the rules, you can get fined. Honestly, it can be a hassle sometimes, especially when I'm busy, but I think it's worth it because it really helps the environment."
+    },
+    {
+      "id": "weather",
+      "name": "날씨·계절",
+      "kind": "돌발",
+      "questions": [
+        {
+          "id": "weather-1",
+          "type": "묘사",
+          "q": "Tell me about the weather and seasons in your country. What is the weather like in each season?",
+          "q_kr": "당신 나라의 날씨와 계절에 대해 말해 주세요. 계절마다 날씨가 어떤가요?",
+          "tip": "봄 → 여름 → 가을 → 겨울 순서로 각 계절의 기온·특징·사람들이 하는 일을 한두 문장씩 말하세요. 장마(rainy season)와 미세먼지(fine dust)도 좋은 소재예요."
+        },
+        {
+          "id": "weather-2",
+          "type": "루틴",
+          "q": "What is your favorite season? What do you usually do during that season?",
+          "q_kr": "가장 좋아하는 계절은 무엇인가요? 그 계절에 보통 무엇을 하나요?",
+          "tip": "좋아하는 계절과 이유 → 그 계절에만 하는 활동 2~3가지 → 입는 옷이나 먹는 음식 순서로 말하세요."
+        },
+        {
+          "id": "weather-3",
+          "type": "과거 경험",
+          "q": "Tell me about a time when you experienced extreme weather, such as a heavy snowstorm, a typhoon, or a heat wave. What happened?",
+          "q_kr": "폭설, 태풍, 폭염 같은 극한 날씨를 겪었던 때에 대해 말해 주세요. 무슨 일이 있었나요?",
+          "tip": "날씨 상황 → 내게 생긴 불편(교통, 정전) → 대처 → 결과 순서로 말하세요. 감각 묘사(It was freezing, I was soaked)를 넣으면 생생해요."
+        },
+        {
+          "id": "weather-4",
+          "type": "비교",
+          "q": "How has the weather in your country changed compared to when you were young?",
+          "q_kr": "어렸을 때와 비교해 당신 나라의 날씨는 어떻게 변했나요?",
+          "tip": "여름이 길고 더워짐, 봄·가을이 짧아짐, 미세먼지 증가 같은 변화를 '예전에는 ~, 요즘은 ~'으로 비교하세요."
+        },
+        {
+          "id": "weather-5",
+          "type": "의견",
+          "q": "Many people are worried about climate change. What do you think about this issue, and what can individuals do to help?",
+          "q_kr": "많은 사람들이 기후 변화를 걱정하고 있어요. 이 문제에 대해 어떻게 생각하며, 개인은 어떤 도움을 줄 수 있을까요?",
+          "tip": "내 의견 한 문장 → 근거(최근 이상 기후) → 개인이 할 수 있는 일 2가지(대중교통, 일회용품 줄이기) 순서로 말하세요."
+        }
+      ],
+      "template": [
+        "도입: 계절 특징 한 문장 (Korea has four distinct seasons.)",
+        "본론 1: 봄과 여름 (Spring is ..., and summer is ...)",
+        "본론 2: 가을과 겨울 (Fall is ..., and winter is ...)",
+        "본론 3: 요즘 날씨의 특징 (These days, ...)",
+        "마무리: 좋아하는 계절과 이유 (Personally, my favorite season is ...)"
+      ],
+      "expressions": [
+        {
+          "en": "Korea has four distinct seasons.",
+          "ko": "한국은 사계절이 뚜렷해요."
+        },
+        {
+          "en": "Summer is hot and humid.",
+          "ko": "여름은 덥고 습해요."
+        },
+        {
+          "en": "We have a rainy season in July.",
+          "ko": "7월에는 장마철이 있어요."
+        },
+        {
+          "en": "It gets freezing cold in winter.",
+          "ko": "겨울에는 몹시 추워져요."
+        },
+        {
+          "en": "The leaves turn red and yellow in the fall.",
+          "ko": "가을이면 나뭇잎이 빨갛고 노랗게 물들어요."
+        },
+        {
+          "en": "Spring and fall are getting shorter.",
+          "ko": "봄과 가을이 점점 짧아지고 있어요."
+        },
+        {
+          "en": "The fine dust is really bad these days.",
+          "ko": "요즘 미세먼지가 정말 심해요."
+        },
+        {
+          "en": "I got caught in the rain without an umbrella.",
+          "ko": "우산 없이 비를 맞았어요."
+        },
+        {
+          "en": "The subway was packed because of the heavy snow.",
+          "ko": "폭설 때문에 지하철이 꽉 찼어요."
+        },
+        {
+          "en": "It's perfect weather for a picnic.",
+          "ko": "소풍 가기에 딱 좋은 날씨예요."
+        }
+      ],
+      "sample": "Korea has four distinct seasons, and each one has its own charm. Spring starts around March. It's warm and pleasant, and cherry blossoms are everywhere, but unfortunately, the fine dust can be really bad. Summer is hot and humid, and we have a rainy season in July, so it rains almost every day for a few weeks. Fall is my favorite season. The sky is clear and blue, the air is cool, and the leaves turn red and yellow. It's perfect weather for hiking or a picnic. Winter is freezing cold, and it sometimes snows a lot, especially in the mountains. These days, though, the weather is changing. Summers are getting longer and hotter, and spring and fall feel shorter than before. Personally, I wish fall could last all year, because I feel the most energetic and comfortable then."
+    },
+    {
+      "id": "tech",
+      "name": "기술·인터넷",
+      "kind": "돌발",
+      "questions": [
+        {
+          "id": "tech-1",
+          "type": "묘사",
+          "q": "Tell me about a piece of technology that you use every day. What is it, and what do you use it for?",
+          "q_kr": "매일 사용하는 기술 기기에 대해 말해 주세요. 그것이 무엇이고, 무엇에 사용하나요?",
+          "tip": "스마트폰, 노트북, 무선 이어폰 중 하나를 골라 생김새 → 주요 기능 → 내가 쓰는 용도 → 없으면 불편한 점 순서로 말하세요."
+        },
+        {
+          "id": "tech-2",
+          "type": "루틴",
+          "q": "How do you usually use the internet in your daily life? What websites or apps do you use most often, and why?",
+          "q_kr": "일상생활에서 인터넷을 보통 어떻게 사용하나요? 가장 자주 쓰는 웹사이트나 앱은 무엇이며, 그 이유는 무엇인가요?",
+          "tip": "아침(뉴스·날씨) → 낮(업무·메신저) → 저녁(영상·쇼핑) 시간대별로 앱을 소개하면 루틴이 자연스럽게 드러나요."
+        },
+        {
+          "id": "tech-3",
+          "type": "과거 경험",
+          "q": "Tell me about a time when you had trouble with a piece of technology, such as your computer crashing or your phone not working. What happened, and how did you solve it?",
+          "q_kr": "컴퓨터가 멈추거나 휴대폰이 작동하지 않는 것처럼 기술 기기 때문에 곤란했던 때에 대해 말해 주세요. 무슨 일이 있었고, 어떻게 해결했나요?",
+          "tip": "중요한 순간(과제 마감, 발표 직전)에 생긴 문제로 설정하면 긴장감이 생겨요. 문제 → 시도한 방법 → 해결 → 교훈 순서로 말하세요."
+        },
+        {
+          "id": "tech-4",
+          "type": "비교",
+          "q": "How has technology changed the way people live compared to ten years ago? Give me some specific examples.",
+          "q_kr": "10년 전과 비교해 기술이 사람들의 생활 방식을 어떻게 바꾸었나요? 구체적인 예를 들어 주세요.",
+          "tip": "결제(현금 → 간편결제), 길 찾기(지도책 → 내비 앱), 소통(전화 → 메신저·화상통화) 같은 구체적 예 2~3가지로 비교하세요."
+        },
+        {
+          "id": "tech-5",
+          "type": "의견",
+          "q": "Some people say we depend too much on technology. What are some problems caused by technology, and what is your opinion on this?",
+          "q_kr": "우리가 기술에 너무 의존한다고 말하는 사람들도 있어요. 기술 때문에 생기는 문제는 무엇이며, 이에 대한 당신의 의견은 무엇인가요?",
+          "tip": "문제 2가지(스마트폰 중독, 개인정보 유출)를 말하고 내 입장(장점이 크지만 균형이 필요하다)으로 마무리하세요."
+        }
+      ],
+      "template": [
+        "도입: 매일 쓰는 기기 소개 (The piece of technology I use the most is ...)",
+        "본론 1: 생김새와 특징 (It's a ... with ...)",
+        "본론 2: 주로 쓰는 용도 (I use it to ...)",
+        "본론 3: 없으면 불편한 점 (I can't imagine my life without it because ...)",
+        "마무리: 기술에 대한 짧은 생각 (It has made my life so much easier.)"
+      ],
+      "expressions": [
+        {
+          "en": "I can't imagine my life without my smartphone.",
+          "ko": "스마트폰 없는 삶은 상상할 수 없어요."
+        },
+        {
+          "en": "I use it for almost everything, from banking to shopping.",
+          "ko": "은행 업무부터 쇼핑까지 거의 모든 걸 그걸로 해요."
+        },
+        {
+          "en": "I check the news and the weather first thing in the morning.",
+          "ko": "아침에 일어나자마자 뉴스와 날씨를 확인해요."
+        },
+        {
+          "en": "My laptop suddenly froze while I was working.",
+          "ko": "작업하던 중에 노트북이 갑자기 멈췄어요."
+        },
+        {
+          "en": "I hadn't saved my file, so I lost everything.",
+          "ko": "파일을 저장하지 않아서 전부 날렸어요."
+        },
+        {
+          "en": "I tried restarting it, but it didn't help.",
+          "ko": "다시 시작해 봤지만 소용없었어요."
+        },
+        {
+          "en": "These days, you can pay for things with just your phone.",
+          "ko": "요즘은 휴대폰 하나로 결제할 수 있어요."
+        },
+        {
+          "en": "It has made our lives much more convenient.",
+          "ko": "기술 덕분에 생활이 훨씬 편리해졌어요."
+        },
+        {
+          "en": "Some people spend too much time on their phones.",
+          "ko": "어떤 사람들은 휴대폰에 너무 많은 시간을 써요."
+        },
+        {
+          "en": "We need to be careful about our personal information.",
+          "ko": "개인 정보에 주의해야 해요."
+        }
+      ],
+      "sample": "The piece of technology I use the most is definitely my smartphone. Honestly, I can't imagine my life without it. It's a pretty new model with a large screen and a really good camera, and I keep it in a simple black case. I use it for almost everything. In the morning, it wakes me up with an alarm, and I check the news and the weather first thing. On my way to work, I listen to music or watch short videos on the subway. During the day, I use messenger apps to talk with my coworkers and friends. I also use it for banking, online shopping, and even paying for coffee, so I don't really carry my wallet anymore. In the evening, I use it to order food or look up recipes. Sometimes I think I use it too much, you know, but it has made my life so much easier."
+    },
+    {
+      "id": "bank",
+      "name": "은행",
+      "kind": "돌발",
+      "questions": [
+        {
+          "id": "bank-1",
+          "type": "묘사",
+          "q": "I'd like to ask you about banks. Tell me about a bank in your neighborhood. What does it look like inside, and what services does it offer?",
+          "q_kr": "은행에 대해 여쭤보고 싶어요. 당신 동네에 있는 은행에 대해 말해 주세요. 내부는 어떻게 생겼고, 어떤 서비스를 제공하나요?",
+          "tip": "위치 → 입구의 ATM 코너 → 번호표 기계와 대기석 → 창구 → 제공 서비스 순서로 공간을 따라가며 묘사하세요."
+        },
+        {
+          "id": "bank-2",
+          "type": "루틴",
+          "q": "How do you usually take care of your banking? Do you go to the bank in person or use online banking? Tell me about your banking habits.",
+          "q_kr": "보통 은행 업무를 어떻게 처리하나요? 은행에 직접 가나요, 아니면 온라인 뱅킹을 이용하나요? 은행 이용 습관에 대해 말해 주세요.",
+          "tip": "모바일 앱으로 하는 일(이체, 잔액 확인)과 직접 방문해야 하는 일(통장 개설, 카드 재발급)을 나누어 말하세요."
+        },
+        {
+          "id": "bank-3",
+          "type": "과거 경험",
+          "q": "Tell me about a memorable experience you had at a bank. Maybe you had a problem, or something unusual happened. What was it?",
+          "q_kr": "은행에서 있었던 기억에 남는 경험에 대해 말해 주세요. 문제가 생겼거나 특이한 일이 있었을 수도 있겠죠. 어떤 일이었나요?",
+          "tip": "카드 분실, 이체 실수, 처음 통장을 만든 날 등 하나를 골라 상황 → 문제 → 해결 → 느낀 점 순서로 말하세요."
+        },
+        {
+          "id": "bank-4",
+          "type": "비교",
+          "q": "How has banking changed over the years? Compare the way people used banks in the past with how they use them now.",
+          "q_kr": "은행 업무는 몇 년 사이에 어떻게 변했나요? 예전에 사람들이 은행을 이용하던 방식과 지금의 방식을 비교해 주세요.",
+          "tip": "예전(통장·도장, 긴 대기) vs 지금(앱, 인터넷 전문 은행, 지점 감소)을 비교하고, 어르신들의 불편 같은 부작용도 언급하면 좋아요."
+        },
+        {
+          "id": "bank-5",
+          "type": "의견",
+          "q": "Mobile banking is very convenient, but some people worry about it. What are some concerns people have about online or mobile banking?",
+          "q_kr": "모바일 뱅킹은 매우 편리하지만 걱정하는 사람들도 있어요. 온라인이나 모바일 뱅킹에 대해 사람들이 갖는 우려는 무엇인가요?",
+          "tip": "우려 2가지(보이스피싱·해킹, 디지털 소외)를 말하고 각각에 대한 해결책이나 내 습관(비밀번호 관리)을 덧붙이세요."
+        }
+      ],
+      "template": [
+        "도입: 동네 은행 소개 (There's a bank right across from my apartment.)",
+        "본론 1: 입구와 ATM 코너 (When you walk in, there are ...)",
+        "본론 2: 내부 공간 (Inside, there's a ticket machine and ...)",
+        "본론 3: 제공 서비스나 이용 모습 (People usually go there to ...)",
+        "마무리: 요즘 은행 이용에 대한 생각 (These days, I rarely go there because ...)"
+      ],
+      "expressions": [
+        {
+          "en": "There's a bank right across the street from my apartment.",
+          "ko": "아파트 바로 길 건너에 은행이 있어요."
+        },
+        {
+          "en": "There's an ATM corner by the entrance.",
+          "ko": "입구 옆에 ATM 코너가 있어요."
+        },
+        {
+          "en": "You take a number and wait for it to be called.",
+          "ko": "번호표를 뽑고 번호가 불릴 때까지 기다려요."
+        },
+        {
+          "en": "I needed to open a new account.",
+          "ko": "새 계좌를 만들어야 했어요."
+        },
+        {
+          "en": "I transfer money using a mobile app.",
+          "ko": "모바일 앱으로 송금해요."
+        },
+        {
+          "en": "I sent money to the wrong account by mistake.",
+          "ko": "실수로 다른 계좌로 돈을 보냈어요."
+        },
+        {
+          "en": "I had to get my card reissued.",
+          "ko": "카드를 재발급받아야 했어요."
+        },
+        {
+          "en": "Many bank branches have closed recently.",
+          "ko": "최근 많은 은행 지점이 문을 닫았어요."
+        },
+        {
+          "en": "Older people sometimes find mobile banking difficult.",
+          "ko": "어르신들은 모바일 뱅킹을 어려워하기도 해요."
+        },
+        {
+          "en": "You should never share your password with anyone.",
+          "ko": "비밀번호는 절대 누구와도 공유하면 안 돼요."
+        }
+      ],
+      "sample": "There's a bank right across the street from my apartment. It's on the first floor of an office building, and you can easily spot it because of its big blue sign. When you walk in, there's an ATM corner by the entrance with four machines, and it's open until late at night. Inside, there's a ticket machine, so you take a number and wait on the sofas until it's called. There are about six counters, and each one has a bank teller who helps customers. On the right side, there's a separate area for loans and business accounts. People usually go there to open new accounts, get their cards reissued, or ask about savings plans. Actually, I went there last month because I lost my debit card. These days, though, I rarely go to the bank in person, because I can do almost everything with my mobile app."
+    }
+  ]
+}

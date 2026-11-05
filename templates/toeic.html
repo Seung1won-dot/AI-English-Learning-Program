@@ -3,25 +3,46 @@
 {% block title %}TOEIC — English World{% endblock %}
 
 {% block content %}
-  {{ page_head("pen", "TOEIC", "빈출 단어와 Part 5", "목표 점수에 맞는 빈출 단어를 담고, 실전 유형 문법·어휘 문제를 풀어 보세요.", using_real_ai, provider_label) }}
+  {{ page_head("pen", "TOEIC", "Part 5와 빈출 어휘", "유형별로 골라 풀고, 틀린 문제는 간격 반복으로 다시 만납니다. 모든 문제에 해설이 있어요.") }}
 
-  <!-- Part 5 문제 -->
-  <section class="surface">
+  <!-- Part 5 -->
+  <section class="surface" id="part5" data-start-review="{{ 1 if start_review else 0 }}" data-start-category="{{ start_category }}">
     <div class="surface-head">
-      <h2>Part 5 문제 풀기</h2>
-      <span id="p5Score" class="meta num"></span>
+      <h2>Part 5 문제</h2>
+      <span class="meta tnum">푼 문제 <span id="p5Solved">{{ p5_progress.solved }}</span> / {{ p5_progress.total }}</span>
     </div>
-    <p class="hint">4지선다 문제입니다. 보기를 누르거나 키보드 <kbd>1</kbd>~<kbd>4</kbd> 로 고르세요. 풀이 결과는 날짜별 기록에 저장됩니다.</p>
+    <p class="hint">유형을 고르면 그 유형만 나와요. 안 푼 문제부터 나오고, 보기는 눌러도 되고 키보드 <kbd>1</kbd>~<kbd>4</kbd> 도 됩니다.</p>
+
+    <div class="chip-row scroll-row" role="group" aria-label="문제 유형">
+      <button type="button" class="chip cat-chip {% if not start_category %}active{% endif %}" data-cat="" aria-pressed="{{ 'false' if start_category else 'true' }}">전체</button>
+      {% set by_cat = {} %}{% for c in categories %}{% set _ = by_cat.update({c.category: c}) %}{% endfor %}
+      {% for name in category_order %}
+        {% set c = by_cat[name] %}
+        <button type="button" class="chip cat-chip {% if start_category == name %}active{% endif %}" data-cat="{{ name }}" aria-pressed="{{ 'true' if start_category == name else 'false' }}">
+          {{ name }}{% if c.rate is not none %}<span class="num {% if c.rate < 60 %}low{% endif %}">{{ c.rate }}%</span>{% endif %}
+        </button>
+      {% endfor %}
+    </div>
+    <div class="chip-row" role="group" aria-label="난이도">
+      <span class="label">난이도</span>
+      <button type="button" class="chip lv-chip active" data-lv="" aria-pressed="true">전체</button>
+      {% for key, label in level_label.items() %}
+        <button type="button" class="chip lv-chip" data-lv="{{ key }}" aria-pressed="false">{{ label }}</button>
+      {% endfor %}
+    </div>
+
     <div class="actions">
-      <button type="button" id="p5StartBtn" class="primary">문제 받기</button>
-      <button type="button" id="p5RetryBtn">{{ icon("refresh") }}오답 다시 풀기</button>
-      <span id="p5Loading" class="loading hidden">문제를 만드는 중</span>
+      <button type="button" id="p5StartBtn" class="primary">문제 풀기</button>
+      <button type="button" id="p5ReviewBtn">{{ icon("refresh") }}오답 복습 <span class="num" id="p5Due">{{ due_p5 }}</span></button>
+      <a class="btn push" href="/toeic/test">{{ icon("timer") }}모의고사</a>
     </div>
     <p id="p5Error" class="error hidden" role="alert"></p>
-    <p id="p5Fallback" class="fallback-note hidden">AI 연결에 실패해 준비된 예비 문제로 대체했어요. 잠시 후 다시 시도해 보세요.</p>
 
     <div id="p5Box" class="p5-box hidden">
-      <span id="p5RetryBadge" class="tag warn hidden" style="margin-bottom:8px">오답 복습 중</span>
+      <div class="p5-meta">
+        <span id="p5Tags" class="p5-tags"></span>
+        <span id="p5Score" class="meta num"></span>
+      </div>
       <p id="p5Question" class="p5-question"></p>
       <div id="p5Choices" class="choices" role="group" aria-label="보기"></div>
       <div id="p5Explain" class="explain hidden" aria-live="polite">
@@ -32,23 +53,36 @@
         <button type="button" id="p5NextBtn" class="primary hidden">다음 문제 {{ icon("arrow-right") }}</button>
       </div>
     </div>
+    <div id="p5ReviewDone" class="empty hidden">
+      {{ icon("circle-check") }}
+      <b>오늘 복습할 오답이 없어요</b>
+      틀린 문제는 오늘 다시, 맞히면 1일 → 3일 → 그 이상 간격으로 다시 나옵니다.
+    </div>
   </section>
 
-  <!-- 빈출 단어 -->
-  <section class="surface">
-    <div class="surface-head"><h2>빈출 단어</h2></div>
-    <p class="hint">담은 단어는 퀴즈에 자동으로 들어가 1→3→7→14→30일 간격으로 복습합니다.</p>
-    <div class="chip-row" role="group" aria-label="목표 점수">
-      <span class="label">목표 점수</span>
-      <button type="button" class="chip level-chip active" data-level="600" aria-pressed="true"><span class="num">600</span></button>
-      <button type="button" class="chip level-chip" data-level="800" aria-pressed="false"><span class="num">800</span></button>
-      <button type="button" class="chip level-chip" data-level="900" aria-pressed="false"><span class="num">900</span></button>
-      <button type="button" id="toeicRecommendBtn" class="push">{{ icon("sparkles") }}빈출 단어 추천</button>
+  <!-- 빈출 어휘 -->
+  <section class="surface" id="vocab">
+    <div class="surface-head"><h2>빈출 어휘</h2><span class="meta">하루 목표 <span class="num">{{ goal_words }}</span>개</span></div>
+    <p class="hint">목표 점수대의 어휘를 쉬운 것부터 순서대로 담아요. 담은 단어는 단어 퀴즈에서 간격 반복으로 복습합니다.</p>
+
+    <div class="level-grid" role="group" aria-label="어휘 수준">
+      {% for lv in ["600", "800", "900"] %}
+        {% set p = vocab_progress[lv] %}
+        <button type="button" class="level-card lvl-chip {% if lv == target_level %}active{% endif %}" data-level="{{ lv }}" aria-pressed="{{ 'true' if lv == target_level else 'false' }}">
+          <b class="num">{{ lv }}</b>
+          <span class="tnum"><span class="lvl-learned">{{ p.learned }}</span> / {{ p.total }}</span>
+          <span class="meter"><span class="meter-fill" style="width: {{ (p.learned / p.total * 100) | round(0) if p.total else 0 }}%"></span></span>
+        </button>
+      {% endfor %}
+    </div>
+
+    <div class="actions">
+      <button type="button" id="dailyBtn" class="primary">{{ icon("plus") }}오늘의 단어 {{ goal_words or 10 }}개 담기</button>
+      <button type="button" id="toeicRecommendBtn">미리 보고 골라 담기</button>
     </div>
     <p id="toeicWordError" class="error hidden" role="alert"></p>
-    <p id="toeicWordFallback" class="fallback-note hidden">AI 연결에 실패해 준비된 예비 단어로 대체했어요. 잠시 후 다시 시도해 보세요.</p>
     <div id="toeicRecommendBox" class="recommend-box hidden">
-      <p class="hint">마음에 드는 단어를 눌러 오늘 학습에 담으세요.</p>
+      <p class="hint">눌러서 하나씩 담으세요.</p>
       <div id="toeicRecommendList" class="recommend-list"></div>
     </div>
   </section>
@@ -56,12 +90,12 @@
   <h2 class="group-label">오늘 담은 단어 <span id="toeicCount" class="num">{{ items.words|length }}</span></h2>
   <section class="surface flush">
     <ul id="toeicWordList" class="rows">
-      {% for w in items.words %}{{ word_row(w, deletable=True) }}{% endfor %}
+      {% for w in items.words|reverse %}{{ word_row(w, deletable=True) }}{% endfor %}
     </ul>
     <div id="toeicEmpty" class="empty {% if items.words %}hidden{% endif %}">
       {{ icon("pen") }}
       <b>아직 담은 단어가 없어요</b>
-      목표 점수를 고르고 빈출 단어 추천을 받아 보세요.
+      '오늘의 단어 담기'를 누르면 목표 수준 어휘가 순서대로 들어옵니다.
     </div>
   </section>
 {% endblock %}

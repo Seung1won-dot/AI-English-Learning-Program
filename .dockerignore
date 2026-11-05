@@ -10,3 +10,4 @@ __pycache__/
 *.log
 docs/
 tests/
+.secret_key

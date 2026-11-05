@@ -26,3 +26,6 @@ env/
 
 # 내부 작업 문서 (스펙/플랜)
 docs/superpowers/
+
+# 세션 서명 키 (SECRET_KEY 가 없을 때 자동 생성)
+.secret_key

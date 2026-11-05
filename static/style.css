@@ -237,7 +237,7 @@ h1, .serif, .row-title b, .quiz-meaning, .flash-front, .flash-answer, .quiz-answ
 .group-label:first-child { margin-top: 0; }
 
 /* ---------- 입력 ---------- */
-input[type="text"], input[type="date"], textarea, select {
+input[type="text"], input[type="date"], input[type="password"], input[type="number"], textarea, select {
   font: inherit; font-size: 15px; color: var(--ink);
   background: var(--sunken);
   border: 1px solid var(--seam);
@@ -726,6 +726,134 @@ button.date-chip.active { border-color: var(--accent); background: var(--accent-
 .error-page h1 { margin-top: 8px; }
 .error-page p { color: var(--ink-dim); margin: 8px 0 24px; }
 
+
+/* =========================================================
+   계정 (로그인 · 가입 · 내 계정)
+   ========================================================= */
+.nav-spacer { flex: 1; }
+a.icon-link {
+  display: inline-flex; align-items: center; justify-content: center; flex: none;
+  width: 32px; height: 32px; border-radius: var(--r-control); color: var(--ink-dim);
+  transition: background var(--t) var(--ease), color var(--t) var(--ease);
+}
+a.icon-link:hover, a.icon-link.active { background: var(--hover); color: var(--ink); }
+a.icon-link .ic { width: 18px; height: 18px; }
+
+.auth { max-width: 420px; margin: 0 auto; }
+.auth-form { display: flex; flex-direction: column; gap: 16px; }
+.auth-form .error { margin: 0; }
+.auth-alt { margin: 0; text-align: center; font-size: 13px; color: var(--ink-dim); }
+.field { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.field label { font-size: 13px; font-weight: 500; color: var(--ink-dim); }
+.field small { font-size: 12px; color: var(--ink-faint); }
+.field input, .field select { width: 100%; }
+.form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin-top: 8px; }
+.form-grid .field.wide { grid-column: 1 / -1; }
+button.wide { width: 100%; height: 44px; font-size: 15px; }
+.banner.ok { margin: 0 0 16px; color: var(--ink); }
+.banner.ok .ic { color: var(--good); }
+
+/* =========================================================
+   홈 — 오늘 할 일
+   ========================================================= */
+.plan .meter { margin: 12px 0 4px; }
+.plan-list { margin-top: 8px; }
+.plan-list > li { border-top: 1px solid var(--seam); }
+.plan-list > li:first-child { border-top: none; }
+a.plan-row {
+  display: flex; align-items: center; gap: 12px; padding: 12px 0;
+  color: var(--ink); text-decoration: none;
+}
+a.plan-row:hover .go { color: var(--ink); }
+.plan-row .row-body b { font-weight: 600; }
+.plan-sub { display: block; margin-top: 2px; font-size: 13px; color: var(--ink-dim); }
+.plan-check {
+  width: 22px; height: 22px; flex: none; border-radius: var(--r-pill);
+  border: 1.5px solid var(--seam-strong);
+  display: inline-flex; align-items: center; justify-content: center; color: var(--accent-ink);
+}
+.plan-check .ic { width: 14px; height: 14px; stroke-width: 2.5; }
+.plan-row.complete .plan-check { background: var(--good); border-color: var(--good); }
+.plan-row.complete .row-body b { color: var(--ink-dim); }
+.plan-row .go { color: var(--ink-faint); width: 16px; height: 16px; flex: none; }
+.plan-done { display: flex; align-items: center; gap: 8px; margin: 8px 0 0; font-size: 13px; color: var(--ink-dim); }
+.plan-done .ic { color: var(--good); width: 16px; height: 16px; }
+.mode-row .today.low { color: var(--bad); }
+.group-label a { font-size: 13px; color: var(--ink-dim); }
+
+/* =========================================================
+   TOEIC — 유형 칩 · 어휘 수준 · 모의고사
+   ========================================================= */
+.pos { font-size: 12px; font-style: italic; color: var(--ink-faint); }
+.recommend-chip i { font-size: 12px; color: var(--ink-faint); }
+button.chip .num.low { color: var(--bad); }
+.kind-label { min-width: 48px; }
+.p5-meta { display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.p5-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.tag.ok { color: var(--good); border-color: var(--good); }
+
+.level-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+button.level-card {
+  height: auto; flex-direction: column; align-items: stretch; gap: 6px; padding: 12px;
+  text-align: left; background: var(--sunken);
+}
+button.level-card b { font-size: 17px; color: var(--ink); }
+button.level-card .tnum { font-size: 12px; color: var(--ink-dim); }
+button.level-card .meter { height: 4px; }
+button.level-card.active { border-color: var(--accent); background: var(--accent-soft); }
+button.level-card.active b { color: var(--accent); }
+
+.meter-fill.low { background: var(--bad); }
+.cat-bars { margin-top: 4px; }
+.cat-bar { display: grid; grid-template-columns: 96px minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 10px 0; }
+.cat-bar:hover { background: transparent; }
+.cat-name { font-size: 13px; font-weight: 500; color: var(--ink); text-decoration: none; }
+a.cat-name:hover { color: var(--accent); }
+.cat-num { font-size: 13px; color: var(--ink); text-align: right; min-width: 56px; }
+.cat-num small { font-size: 12px; color: var(--ink-faint); }
+.muted { color: var(--ink-faint); }
+.weak-extra { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--seam); font-size: 13px; color: var(--ink-dim); }
+.weak-extra p { margin: 4px 0; display: flex; gap: 8px; flex-wrap: wrap; }
+.weak-extra b { font-weight: 600; color: var(--ink); }
+
+.test-bar {
+  position: sticky; top: 64px; z-index: 10;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
+  margin-bottom: 16px; padding: 8px 8px 8px 16px;
+  background: var(--raised); border: 1px solid var(--seam); border-radius: var(--r-container);
+  box-shadow: var(--floating); font-size: 13px; color: var(--ink-dim);
+}
+.test-bar b { color: var(--ink); font-weight: 600; }
+.test-clock { font-size: 17px; font-weight: 600; color: var(--ink); }
+.test-clock.low { color: var(--bad); }
+.test-list { list-style: none; margin: 0; padding: 0; }
+.test-q .test-num { margin: 0 0 6px; display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--ink-dim); }
+.test-q .explain { margin-top: 12px; padding-top: 12px; }
+button.choice.selected { border-color: var(--accent); background: var(--accent-soft); }
+.choice.selected .p5-label { border-color: var(--accent); color: var(--accent); }
+.choice.static {
+  display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 10px 12px;
+  border: 1px solid var(--seam); border-radius: var(--r-control); background: var(--sunken); line-height: 1.45;
+}
+.choice.static.correct { border-color: var(--good); background: var(--good-soft); }
+.choice.static.wrong { border-color: var(--bad); background: var(--bad-soft); }
+
+/* =========================================================
+   OPIC — 답변 가이드
+   ========================================================= */
+.q-tip { margin: 8px 0 0; font-size: 13px; color: var(--ink-dim); }
+details.guide { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--seam); }
+details.guide summary {
+  cursor: pointer; font-size: 13px; font-weight: 600; color: var(--accent);
+  min-height: 32px; display: flex; align-items: center;
+}
+details.guide h3 { margin: 16px 0 6px; }
+.guide-steps { margin: 0; padding-left: 20px; font-size: 15px; line-height: 1.65; }
+.guide-steps li { margin: 2px 0; }
+.guide-expr .row { padding: 8px 0; }
+.guide-sample { margin: 0; font-family: var(--serif); line-height: 1.8; }
+.count-line { margin: 6px 0 0; text-align: right; font-size: 12px; color: var(--ink-faint); }
+
 /* =========================================================
    반응형 (구조만 바뀌고 글자 크기는 고정)
    ========================================================= */
@@ -756,6 +884,10 @@ button.date-chip.active { border-color: var(--accent); background: var(--accent-
   .mode-row .row-body p { display: none; }
   .row .row-actions { opacity: 1; }
   .kbd-tip { display: none; }
+  .form-grid { grid-template-columns: 1fr; }
+  .cat-bar { grid-template-columns: 76px minmax(0, 1fr) auto; gap: 8px; }
+  .test-bar { top: 112px; }
+  .level-card .tnum { font-size: 12px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

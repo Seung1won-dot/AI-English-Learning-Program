@@ -4,7 +4,7 @@
 
 {% block content %}
   {% set MODE_LABEL = {'toeic':'TOEIC','opic':'OPIC','talk':'회화','vocab':'단어'} %}
-  {{ page_head("chart", "기록", "학습 기록", "날짜별로 무엇을 공부했는지 모아 봅니다. 오타나 중복 단어는 여기서 지울 수 있어요.") }}
+  {{ page_head("chart", "기록", "학습 기록", "약한 유형과 날짜별 공부 내용을 모아 봅니다. 오타나 중복 단어는 여기서 지울 수 있어요.") }}
 
   <section class="stat-strip six" aria-label="전체 통계">
     <div class="stat-cell"><span class="label">{{ icon("book") }}외운 단어</span><span class="stat-value">{{ stats.total_words }}</span></div>
@@ -14,6 +14,58 @@
     <div class="stat-cell"><span class="label">{{ icon("calendar") }}학습한 날</span><span class="stat-value">{{ stats.total_days }}<small>일</small></span></div>
     <div class="stat-cell"><span class="label">{{ icon("flame") }}연속 학습</span><span class="stat-value">{{ stats.streak }}<small>일</small></span></div>
   </section>
+
+  <h2 class="group-label" id="weakness">약점 분석 <span>Part 5 유형별 정답률</span></h2>
+  <section class="surface">
+    {% set tried = weakness.categories | selectattr("total") | list %}
+    {% if tried %}
+      <p class="hint">정답률이 낮은 유형부터 보여요. 유형을 누르면 그 유형만 골라 풀 수 있어요.</p>
+      <ul class="rows cat-bars">
+        {% for c in weakness.categories %}
+          <li class="row cat-bar">
+            <a class="cat-name" href="/toeic?cat={{ c.category | urlencode }}">{{ c.category }}</a>
+            {% if c.total %}
+              <span class="meter"><span class="meter-fill {% if c.rate < 60 %}low{% endif %}" style="width: {{ c.rate }}%"></span></span>
+              <span class="tnum cat-num">{{ c.rate }}% <small>({{ c.correct }}/{{ c.total }})</small></span>
+            {% else %}
+              <span class="meter"></span><span class="cat-num muted">아직 안 풂</span>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <div class="empty">
+        {{ icon("target") }}
+        <b>아직 분석할 풀이가 없어요</b>
+        Part 5 문제를 풀면 유형별 정답률이 여기에 쌓입니다.
+        <div class="actions"><a class="btn primary" href="/toeic">문제 풀러 가기 {{ icon("arrow-right") }}</a></div>
+      </div>
+    {% endif %}
+    <div class="weak-extra">
+      <p><b>단어 퀴즈 (최근 30일)</b>
+        {% if weakness.word_quiz.total %}<span class="tnum">{{ weakness.word_quiz.rate }}% · {{ weakness.word_quiz.correct }}/{{ weakness.word_quiz.total }}</span>{% else %}<span class="muted">기록 없음</span>{% endif %}</p>
+      {% if weakness.opic %}
+        <p><b>오픽 평균 점수</b>
+          <span class="tnum">{% for o in weakness.opic %}{{ o.topic }} {{ o.avg }}{% if not loop.last %} · {% endif %}{% endfor %}</span></p>
+      {% endif %}
+    </div>
+  </section>
+
+  {% if tests %}
+    <h2 class="group-label">모의고사 기록 <a href="/toeic/test">새로 보기</a></h2>
+    <section class="surface flush">
+      <ul class="rows">
+        {% for t in tests %}
+          <li class="row">
+            <div class="row-body">
+              <div class="row-title"><b class="tnum">{{ t.correct }} / {{ t.total }}</b><span class="pron tnum">정답률 {{ (t.correct * 100 / t.total) | round | int }}%</span></div>
+              <div class="row-sub tnum">{{ t.created_at[:10] }} · {{ t.seconds // 60 }}분 {{ t.seconds % 60 }}초</div>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    </section>
+  {% endif %}
 
   {% if history %}
     <h2 class="group-label">날짜별 기록</h2>

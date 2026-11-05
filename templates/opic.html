@@ -7,16 +7,15 @@
 
   <section class="surface">
     <div class="surface-head"><h2><span class="step">01</span>질문 받기</h2></div>
-    <p class="hint">실제 오픽 서베이 주제입니다. 질문은 소리로도 읽어 줍니다.</p>
-    <div class="chip-row" role="group" aria-label="주제">
-      <button type="button" class="chip opic-chip active" data-topic="자기소개" aria-pressed="true">자기소개</button>
-      <button type="button" class="chip opic-chip" data-topic="집" aria-pressed="false">집</button>
-      <button type="button" class="chip opic-chip" data-topic="취미" aria-pressed="false">취미</button>
-      <button type="button" class="chip opic-chip" data-topic="여행" aria-pressed="false">여행</button>
-      <button type="button" class="chip opic-chip" data-topic="운동" aria-pressed="false">운동</button>
-      <button type="button" class="chip opic-chip" data-topic="영화" aria-pressed="false">영화</button>
-      <button type="button" class="chip opic-chip" data-topic="롤플레이" aria-pressed="false">롤플레이</button>
-    </div>
+    <p class="hint">주제별로 묘사·루틴·경험·롤플레이 질문이 준비돼 있어요. 질문은 소리로도 읽어 줍니다.</p>
+    {% for kind in kinds %}
+      <div class="chip-row" role="group" aria-label="{{ kind }} 주제">
+        <span class="label kind-label">{{ kind }}</span>
+        {% for t in topics if t.kind == kind %}
+          <button type="button" class="chip opic-chip {% if loop.first and kind == '기본' %}active{% endif %}" data-topic="{{ t.name }}" aria-pressed="{{ 'true' if loop.first and kind == '기본' else 'false' }}">{{ t.name }}<span class="num">{{ t.questions|length }}</span></button>
+        {% endfor %}
+      </div>
+    {% endfor %}
     <div class="actions" style="margin-top:0">
       <button type="button" id="opicQuestionBtn" class="primary">질문 받기</button>
       <span id="opicQLoading" class="loading hidden">질문을 만드는 중</span>
@@ -27,20 +26,32 @@
     <div id="opicQuestionBox" class="question hidden">
       <div class="q-en"><span id="opicQText"></span><button type="button" id="opicQSpeak" class="icon-btn speak-btn" title="질문 다시 듣기" aria-label="질문 다시 듣기">{{ icon("volume") }}</button></div>
       <div id="opicQKr" class="q-kr"></div>
+      <p id="opicQTip" class="q-tip hidden"></p>
     </div>
+
+    <details id="opicGuide" class="guide hidden">
+      <summary>답변 가이드 — 틀 · 표현 · 예시 답변</summary>
+      <h3>답변 틀</h3>
+      <ol id="opicTemplate" class="guide-steps"></ol>
+      <h3>쓸 만한 표현</h3>
+      <ul id="opicExpr" class="rows guide-expr"></ul>
+      <h3>예시 답변 <span class="hint" style="margin:0">— <span id="opicSampleQ"></span></span></h3>
+      <p id="opicSample" class="guide-sample"></p>
+    </details>
   </section>
 
   <section id="opicAnswerCard" class="surface hidden">
     <div class="surface-head"><h2><span class="step">02</span>답변하기</h2></div>
-    <p class="hint">말로 답하거나 타이핑하세요. 답변은 영어로!</p>
+    <p class="hint">말로 답하거나 타이핑하세요. 실전 답변은 1~2분, 80~150단어 정도가 적당해요.</p>
     <div class="answer-tools">
       <button type="button" id="micBtn" class="mic-btn hidden"><span class="rec-dot"></span>{{ icon("mic") }}<span class="mic-label">말로 답하기</span></button>
       <span id="micHint" class="mic-hint"></span>
     </div>
     <label class="sr-only" for="opicAnswer">답변</label>
-    <textarea id="opicAnswer" rows="5" maxlength="3000" placeholder="예: Hi, my name is Minsu. I'm a university student majoring in..."></textarea>
+    <textarea id="opicAnswer" rows="6" maxlength="3000" placeholder="예: Hi, my name is Minsu. I'm a university student majoring in..."></textarea>
+    <p class="count-line tnum"><span id="opicWords">0</span>단어</p>
     <div class="actions">
-      <button type="button" id="opicSubmitBtn" class="primary">AI 첨삭 받기</button>
+      <button type="button" id="opicSubmitBtn" class="primary">첨삭 받기</button>
       <span id="opicALoading" class="loading hidden">AI 가 답변을 검토하는 중</span>
     </div>
     <p id="opicAError" class="error hidden" role="alert"></p>
