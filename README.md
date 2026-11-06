@@ -142,3 +142,7 @@ AI-English-Learning-Program/
 - Part 6·7(장문) 문제, 듣기(LC) 연습
 - 학습 알림
 - 오픽 답변도 간격 반복 복습에 편입
+
+## 라이선스
+
+[MIT License](LICENSE)
